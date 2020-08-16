@@ -7,6 +7,7 @@ import android.util.ArrayMap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.gianlu.aria2app.PK;
@@ -23,12 +24,11 @@ import com.gianlu.commonutils.preferences.Prefs;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
-import org.apache.commons.net.io.CopyStreamEvent;
-import org.apache.commons.net.io.CopyStreamListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -96,27 +96,63 @@ public final class FtpHelper extends DirectDownloadHelper {
 
     @Override
     public void start(@NonNull Context context, @NonNull AriaDirectory dir, @NonNull StartListener listener) {
-        throw new UnsupportedOperationException(); // FIXME
+        DocumentFile ddDir;
+        try {
+            ddDir = getAndValidateDownloadPath(context);
+        } catch (FetchHelper.PreparationException ex) {
+            callFailed(listener, ex);
+            return;
+        }
+
+        aria2.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<OptionsMap>() {
+            @Override
+            public void onResult(@NonNull OptionsMap result) {
+                for (AriaFile file : dir.allFiles()) {
+                    try {
+                        startInternal(result, ddDir, file);
+                    } catch (PreparationException ex) {
+                        Log.e(TAG, "Failed preparing download: " + file.path, ex);
+                    }
+                }
+
+                handler.post(listener::onSuccess);
+            }
+
+            @Override
+            public void onException(@NonNull Exception ex) {
+                listener.onFailed(ex);
+            }
+        });
+    }
+
+    @Nullable
+    private DownloadRunnable unwrap(@NonNull DdDownload wrap) {
+        DownloadRunnable download = wrap.unwrapFtp();
+        if (download == null || !downloads.containsKey(download.id)) return null;
+        else return download;
     }
 
     @Override
-    public void resume(@NonNull DdDownload download) {
-        // TODO
+    public void resume(@NonNull DdDownload wrap) {
+        DownloadRunnable download = unwrap(wrap);
+        if (download != null) download.resume();
     }
 
     @Override
-    public void pause(@NonNull DdDownload download) {
-        // TODO
+    public void pause(@NonNull DdDownload wrap) {
+        DownloadRunnable download = unwrap(wrap);
+        if (download != null) download.pause();
     }
 
     @Override
-    public void restart(@NonNull DdDownload download, @NonNull StartListener listener) {
-        // TODO
+    public void restart(@NonNull DdDownload wrap, @NonNull StartListener listener) {
+        // TODO: Restart
     }
 
     @Override
-    public void remove(@NonNull DdDownload download) {
-        // TODO
+    public void remove(@NonNull DdDownload wrap) {
+        DownloadRunnable download = unwrap(wrap);
+        if (download != null) download.remove();
     }
 
     @Override
@@ -130,6 +166,9 @@ public final class FtpHelper extends DirectDownloadHelper {
 
     @Override
     public void close() {
+        for (DownloadRunnable download : downloads.values())
+            download.remove();
+
         executorService.shutdownNow();
     }
 
@@ -159,6 +198,7 @@ public final class FtpHelper extends DirectDownloadHelper {
         volatile long length = -1;
         volatile long downloaded = -1;
         volatile DdDownload.Status status;
+        volatile boolean shouldStop = false;
 
         DownloadRunnable(int id, @NonNull DocumentFile file, @NonNull String remotePath) {
             this.id = id;
@@ -210,39 +250,34 @@ public final class FtpHelper extends DirectDownloadHelper {
                     throw new NumberFormatException(sizeStr + " -> " + ex.getMessage());
                 }
 
-                client.setCopyStreamListener(new CopyStreamListener() {
-                    long lastBlockTime = -1;
-
-                    @Override
-                    public void bytesTransferred(CopyStreamEvent event) {
-                    }
-
-                    long calcEta(long speed) {
-                        return (long) (((float) (length - downloaded) / (float) speed) * 1000);
-                    }
-
-                    long calcSpeed(long lastTransferred) {
-                        if (lastBlockTime == -1) return 0;
-
-                        float diff = ((float) (System.currentTimeMillis() - lastBlockTime)) / 1000;
-                        lastBlockTime = System.currentTimeMillis();
-                        return (long) (lastTransferred / diff);
-                    }
-
-                    @Override
-                    public void bytesTransferred(long totalBytesTransferred, int bytesTransferred, long streamSize) {
-                        downloaded = totalBytesTransferred;
-
-                        long speed = calcSpeed(bytesTransferred);
-                        long eta = calcEta(speed);
-                        DdDownload wrap = DdDownload.wrap(DownloadRunnable.this);
-                        forEachListener(listener -> listener.onProgress(wrap, eta, speed));
-                    }
-                });
-
                 try (OutputStream out = contentResolver.openOutputStream(file.getUri())) {
                     if (out == null) throw new IOException("Couldn't open output file.");
-                    client.retrieveFile(remotePath, out);
+                    try (InputStream in = client.retrieveFileStream(remotePath)) {
+                        downloaded = 0;
+                        long lastTime = System.currentTimeMillis();
+
+                        byte[] buffer = new byte[512 * 1024];
+                        int read;
+                        while (!shouldStop && (read = in.read(buffer)) > 0) {
+                            out.write(buffer, 0, read);
+                            downloaded += read;
+
+
+                            float diff = ((float) (System.currentTimeMillis() - lastTime)) / 1000;
+                            lastTime = System.currentTimeMillis();
+
+                            long speed = (long) (read / diff);
+                            long eta = (long) (((float) (length - downloaded) / (float) speed) * 1000);
+                            DdDownload wrap = DdDownload.wrap(DownloadRunnable.this);
+                            forEachListener(listener -> listener.onProgress(wrap, eta, speed));
+                        }
+
+                        if (shouldStop) {
+                            status = DdDownload.Status.CANCELLED;
+                            callUpdated(this);
+                            return;
+                        }
+                    }
                 }
 
                 status = DdDownload.Status.COMPLETED;
@@ -282,6 +317,18 @@ public final class FtpHelper extends DirectDownloadHelper {
         public int getProgress() {
             if (length == -1 || downloaded == -1) return -1;
             else return (int) (((float) downloaded / (float) length) * 100);
+        }
+
+        void resume() {
+            // TODO: Resume
+        }
+
+        void pause() {
+            // TODO: Pause
+        }
+
+        void remove() {
+            shouldStop = true;
         }
     }
 }

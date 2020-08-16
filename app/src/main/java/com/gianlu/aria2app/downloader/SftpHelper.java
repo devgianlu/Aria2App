@@ -1,0 +1,61 @@
+package com.gianlu.aria2app.downloader;
+
+import android.content.Context;
+
+import androidx.annotation.NonNull;
+
+import com.gianlu.aria2app.api.aria2.Aria2Helper;
+import com.gianlu.aria2app.api.aria2.AriaDirectory;
+import com.gianlu.aria2app.api.aria2.AriaFile;
+import com.gianlu.aria2app.profiles.MultiProfile;
+
+import java.io.IOException;
+
+public final class SftpHelper extends DirectDownloadHelper { // TODO
+    private final MultiProfile.DirectDownload.Sftp dd;
+
+    public SftpHelper(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull MultiProfile.DirectDownload.Sftp dd) throws Aria2Helper.InitializingException {
+        super(context, profile);
+        this.dd = dd;
+    }
+
+    @Override
+    public void start(@NonNull Context context, @NonNull AriaFile file, @NonNull StartListener listener) {
+
+    }
+
+    @Override
+    public void start(@NonNull Context context, @NonNull AriaDirectory dir, @NonNull StartListener listener) {
+
+    }
+
+    @Override
+    public void resume(@NonNull DdDownload download) {
+
+    }
+
+    @Override
+    public void pause(@NonNull DdDownload download) {
+
+    }
+
+    @Override
+    public void restart(@NonNull DdDownload download, @NonNull StartListener listener) {
+
+    }
+
+    @Override
+    public void remove(@NonNull DdDownload download) {
+
+    }
+
+    @Override
+    public void reloadListener(@NonNull Listener listener) {
+
+    }
+
+    @Override
+    public void close() throws IOException {
+
+    }
+}

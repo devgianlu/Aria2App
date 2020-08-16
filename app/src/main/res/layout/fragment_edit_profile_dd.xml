@@ -55,6 +55,13 @@
                     android:text="@string/ftp" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/editProfile_ddType_sftp"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sftp" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/editProfile_ddType_samba"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="wrap_content"
@@ -142,6 +149,15 @@
 
             <LinearLayout
                 android:id="@+id/editProfile_ddFtp_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- TODO -->
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/editProfile_ddSftp_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">

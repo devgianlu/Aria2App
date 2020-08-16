@@ -83,6 +83,12 @@ public abstract class DirectDownloadHelper implements Closeable {
                 } catch (Aria2Helper.InitializingException ex) {
                     throw new InitializationException(ex);
                 }
+            case SFTP:
+                try {
+                    return instance = new SftpHelper(context, profile, dd.sftp);
+                } catch (Aria2Helper.InitializingException ex) {
+                    throw new InitializationException(ex);
+                }
             case SMB:
                 try {
                     return instance = new SambaHelper(context, profile, dd.smb);

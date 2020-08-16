@@ -97,6 +97,7 @@ dependencies {
 
     implementation 'commons-net:commons-net:3.7'
     implementation 'com.hierynomus:smbj:0.10.0'
+    implementation 'com.jcraft:jsch:0.1.55'
 
     implementation 'com.squareup.okhttp3:okhttp:4.8.0'
 

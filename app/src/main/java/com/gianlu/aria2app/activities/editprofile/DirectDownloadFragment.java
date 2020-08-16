@@ -37,6 +37,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     private MaterialButtonToggleGroup typePick;
     private LinearLayout webContainer;
     private LinearLayout ftpContainer;
+    private LinearLayout sftpContainer;
     private LinearLayout smbContainer;
 
     private TextInputLayout webAddress;
@@ -64,6 +65,8 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                 return R.id.editProfile_ddType_web;
             case FTP:
                 return R.id.editProfile_ddType_ftp;
+            case SFTP:
+                return R.id.editProfile_ddType_sftp;
             case SMB:
                 return R.id.editProfile_ddType_samba;
         }
@@ -91,6 +94,9 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                     bundle.putBundle("web", webBundle);
                     break;
                 case FTP:
+                    // TODO
+                    break;
+                case SFTP:
                     // TODO
                     break;
                 case SMB:
@@ -143,6 +149,11 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     }
 
     @NonNull
+    private static MultiProfile.DirectDownload.Sftp validateSftpState(@NonNull Bundle sftpBundle) {
+        return null; // TODO
+    }
+
+    @NonNull
     private static MultiProfile.DirectDownload.Smb validateSmbState(@NonNull Bundle smbBundle) {
         return null; // TODO
     }
@@ -155,17 +166,22 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                 case R.id.editProfile_ddType_web:
                     Bundle webBundle = bundle.getBundle("web");
                     if (webBundle != null)
-                        dd = new MultiProfile.DirectDownload(null, validateWebState(webBundle), null);
+                        dd = new MultiProfile.DirectDownload(validateWebState(webBundle), null, null, null);
                     break;
                 case R.id.editProfile_ddType_ftp:
                     Bundle ftpBundle = bundle.getBundle("ftp");
                     if (ftpBundle != null)
-                        dd = new MultiProfile.DirectDownload(validateFtpState(ftpBundle), null, null);
+                        dd = new MultiProfile.DirectDownload(null, validateFtpState(ftpBundle), null, null);
+                    break;
+                case R.id.editProfile_ddType_sftp:
+                    Bundle sftpBundle = bundle.getBundle("sftp");
+                    if (sftpBundle != null)
+                        dd = new MultiProfile.DirectDownload(null, null, validateSftpState(sftpBundle), null);
                     break;
                 case R.id.editProfile_ddType_samba:
                     Bundle smbBundle = bundle.getBundle("smb");
                     if (smbBundle != null)
-                        dd = new MultiProfile.DirectDownload(null, null, validateSmbState(smbBundle));
+                        dd = new MultiProfile.DirectDownload(null, null, null, validateSmbState(smbBundle));
                     break;
             }
         }
@@ -202,6 +218,9 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
             case R.id.editProfile_ddType_ftp:
                 // TODO
                 break;
+            case R.id.editProfile_ddType_sftp:
+                // TODO
+                break;
             case R.id.editProfile_ddType_samba:
                 // TODO
                 break;
@@ -226,6 +245,11 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
 
         Bundle ftpBundle = bundle.getBundle("ftp");
         if (ftpBundle != null) {
+            // TODO
+        }
+
+        Bundle sftpBundle = bundle.getBundle("sftp");
+        if (sftpBundle != null) {
             // TODO
         }
 
@@ -273,16 +297,25 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                 case R.id.editProfile_ddType_web:
                     webContainer.setVisibility(View.VISIBLE);
                     ftpContainer.setVisibility(View.GONE);
+                    sftpContainer.setVisibility(View.GONE);
                     smbContainer.setVisibility(View.GONE);
                     break;
                 case R.id.editProfile_ddType_ftp:
                     webContainer.setVisibility(View.GONE);
                     ftpContainer.setVisibility(View.VISIBLE);
+                    sftpContainer.setVisibility(View.GONE);
+                    smbContainer.setVisibility(View.GONE);
+                    break;
+                case R.id.editProfile_ddType_sftp:
+                    webContainer.setVisibility(View.GONE);
+                    ftpContainer.setVisibility(View.GONE);
+                    sftpContainer.setVisibility(View.VISIBLE);
                     smbContainer.setVisibility(View.GONE);
                     break;
                 case R.id.editProfile_ddType_samba:
                     webContainer.setVisibility(View.GONE);
                     ftpContainer.setVisibility(View.GONE);
+                    sftpContainer.setVisibility(View.GONE);
                     smbContainer.setVisibility(View.VISIBLE);
                     break;
             }
@@ -290,6 +323,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
 
         webContainer = layout.findViewById(R.id.editProfile_ddWeb_container);
         ftpContainer = layout.findViewById(R.id.editProfile_ddFtp_container);
+        sftpContainer = layout.findViewById(R.id.editProfile_ddSftp_container);
         smbContainer = layout.findViewById(R.id.editProfile_ddSamba_container);
 
         //region Web
@@ -311,6 +345,10 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         //endregion
 
         //region FTP
+        // TODO
+        //endregion
+
+        //region SFTP
         // TODO
         //endregion
 

@@ -179,7 +179,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     }
 
     @NonNull
-    public UserProfile getProfile(ProfilesManager manager) {
+    public UserProfile getProfile(@NotNull ProfilesManager manager) {
         return getProfile(manager.getConnectivityManager(), manager.getWifiManager());
     }
 
@@ -424,25 +424,31 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         private static final long serialVersionUID = 1L;
         public final Type type;
         public final Ftp ftp;
+        public final Sftp sftp;
         public final Web web;
         public final Smb smb;
 
-        public DirectDownload(@Nullable Ftp ftp, @Nullable Web web, @Nullable Smb smb) {
+        public DirectDownload(@Nullable Web web, @Nullable Ftp ftp, @Nullable Sftp sftp, @Nullable Smb smb) {
             this.ftp = ftp;
+            this.sftp = sftp;
             this.web = web;
             this.smb = smb;
 
-            if (ftp == null && web == null && smb == null)
+            if (ftp == null && web == null && smb == null && sftp == null)
                 throw new IllegalArgumentException();
 
-            if (ftp != null && (web != null || smb != null))
+            if (web != null && (ftp != null || sftp != null || smb != null))
                 throw new IllegalArgumentException();
 
-            if (web != null && smb != null)
+            if (ftp != null && (sftp != null || smb != null))
+                throw new IllegalArgumentException();
+
+            if (sftp != null && smb != null)
                 throw new IllegalArgumentException();
 
             if (smb != null) type = Type.SMB;
             else if (ftp != null) type = Type.FTP;
+            else if (sftp != null) type = Type.SFTP;
             else type = Type.SMB;
         }
 
@@ -454,16 +460,25 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                         web = new Web(obj.getJSONObject("web"));
                         smb = null;
                         ftp = null;
+                        sftp = null;
                         break;
                     case FTP:
                         web = null;
                         smb = null;
                         ftp = new Ftp(obj.getJSONObject("ftp"));
+                        sftp = null;
+                        break;
+                    case SFTP:
+                        web = null;
+                        smb = null;
+                        ftp = null;
+                        sftp = new Sftp(obj.getJSONObject("sftp"));
                         break;
                     case SMB:
                         web = null;
                         smb = new Smb(obj.getJSONObject("smb"));
                         ftp = null;
+                        sftp = null;
                         break;
                     default:
                         throw new IllegalArgumentException("Unknown type: " + type);
@@ -473,6 +488,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 web = new Web(obj);
                 ftp = null;
                 smb = null;
+                sftp = null;
             }
         }
 
@@ -496,7 +512,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
 
         public enum Type {
-            WEB("web"), FTP("ftp"), SMB("smb");
+            WEB("web"), FTP("ftp"), SFTP("sftp"), SMB("smb");
 
             final String val;
 
@@ -549,6 +565,18 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                     obj.put("certificate", CertUtils.encodeCertificate(certificate));
 
                 return obj;
+            }
+        }
+
+        public static class Sftp {
+
+            Sftp(@NonNull JSONObject obj) {
+
+            }
+
+            @NonNull
+            public JSONObject toJson() {
+                return null; // TODO
             }
         }
 

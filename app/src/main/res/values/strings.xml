@@ -356,4 +356,5 @@
     <string name="samba">Samba</string>
     <string name="ftp">FTP</string>
     <string name="webServer">Web server</string>
+    <string name="sftp">SFTP</string>
 </resources>
