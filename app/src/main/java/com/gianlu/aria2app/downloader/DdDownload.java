@@ -18,21 +18,28 @@ import okhttp3.HttpUrl;
 public final class DdDownload {
     private final Download fetchDownload;
     private final FtpHelper.DownloadRunnable ftpDownload;
+    private final SftpHelper.DownloadRunnable sftpDownload;
     private ProgressBundle progress;
 
-    private DdDownload(@Nullable Download fetchDownload, @Nullable FtpHelper.DownloadRunnable ftpDownload) {
+    private DdDownload(@Nullable Download fetchDownload, @Nullable FtpHelper.DownloadRunnable ftpDownload, @Nullable SftpHelper.DownloadRunnable sftpDownload) {
         this.fetchDownload = fetchDownload;
         this.ftpDownload = ftpDownload;
+        this.sftpDownload = sftpDownload;
     }
 
     @NonNull
     public static DdDownload wrap(@NonNull Download download) {
-        return new DdDownload(download, null);
+        return new DdDownload(download, null, null);
     }
 
     @NonNull
     public static DdDownload wrap(@NonNull FtpHelper.DownloadRunnable download) {
-        return new DdDownload(null, download);
+        return new DdDownload(null, download, null);
+    }
+
+    @NonNull
+    public static DdDownload wrap(@NonNull SftpHelper.DownloadRunnable download) {
+        return new DdDownload(null, null, download);
     }
 
     @Nullable
@@ -65,6 +72,8 @@ public final class DdDownload {
             return fetchDownload.getId() == other.fetchDownload.getId();
         else if (ftpDownload != null && other.ftpDownload != null)
             return ftpDownload.id == other.ftpDownload.id;
+        else if (sftpDownload != null && other.sftpDownload != null)
+            return sftpDownload.id == other.sftpDownload.id;
         else
             throw new IllegalStateException();
     }
@@ -73,18 +82,21 @@ public final class DdDownload {
     public synchronized Status getStatus() {
         if (fetchDownload != null) return Status.from(fetchDownload.getStatus());
         else if (ftpDownload != null) return ftpDownload.status;
+        else if (sftpDownload != null) return sftpDownload.status;
         else throw new IllegalStateException();
     }
 
     public synchronized long getDownloaded() {
         if (fetchDownload != null) return fetchDownload.getDownloaded();
         else if (ftpDownload != null) return ftpDownload.downloaded;
+        else if (sftpDownload != null) return sftpDownload.downloaded;
         else throw new IllegalStateException();
     }
 
     public synchronized int getProgress() {
         if (fetchDownload != null) return fetchDownload.getProgress();
         else if (ftpDownload != null) return ftpDownload.getProgress();
+        else if (sftpDownload != null) return sftpDownload.getProgress();
         else throw new IllegalStateException();
     }
 
@@ -92,6 +104,7 @@ public final class DdDownload {
     public synchronized File getFile() {
         if (fetchDownload != null) return new File(fetchDownload.getFile());
             // FIXME else if (ftpDownload != null) return ftpDownload.file;
+            // FIXME else if (sftpDownload != null) return sftpDownload.file;
         else throw new IllegalStateException();
     }
 
@@ -99,6 +112,7 @@ public final class DdDownload {
     public synchronized Uri getUri() {
         if (fetchDownload != null) return fetchDownload.getFileUri();
         else if (ftpDownload != null) return ftpDownload.file.getUri();
+        else if (sftpDownload != null) return sftpDownload.file.getUri();
         else throw new IllegalStateException();
     }
 
@@ -114,6 +128,7 @@ public final class DdDownload {
     public synchronized String getUrlStr() {
         if (fetchDownload != null) return fetchDownload.getUrl();
         else if (ftpDownload != null) return ftpDownload.getUrl();
+        else if (sftpDownload != null) return sftpDownload.getUrl();
         else throw new IllegalStateException();
     }
 

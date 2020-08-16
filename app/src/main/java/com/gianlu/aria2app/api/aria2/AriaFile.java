@@ -84,6 +84,11 @@ public class AriaFile {
         return path.substring(dirStr.length() + 1);
     }
 
+    @NonNull
+    public String getAbsolutePath() {
+        return path;
+    }
+
     public boolean completed() {
         return completedLength == length;
     }

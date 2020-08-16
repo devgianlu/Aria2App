@@ -503,6 +503,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 case FTP:
                     obj.put("ftp", ftp.toJson());
                     break;
+                case SFTP:
+                    obj.put("sftp", sftp.toJson());
+                    break;
                 case SMB:
                     obj.put("smb", smb.toJson());
                     break;
@@ -569,14 +572,19 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
 
         public static class Sftp {
+            public final String hostname;
+            public final int port;
+            public final String username;
 
-            Sftp(@NonNull JSONObject obj) {
-
+            Sftp(@NonNull JSONObject obj) throws JSONException {
+                hostname = obj.getString("hostname");
+                port = obj.getInt("port");
+                username = obj.getString("username");
             }
 
             @NonNull
-            public JSONObject toJson() {
-                return null; // TODO
+            public JSONObject toJson() throws JSONException {
+                return new JSONObject().put("hostname", hostname).put("port", port).put("username", username);
             }
         }
 
