@@ -1,6 +1,4 @@
-Thanks to Aria2App you can handle as many aria2 servers as you want!
-
-IMPORTANT: Aria2App uses the JSONRPC interface! See here for more: https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface
+Aria2App is your portable server-grade download manager backed by aria2 directly on your device. You can also manage aria2 instances running on external devices thanks to the JSON-RPC interface.
 
 Some of the features are:
 - Handle more servers simultaneously
@@ -15,8 +13,6 @@ Some of the features are:
 - Change a single download or aria2 general options
 - Receive live notifications of your downloads or your selected downloads
 And even more
-
-Aria2App is developed to run on the latest aria2 version so keep your build updated to avoid problems and various bugs.
 
 This project is open source at https://github.com/devgianlu/Aria2App
 ---------------------------------------
