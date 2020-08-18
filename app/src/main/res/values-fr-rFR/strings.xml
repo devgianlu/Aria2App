@@ -97,7 +97,7 @@
     <string name="endpoint">Point de sortie</string>
     <string name="token">Jeton</string>
     <string name="authentication">Authentification</string>
-    <string name="pickFromFile">Pick from file</string>
+    <string name="pickFromFile">Récupérer depuis un fichier</string>
     <string name="filters">Filtres</string>
     <string name="encryption">Activer le chiffrement TLS/SSL</string>
     <string name="apply">Appliquer</string>
@@ -168,16 +168,16 @@
     <string name="set">Définir</string>
     <string name="noUris_help">Il n\'y a pas d\'URL. Merci d\'en ajouter au moins une en cliquant sur le bouton ci-dessous.</string>
     <string name="editUri">Modifier l\'URL</string>
-    <string name="queuePosition_help">Laisser vide pour ajouter un téléchargement à la fin de la fil d\'attente.</string>
-    <string name="uris_disclaimer">Il est impératif d\'ajouter uniquement des liens HTTP/FTP/SFTP/BitTorrent qui pointent vers la même ressource. Si vous mélangez des liens désignant des ressources différents, le téléchargement échouera ou sera corrompu sans message du serveur aria2.</string>
+    <string name="queuePosition_help">Laisser vide pour ajouter un téléchargement à la fin de la file d\'attente.</string>
+    <string name="uris_disclaimer">Il est impératif d\'ajouter uniquement des liens HTTP/FTP/SFTP/BitTorrent qui pointent vers la même ressource. Si vous mélangez des liens désignant des ressources différentes, le téléchargement échouera ou sera corrompu sans message du serveur aria2.</string>
     <string name="noUris">Il n\'y a pas d\'URL.</string>
     <string name="torrentUris_disclaimer">Les Uris sont utilisées pour le webseeding. Pour les torrents d\'un seul fichier, l\'URI peut être une URI complète pointant vers la ressource; si l\'URI se termine par /, le nom dans le fichier torrent est ajouté. Pour les torrents multi-fichiers, le nom et le chemin dans le torrent sont ajoutés pour former un URI pour chaque fichier.</string>
     <string name="file">Fichier</string>
     <string name="pickTorrent_help">Sélectionner un fichier torrent. Le MIME type supporté est <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
-    <string name="pickMetalink_help">Séléctionner un fichier métalien. Les MIME types supportés sont <![CDATA[<b>application/metalink4+xml</b>]]> et <![CDATA[<b>application/metalink+xml</b>]]>.</string>
+    <string name="pickMetalink_help">Sélectionnez un fichier métalien. Les types MIME supportés sont <![CDATA[<b>application/metalink4+xml</b>]]> et <![CDATA[<b>application/metalink+xml</b>]]>.</string>
     <string name="outdated_aria2">Version aria2 obsolète</string>
     <string name="outdated_aria2_message">La version du serveur aria2 est obsolète. Aria2App est programmée pour fonctionner avec la dernière version d\'aria2. C\'est pourquoi vous devriez le mettre à jour. Vous pouvez désactiver ce messages dans les préférences. \n\nVersion actuelle : %1$s \nDernière version: %2$s</string>
-    <string name="selectFile_help">Un fichier pour être sélectionné ou désélectionné des télécharement seulement pour les torrents multi-fichier.</string>
+    <string name="selectFile_help">Le fichier peut être sélectionné ou désélectionné des téléchargements seulement pour les torrents multi-fichiers.</string>
     <string name="nameLabel">Nom</string>
     <string name="searchDownloads">Rechercher des téléchargements</string>
     <string name="failedLoadingDownloads">Échec de chargement des téléchargements !</string>
@@ -199,7 +199,7 @@
     <string name="base64NotSelected">Vous n\'avez pas sélectionné de fichier !</string>
     <string name="certDisclaimer">Un certificat n\'est pas nécessaire si votre serveur est déjà validé par cet appareil (habituellement, si vous avez installé le certificat ou s\'il s\'agît d\'un certificat signé)</string>
     <string name="test">Tester</string>
-    <string name="test_help">Appuyer sur le bouton tester pour vérifier votre configuration et aider à diagnostiquer s\'il y a des problèmes. To get further help contact me at altomanigianluca@gmail.com.</string>
+    <string name="test_help">Appuyer sur le bouton Tester pour vérifier votre configuration et aider à diagnostiquer s\'il y a des problèmes. Pour obtenir de l\'aide supplémentaire, contactez-moi via altomanigianluca@gmail.com.</string>
     <string name="completedLengthLabel">Données téléchargées</string>
     <string name="filename">Nom du fichier :</string>
     <string name="filename_help" tools:ignore="TypographyDashes">Nom du fichier téléchargé. Laisser vide pour laisser aria2 en générer un. Cela surchargera l\'option --out.</string>
@@ -234,7 +234,7 @@
     <string name="seeError">Voir l\'erreur</string>
     <string name="contactMe">Me contacter</string>
     <string name="failedLoading_reason">Échec de chargement : %s</string>
-    <string name="searchEngine_disclaimer">Ce moteur de recherche est fournis par moi-même (le developpeur). Il combine les résultats de plusieurs sources.</string>
+    <string name="searchEngine_disclaimer">Ce moteur de recherche est fourni par moi-même (le developpeur). Il combine les résultats de plusieurs sources.</string>
     <string name="noServers">Pas de serveur</string>
     <string name="enableHostnameVerifier">Activer la vérification du nom d\'hôte</string>
     <string name="hostnameVerifier_disclaimer">Vous devriez activer cette option si votre certificat contient un Subject Alternative Names (SAN). Il est recommandé d\'ajouter un SAN à votre certificat.</string>
@@ -305,7 +305,7 @@
     <string name="torrents">Torrents</string>
     <string name="metalinks">Metaliens</string>
     <string name="addSingle">Ajouter un seul</string>
-    <string name="noBatchAdd">Il n\'y a pas d\'opération de batch. Ajouter en avec le bouton ci-dessous.</string>
+    <string name="noBatchAdd">Il n\'y a pas d\'opération de batch. Ajoutez-en avec les boutons ci-dessous.</string>
     <string name="downloadsAddedBatch">Tous les téléchargements ont été ajoutés.</string>
     <string name="failedAddingDownloads">L\'ajout de certains téléchargements a échoué.</string>
     <string name="torrentFiles">Fichiers torrent</string>
@@ -325,7 +325,7 @@
     <string name="webView">WebView</string>
     <string name="visit">Visiter</string>
     <string name="goTo">Aller à</string>
-    <string name="prefs_addBestTrackers">Ajouter de meilleurs traquers aux nouveaux téléchargements</string>
+    <string name="prefs_addBestTrackers">Ajouter de meilleurs traqueurs aux nouveaux téléchargements</string>
     <string name="prefs_addBestTrackers_summary">Ajouter automatiquement de meilleurs trackers de XIU2/TrackersListCollection aux nouveaux téléchargements</string>
     <string name="addBestTrackers">Ajouter de meilleurs traquers</string>
     <string name="health"><![CDATA[<b>Santé :</b>]]> %.2f%% (%d/%d)</string>
@@ -340,11 +340,12 @@
     <string name="addWebViewShortcutToHomePage_summary">Ajouter un raccourcis vers la WebView sur votre page d\'accueil.</string>
     <string name="setAsDefault">Définir pat défaut</string>
     <string name="webViewUrlHint">Entrez une URL à visiter…</string>
-    <string name="startPaused">Mettre en pause les téléchargement quand ajouté</string>
+    <string name="startPaused">Mettre en pause les téléchargements quand ajouté</string>
     <string name="noDownloads_addOne">Il n\'y a pas de téléchargement ! Vous pouvez en ajouter un en appuyant sur le bouton plus en haut à droite.</string>
     <string name="noDownloads_changeFilters">Il n\'y a pas de téléchargement à afficher ! Essayer de changer vos filtres.</string>
     <string name="filtersShowingOnly">Affiche uniquement les %s (%d)</string>
     <string name="prefs_skipWebViewDialog">Passer la fenêtre pour WebView</string>
     <string name="prefs_skipWebViewDialog_summary">Passer la fenêtre WebView au partage d\'un lien</string>
     <string name="desktopMode">Mode bureau</string>
+    <string name="copyMagnetLink">Copier le lien Magnet</string>
 </resources>
