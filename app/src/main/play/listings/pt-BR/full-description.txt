@@ -1,4 +1,4 @@
-Aria2App is your portable server-grade download manager backed by aria2 directly on your device. You can also manage aria2 instances running on external devices thanks to the JSON-RPC interface.
+Aria2App é o seu gerenciador de downloads portátil do servidor apoiado por aria2 diretamente no seu dispositivo. Você também pode gerenciar instâncias aria2 em dispositivos externos graças à interface JSON-RPC.
 
 Alguns dos recursos são:
 - Operar mais servidores simultaneamente
