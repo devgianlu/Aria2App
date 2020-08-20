@@ -1,1 +1,1 @@
-An advanced download manager and aria2 client for your pocket.
+Um gerenciador de download avançado e um cliente aria2 em seu bolso.
