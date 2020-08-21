@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2app.api.StatusCodeException;
 import com.gianlu.aria2app.downloader.SftpHelper;
 import com.gianlu.aria2app.profiles.MultiProfile;
@@ -14,7 +15,12 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.FTPSClient;
+
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
@@ -119,7 +125,45 @@ class DirectDownloadTester extends BaseTester<Boolean> {
     @Nullable
     @WorkerThread
     private Boolean callFtp() {
-        return null; // TODO
+        MultiProfile.DirectDownload.Ftp dd = profile.directDownload.ftp;
+
+        FTPClient client = null;
+        try {
+            if (dd.serverSsl) {
+                FTPSClient ftps = new FTPSClient();
+                if (!dd.hostnameVerifier) ftps.setHostnameVerifier((s, sslSession) -> true);
+                if (dd.certificate != null) NetUtils.setSslSocketFactory(ftps, dd.certificate);
+                client = ftps;
+            } else {
+                client = new FTPClient();
+            }
+
+            client.connect(dd.hostname, dd.port);
+            int reply = client.getReplyCode();
+            if (!FTPReply.isPositiveCompletion(reply)) {
+                publishMessage("Failed connecting, code: " + reply, Level.ERROR);
+                return null;
+            }
+
+            if (!client.login(dd.username, dd.password)) {
+                reply = client.getReplyCode();
+                publishMessage("Failed logging in, code: " + reply, Level.ERROR);
+                return null;
+            }
+
+            return true;
+        } catch (GeneralSecurityException | IOException ex) {
+            publishError(ex);
+            return null;
+        } finally {
+            try {
+                if (client != null) {
+                    client.logout();
+                    client.disconnect();
+                }
+            } catch (IOException ignored) {
+            }
+        }
     }
 
     @Nullable

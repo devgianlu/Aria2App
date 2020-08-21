@@ -35,6 +35,9 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     private CheckBox enableDirectDownload;
     private LinearLayout container;
     private MaterialButtonToggleGroup typePick;
+    private LinearLayout encryptionContainer;
+    private CheckBox encryptionEnabled;
+    private CertificateInputView certificate;
     private LinearLayout webContainer;
     private LinearLayout ftpContainer;
     private LinearLayout sftpContainer;
@@ -45,8 +48,11 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     private LinearLayout webAuthContainer;
     private TextInputLayout webUsername;
     private TextInputLayout webPassword;
-    private CheckBox webEncryption;
-    private CertificateInputView webCertificate;
+
+    private TextInputLayout ftpHost;
+    private TextInputLayout ftpPort;
+    private TextInputLayout ftpUsername;
+    private TextInputLayout ftpPassword;
 
     private TextInputLayout sftpHost;
     private TextInputLayout sftpPort;
@@ -99,7 +105,16 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                     bundle.putBundle("web", webBundle);
                     break;
                 case FTP:
-                    // TODO
+                    MultiProfile.DirectDownload.Ftp ftp = profile.directDownload.ftp;
+                    Bundle ftpBundle = new Bundle();
+                    ftpBundle.putString("host", ftp.hostname);
+                    ftpBundle.putString("port", String.valueOf(ftp.port));
+                    ftpBundle.putString("username", ftp.username);
+                    ftpBundle.putString("password", ftp.password);
+                    ftpBundle.putBoolean("encryption", ftp.serverSsl);
+                    if (ftp.serverSsl)
+                        ftpBundle.putBundle("certificate", CertificateInputView.stateFromDirectDownload(ftp));
+                    bundle.putBundle("ftp", ftpBundle);
                     break;
                 case SFTP:
                     MultiProfile.DirectDownload.Sftp sftp = profile.directDownload.sftp;
@@ -142,7 +157,6 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         }
 
         boolean encryption = webBundle.getBoolean("encryption", false);
-
         boolean hostnameVerifier = false;
         X509Certificate certificate = null;
         Bundle certBundle = webBundle.getBundle("certificate");
@@ -155,8 +169,39 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     }
 
     @NonNull
-    private static MultiProfile.DirectDownload.Ftp validateFtpState(@NonNull Bundle ftpBundle) {
-        return null; // TODO
+    private static MultiProfile.DirectDownload.Ftp validateFtpState(@NonNull Bundle ftpBundle) throws InvalidFieldException {
+        String host = ftpBundle.getString("host");
+        if (host == null || host.isEmpty())
+            throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddFtp_host, R.string.invalidHost);
+
+        int port;
+        String portStr = ftpBundle.getString("port", "");
+        try {
+            port = Integer.parseInt(portStr);
+        } catch (Exception ex) {
+            throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddFtp_port, R.string.invalidPort);
+        }
+
+        if (port <= 0 || port > 65535)
+            throw new InvalidFieldException(Where.CONNECTION, R.id.editProfile_ddFtp_port, R.string.invalidPort);
+
+        String username = ftpBundle.getString("username");
+        if (username == null || username.isEmpty())
+            throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddFtp_username, R.string.invalidUsername);
+
+        String password = ftpBundle.getString("password");
+        if (password == null) password = "";
+
+        boolean encryption = ftpBundle.getBoolean("encryption", false);
+        boolean hostnameVerifier = false;
+        X509Certificate certificate = null;
+        Bundle certBundle = ftpBundle.getBundle("certificate");
+        if (certBundle != null) {
+            hostnameVerifier = certBundle.getBoolean("hostnameVerifier", false);
+            certificate = (X509Certificate) certBundle.getSerializable("certificate");
+        }
+
+        return new MultiProfile.DirectDownload.Ftp(host, port, username, password, encryption, certificate, hostnameVerifier);
     }
 
     @NonNull
@@ -182,7 +227,6 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
 
         String password = sftpBundle.getString("password");
         if (password == null) password = "";
-
 
         return new MultiProfile.DirectDownload.Sftp(host, port, username, password);
     }
@@ -239,9 +283,9 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                 webBundle.putBoolean("auth", webAuth.isChecked());
                 webBundle.putString("username", CommonUtils.getText(webUsername));
                 webBundle.putString("password", CommonUtils.getText(webPassword));
-                webBundle.putBoolean("encryption", webEncryption.isChecked());
-                if (webEncryption.isChecked())
-                    webBundle.putBundle("certificate", webCertificate.saveState());
+                webBundle.putBoolean("encryption", encryptionEnabled.isChecked());
+                if (encryptionEnabled.isChecked())
+                    webBundle.putBundle("certificate", certificate.saveState());
                 else
                     webBundle.remove("certificate");
 
@@ -251,7 +295,21 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                 outState.remove("smb");
                 break;
             case R.id.editProfile_ddType_ftp:
-                // TODO
+                Bundle ftpBundle = new Bundle();
+                ftpBundle.putString("host", CommonUtils.getText(ftpHost));
+                ftpBundle.putString("port", CommonUtils.getText(ftpPort));
+                ftpBundle.putString("username", CommonUtils.getText(ftpUsername));
+                ftpBundle.putString("password", CommonUtils.getText(ftpPassword));
+                ftpBundle.putBoolean("encryption", encryptionEnabled.isChecked());
+                if (encryptionEnabled.isChecked())
+                    ftpBundle.putBundle("certificate", certificate.saveState());
+                else
+                    ftpBundle.remove("certificate");
+
+                outState.putBundle("ftp", ftpBundle);
+                outState.remove("web");
+                outState.remove("sftp");
+                outState.remove("smb");
                 break;
             case R.id.editProfile_ddType_sftp:
                 Bundle sftpBundle = new Bundle();
@@ -282,13 +340,19 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
             CommonUtils.setText(webUsername, webBundle.getString("username"));
             CommonUtils.setText(webPassword, webBundle.getString("password"));
 
-            webEncryption.setChecked(webBundle.getBoolean("encryption", false));
-            webCertificate.restore(webBundle.getBundle("certificate"), webEncryption.isChecked());
+            encryptionEnabled.setChecked(webBundle.getBoolean("encryption", false));
+            certificate.restore(webBundle.getBundle("certificate"), encryptionEnabled.isChecked());
         }
 
         Bundle ftpBundle = bundle.getBundle("ftp");
         if (ftpBundle != null) {
-            // TODO
+            CommonUtils.setText(ftpHost, ftpBundle.getString("host"));
+            CommonUtils.setText(ftpPort, ftpBundle.getString("port"));
+            CommonUtils.setText(ftpUsername, ftpBundle.getString("username"));
+            CommonUtils.setText(ftpPassword, ftpBundle.getString("password"));
+
+            encryptionEnabled.setChecked(ftpBundle.getBoolean("encryption", false));
+            certificate.restore(ftpBundle.getBundle("certificate"), encryptionEnabled.isChecked());
         }
 
         Bundle sftpBundle = bundle.getBundle("sftp");
@@ -334,10 +398,17 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
             }
         });
 
+        encryptionContainer = layout.findViewById(R.id.editProfile_dd_encryption);
+        encryptionEnabled = encryptionContainer.findViewById(R.id.editProfile_ddEncryption_enabled);
+        certificate = encryptionContainer.findViewById(R.id.editProfile_ddEncryption_certificate);
+        certificate.attachActivity(this);
+        encryptionEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> certificate.setVisibility(isChecked ? View.VISIBLE : View.GONE));
+
         container = layout.findViewById(R.id.editProfile_dd_container);
         typePick = layout.findViewById(R.id.editProfile_dd_type);
         typePick.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (!isChecked) return;
+
             switch (checkedId) {
                 default:
                 case R.id.editProfile_ddType_web:
@@ -345,24 +416,32 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                     ftpContainer.setVisibility(View.GONE);
                     sftpContainer.setVisibility(View.GONE);
                     smbContainer.setVisibility(View.GONE);
+
+                    encryptionContainer.setVisibility(View.VISIBLE);
                     break;
                 case R.id.editProfile_ddType_ftp:
                     webContainer.setVisibility(View.GONE);
                     ftpContainer.setVisibility(View.VISIBLE);
                     sftpContainer.setVisibility(View.GONE);
                     smbContainer.setVisibility(View.GONE);
+
+                    encryptionContainer.setVisibility(View.VISIBLE);
                     break;
                 case R.id.editProfile_ddType_sftp:
                     webContainer.setVisibility(View.GONE);
                     ftpContainer.setVisibility(View.GONE);
                     sftpContainer.setVisibility(View.VISIBLE);
                     smbContainer.setVisibility(View.GONE);
+
+                    encryptionContainer.setVisibility(View.GONE);
                     break;
                 case R.id.editProfile_ddType_samba:
                     webContainer.setVisibility(View.GONE);
                     ftpContainer.setVisibility(View.GONE);
                     sftpContainer.setVisibility(View.GONE);
                     smbContainer.setVisibility(View.VISIBLE);
+
+                    encryptionContainer.setVisibility(View.GONE);
                     break;
             }
         });
@@ -382,16 +461,17 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         CommonUtils.clearErrorOnEdit(webUsername);
         webPassword = webContainer.findViewById(R.id.editProfile_ddWeb_password);
         CommonUtils.clearErrorOnEdit(webPassword);
-
-        webEncryption = webContainer.findViewById(R.id.editProfile_ddWeb_encryption);
-        webEncryption.setOnCheckedChangeListener((buttonView, isChecked) -> webCertificate.setVisibility(isChecked ? View.VISIBLE : View.GONE));
-
-        webCertificate = webContainer.findViewById(R.id.editProfile_ddWeb_certificate);
-        webCertificate.attachActivity(this);
         //endregion
 
         //region FTP
-        // TODO
+        ftpHost = ftpContainer.findViewById(R.id.editProfile_ddFtp_host);
+        CommonUtils.clearErrorOnEdit(ftpHost);
+        ftpPort = ftpContainer.findViewById(R.id.editProfile_ddFtp_port);
+        CommonUtils.clearErrorOnEdit(ftpPort);
+        ftpUsername = ftpContainer.findViewById(R.id.editProfile_ddFtp_username);
+        CommonUtils.clearErrorOnEdit(ftpUsername);
+        ftpPassword = ftpContainer.findViewById(R.id.editProfile_ddFtp_password);
+        CommonUtils.clearErrorOnEdit(ftpPassword);
         //endregion
 
         //region SFTP
@@ -415,7 +495,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CertificateInputView.CODE_PICK_CERT && resultCode == Activity.RESULT_OK && isAdded())
-            webCertificate.loadCertificateUri(data.getData()); // FIXME
+            certificate.loadCertificateUri(data.getData());
     }
 
     @Override

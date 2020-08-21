@@ -538,7 +538,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             public final int port;
             public final String username;
             public final String password;
-            public final String path;
             public final boolean hostnameVerifier;
             public final X509Certificate certificate;
             public final boolean serverSsl;
@@ -548,7 +547,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 port = obj.getInt("port");
                 username = obj.getString("username");
                 password = obj.getString("password");
-                path = obj.getString("path");
                 hostnameVerifier = obj.optBoolean("hostnameVerifier", false);
                 serverSsl = obj.optBoolean("serverSsl", false);
 
@@ -557,11 +555,21 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 else certificate = CertUtils.decodeCertificate(base64);
             }
 
+            public Ftp(@NonNull String hostname, int port, @NonNull String username, @NonNull String password, boolean serverSsl, @Nullable X509Certificate certificate, boolean hostnameVerifier) {
+                this.hostname = hostname;
+                this.port = port;
+                this.username = username;
+                this.password = password;
+                this.serverSsl = serverSsl;
+                this.certificate = certificate;
+                this.hostnameVerifier = hostnameVerifier;
+            }
+
             @NonNull
             public JSONObject toJson() throws JSONException {
                 JSONObject obj = new JSONObject();
                 obj.put("hostname", hostname).put("port", port).put("serverSsl", serverSsl)
-                        .put("username", username).put("password", password).put("path", path)
+                        .put("username", username).put("password", password)
                         .put("hostnameVerifier", hostnameVerifier);
 
                 if (certificate != null && serverSsl)

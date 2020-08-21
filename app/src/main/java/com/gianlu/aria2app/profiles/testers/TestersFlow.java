@@ -55,7 +55,7 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
     }
 
     @Override
-    public void publishGeneralMessage(@NonNull String message, @NonNull final BaseTester.Color color) {
+    public void publishGeneralMessage(@NonNull String message, @NonNull BaseTester.Color color) {
         handler.post(() -> {
             if (listener != null)
                 listener.addItem((System.currentTimeMillis() - startTime) + ": " + message, color);
