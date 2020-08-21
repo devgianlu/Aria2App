@@ -90,12 +90,12 @@ public abstract class BaseTester<T> implements Runnable {
 
     public interface PublishListener<T> {
         @UiThread
-        void startedNewTest(@NonNull BaseTester tester);
+        void startedNewTest(@NonNull BaseTester<T> tester);
 
         @UiThread
         void publishGeneralMessage(@NonNull String message, @NonNull Color color);
 
         @UiThread
-        void endedTest(@NonNull BaseTester tester, @Nullable T result);
+        void endedTest(@NonNull BaseTester<T> tester, @Nullable T result);
     }
 }

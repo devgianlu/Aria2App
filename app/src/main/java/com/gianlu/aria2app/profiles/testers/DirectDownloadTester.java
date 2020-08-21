@@ -8,7 +8,11 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.gianlu.aria2app.api.StatusCodeException;
+import com.gianlu.aria2app.downloader.SftpHelper;
 import com.gianlu.aria2app.profiles.MultiProfile;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +48,8 @@ class DirectDownloadTester extends BaseTester<Boolean> {
                 return callWeb();
             case FTP:
                 return callFtp();
+            case SFTP:
+                return callSftp();
             case SMB:
                 return callSmb();
             default:
@@ -85,6 +91,28 @@ class DirectDownloadTester extends BaseTester<Boolean> {
         } finally {
             client.connectionPool().evictAll();
             client.dispatcher().executorService().shutdown();
+        }
+    }
+
+    @Nullable
+    @WorkerThread
+    private Boolean callSftp() {
+        MultiProfile.DirectDownload.Sftp dd = profile.directDownload.sftp;
+
+        Session session = null;
+        try {
+            JSch jSch = new JSch();
+            session = jSch.getSession(dd.username, dd.hostname, dd.port);
+            session.setUserInfo(new SftpHelper.BasicUserInfo(dd.password));
+            session.connect();
+
+            publishMessage("Your DirectDownload configuration is working", Level.SUCCESS);
+            return true;
+        } catch (JSchException ex) {
+            publishError(ex);
+            return null;
+        } finally {
+            if (session != null) session.disconnect();
         }
     }
 

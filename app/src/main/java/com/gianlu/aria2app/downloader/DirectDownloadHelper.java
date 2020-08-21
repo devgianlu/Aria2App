@@ -70,6 +70,8 @@ public abstract class DirectDownloadHelper implements Closeable {
         DirectDownload dd = profile.directDownload;
         if (dd == null) throw new FetchHelper.DirectDownloadNotEnabledException(profile);
 
+        Log.d(TAG, "DirectDownload will instantiate for " + dd.type);
+
         switch (dd.type) {
             case WEB:
                 try {
@@ -117,7 +119,7 @@ public abstract class DirectDownloadHelper implements Closeable {
                 }
 
                 @Override
-                public void onProgress(@NonNull DdDownload download, long eta, long speed) {
+                public void onProgress(@NonNull DdDownload download) {
                 }
 
                 @Override
@@ -310,14 +312,7 @@ public abstract class DirectDownloadHelper implements Closeable {
 
         void onUpdated(@NonNull DdDownload download);
 
-        /**
-         * Notifies that the download has progressed.
-         *
-         * @param download The download object
-         * @param eta      Remaining time in milliseconds
-         * @param speed    Download speed in bytes per second
-         */
-        void onProgress(@NonNull DdDownload download, long eta, long speed);
+        void onProgress(@NonNull DdDownload download);
 
         void onRemoved(@NonNull DdDownload download);
     }

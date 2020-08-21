@@ -39,7 +39,7 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
         startTime = System.currentTimeMillis();
 
         Object lastResult = null;
-        for (BaseTester tester : testers) {
+        for (BaseTester<?> tester : testers) {
             lastResult = tester.start(lastResult);
             if (lastResult == null) break;
         }

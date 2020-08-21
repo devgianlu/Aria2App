@@ -575,16 +575,26 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             public final String hostname;
             public final int port;
             public final String username;
+            public final String password;
 
             Sftp(@NonNull JSONObject obj) throws JSONException {
                 hostname = obj.getString("hostname");
                 port = obj.getInt("port");
                 username = obj.getString("username");
+                password = obj.getString("password");
+            }
+
+            public Sftp(@NonNull String hostname, int port, @NonNull String username, @NonNull String password) {
+                this.hostname = hostname;
+                this.port = port;
+                this.username = username;
+                this.password = password;
             }
 
             @NonNull
             public JSONObject toJson() throws JSONException {
-                return new JSONObject().put("hostname", hostname).put("port", port).put("username", username);
+                return new JSONObject().put("hostname", hostname).put("port", port)
+                        .put("username", username).put("password", password);
             }
         }
 

@@ -12,34 +12,42 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.HttpUrl;
 
 public final class DdDownload {
+    private static final Map<Object, DdDownload> wrappedMap = new HashMap<>(10);
     private final Download fetchDownload;
-    private final FtpHelper.DownloadRunnable ftpDownload;
-    private final SftpHelper.DownloadRunnable sftpDownload;
+    private final AbsStreamDownloadHelper.DownloadRunnable streamDownload;
     private ProgressBundle progress;
 
-    private DdDownload(@Nullable Download fetchDownload, @Nullable FtpHelper.DownloadRunnable ftpDownload, @Nullable SftpHelper.DownloadRunnable sftpDownload) {
+    private DdDownload(@Nullable Download fetchDownload, @Nullable AbsStreamDownloadHelper.DownloadRunnable streamDownload) {
         this.fetchDownload = fetchDownload;
-        this.ftpDownload = ftpDownload;
-        this.sftpDownload = sftpDownload;
+        this.streamDownload = streamDownload;
     }
 
     @NonNull
     public static DdDownload wrap(@NonNull Download download) {
-        return new DdDownload(download, null, null);
+        DdDownload wrap = wrappedMap.get(download);
+        if (wrap == null) {
+            wrap = new DdDownload(download, null);
+            wrappedMap.put(download, wrap);
+        }
+
+        return wrap;
     }
 
     @NonNull
-    public static DdDownload wrap(@NonNull FtpHelper.DownloadRunnable download) {
-        return new DdDownload(null, download, null);
-    }
+    public static DdDownload wrap(@NonNull AbsStreamDownloadHelper.DownloadRunnable download) {
+        DdDownload wrap = wrappedMap.get(download);
+        if (wrap == null) {
+            wrap = new DdDownload(null, download);
+            wrappedMap.put(download, wrap);
+        }
 
-    @NonNull
-    public static DdDownload wrap(@NonNull SftpHelper.DownloadRunnable download) {
-        return new DdDownload(null, null, download);
+        return wrap;
     }
 
     @Nullable
@@ -48,17 +56,31 @@ public final class DdDownload {
     }
 
     @Nullable
-    public FtpHelper.DownloadRunnable unwrapFtp() {
-        return ftpDownload;
+    public AbsStreamDownloadHelper.DownloadRunnable unwrapStream() {
+        return streamDownload;
     }
 
-    public synchronized ProgressBundle progress(long eta, long speed) {
-        return progress = new ProgressBundle(eta, speed);
+    /**
+     * @param eta   Remaining time in milliseconds
+     * @param speed Download speed in bytes per second
+     */
+    void progress(long eta, long speed) {
+        progress = new ProgressBundle(eta, speed);
+    }
+
+    @Nullable
+    public ProgressBundle progress() {
+        return progress;
     }
 
     @NotNull
     public synchronized String getName() {
-        String name = getFile().getName();
+        String name;
+        if (fetchDownload != null) name = new File(fetchDownload.getFile()).getName();
+        else if (streamDownload != null) name = streamDownload.file.getName();
+        else throw new IllegalStateException();
+
+        if (name == null) name = "<unknown>";
 
         try {
             return URLDecoder.decode(name, "UTF-8");
@@ -70,10 +92,8 @@ public final class DdDownload {
     public synchronized boolean is(@NotNull DdDownload other) {
         if (fetchDownload != null && other.fetchDownload != null)
             return fetchDownload.getId() == other.fetchDownload.getId();
-        else if (ftpDownload != null && other.ftpDownload != null)
-            return ftpDownload.id == other.ftpDownload.id;
-        else if (sftpDownload != null && other.sftpDownload != null)
-            return sftpDownload.id == other.sftpDownload.id;
+        else if (streamDownload != null && other.streamDownload != null)
+            return streamDownload.id == other.streamDownload.id;
         else
             throw new IllegalStateException();
     }
@@ -81,38 +101,26 @@ public final class DdDownload {
     @NotNull
     public synchronized Status getStatus() {
         if (fetchDownload != null) return Status.from(fetchDownload.getStatus());
-        else if (ftpDownload != null) return ftpDownload.status;
-        else if (sftpDownload != null) return sftpDownload.status;
+        else if (streamDownload != null) return streamDownload.status;
         else throw new IllegalStateException();
     }
 
     public synchronized long getDownloaded() {
         if (fetchDownload != null) return fetchDownload.getDownloaded();
-        else if (ftpDownload != null) return ftpDownload.downloaded;
-        else if (sftpDownload != null) return sftpDownload.downloaded;
+        else if (streamDownload != null) return streamDownload.downloaded;
         else throw new IllegalStateException();
     }
 
     public synchronized int getProgress() {
         if (fetchDownload != null) return fetchDownload.getProgress();
-        else if (ftpDownload != null) return ftpDownload.getProgress();
-        else if (sftpDownload != null) return sftpDownload.getProgress();
-        else throw new IllegalStateException();
-    }
-
-    @NotNull
-    public synchronized File getFile() {
-        if (fetchDownload != null) return new File(fetchDownload.getFile());
-            // FIXME else if (ftpDownload != null) return ftpDownload.file;
-            // FIXME else if (sftpDownload != null) return sftpDownload.file;
+        else if (streamDownload != null) return streamDownload.getProgress();
         else throw new IllegalStateException();
     }
 
     @NotNull
     public synchronized Uri getUri() {
         if (fetchDownload != null) return fetchDownload.getFileUri();
-        else if (ftpDownload != null) return ftpDownload.file.getUri();
-        else if (sftpDownload != null) return sftpDownload.file.getUri();
+        else if (streamDownload != null) return streamDownload.file.getUri();
         else throw new IllegalStateException();
     }
 
@@ -127,8 +135,7 @@ public final class DdDownload {
     @NonNull
     public synchronized String getUrlStr() {
         if (fetchDownload != null) return fetchDownload.getUrl();
-        else if (ftpDownload != null) return ftpDownload.getUrl();
-        else if (sftpDownload != null) return sftpDownload.getUrl();
+        else if (streamDownload != null) return streamDownload.getUrl();
         else throw new IllegalStateException();
     }
 

@@ -48,6 +48,11 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     private CheckBox webEncryption;
     private CertificateInputView webCertificate;
 
+    private TextInputLayout sftpHost;
+    private TextInputLayout sftpPort;
+    private TextInputLayout sftpUsername;
+    private TextInputLayout sftpPassword;
+
     @NonNull
     public static DirectDownloadFragment getInstance(@NonNull Context context) {
         DirectDownloadFragment fragment = new DirectDownloadFragment();
@@ -97,7 +102,13 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                     // TODO
                     break;
                 case SFTP:
-                    // TODO
+                    MultiProfile.DirectDownload.Sftp sftp = profile.directDownload.sftp;
+                    Bundle sftpBundle = new Bundle();
+                    sftpBundle.putString("host", sftp.hostname);
+                    sftpBundle.putString("port", String.valueOf(sftp.port));
+                    sftpBundle.putString("username", sftp.username);
+                    sftpBundle.putString("password", sftp.password);
+                    bundle.putBundle("sftp", sftpBundle);
                     break;
                 case SMB:
                     // TODO
@@ -149,8 +160,31 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     }
 
     @NonNull
-    private static MultiProfile.DirectDownload.Sftp validateSftpState(@NonNull Bundle sftpBundle) {
-        return null; // TODO
+    private static MultiProfile.DirectDownload.Sftp validateSftpState(@NonNull Bundle sftpBundle) throws InvalidFieldException {
+        String host = sftpBundle.getString("host");
+        if (host == null || host.isEmpty())
+            throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddSftp_host, R.string.invalidHost);
+
+        int port;
+        String portStr = sftpBundle.getString("port", "");
+        try {
+            port = Integer.parseInt(portStr);
+        } catch (Exception ex) {
+            throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddSftp_port, R.string.invalidPort);
+        }
+
+        if (port <= 0 || port > 65535)
+            throw new InvalidFieldException(Where.CONNECTION, R.id.editProfile_ddSftp_port, R.string.invalidPort);
+
+        String username = sftpBundle.getString("username");
+        if (username == null || username.isEmpty())
+            throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddSftp_username, R.string.invalidUsername);
+
+        String password = sftpBundle.getString("password");
+        if (password == null) password = "";
+
+
+        return new MultiProfile.DirectDownload.Sftp(host, port, username, password);
     }
 
     @NonNull
@@ -213,13 +247,22 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
 
                 outState.putBundle("web", webBundle);
                 outState.remove("ftp");
+                outState.remove("sftp");
                 outState.remove("smb");
                 break;
             case R.id.editProfile_ddType_ftp:
                 // TODO
                 break;
             case R.id.editProfile_ddType_sftp:
-                // TODO
+                Bundle sftpBundle = new Bundle();
+                sftpBundle.putString("host", CommonUtils.getText(sftpHost));
+                sftpBundle.putString("port", CommonUtils.getText(sftpPort));
+                sftpBundle.putString("username", CommonUtils.getText(sftpUsername));
+                sftpBundle.putString("password", CommonUtils.getText(sftpPassword));
+                outState.putBundle("sftp", sftpBundle);
+                outState.remove("web");
+                outState.remove("ftp");
+                outState.remove("smb");
                 break;
             case R.id.editProfile_ddType_samba:
                 // TODO
@@ -250,7 +293,10 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
 
         Bundle sftpBundle = bundle.getBundle("sftp");
         if (sftpBundle != null) {
-            // TODO
+            CommonUtils.setText(sftpHost, sftpBundle.getString("host"));
+            CommonUtils.setText(sftpPort, sftpBundle.getString("port"));
+            CommonUtils.setText(sftpUsername, sftpBundle.getString("username"));
+            CommonUtils.setText(sftpPassword, sftpBundle.getString("password"));
         }
 
         Bundle smbBundle = bundle.getBundle("smb");
@@ -349,7 +395,14 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         //endregion
 
         //region SFTP
-        // TODO
+        sftpHost = sftpContainer.findViewById(R.id.editProfile_ddSftp_host);
+        CommonUtils.clearErrorOnEdit(sftpHost);
+        sftpPort = sftpContainer.findViewById(R.id.editProfile_ddSftp_port);
+        CommonUtils.clearErrorOnEdit(sftpPort);
+        sftpUsername = sftpContainer.findViewById(R.id.editProfile_ddSftp_username);
+        CommonUtils.clearErrorOnEdit(sftpUsername);
+        sftpPassword = sftpContainer.findViewById(R.id.editProfile_ddSftp_password);
+        CommonUtils.clearErrorOnEdit(sftpPassword);
         //endregion
 
         //region Samba

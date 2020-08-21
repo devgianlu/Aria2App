@@ -14,13 +14,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.testers.BaseTester;
 import com.gianlu.aria2app.profiles.testers.TestersFlow;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.misc.SuperTextView;
+
+import org.jetbrains.annotations.NotNull;
 
 public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     private OnGetProfile listener;
@@ -28,7 +30,7 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     private Button test;
 
     @NonNull
-    public static TestFragment getInstance(Context context) {
+    public static TestFragment getInstance(@NotNull Context context) {
         TestFragment fragment = new TestFragment();
         fragment.setRetainInstance(true);
         Bundle bundle = new Bundle();

@@ -188,6 +188,14 @@ public final class Utils {
         return sb.toString();
     }
 
+    @NonNull
+    public static Integer[] toIntsList(@NonNull String str, String separator) throws NumberFormatException {
+        String[] split = str.split(separator);
+        Integer[] ints = new Integer[split.length];
+        for (int i = 0; i < split.length; i++) ints[i] = Integer.parseInt(split[i].trim());
+        return ints;
+    }
+
     private static class CustomYAxisValueFormatter extends ValueFormatter {
 
         @Override

@@ -82,8 +82,8 @@ public class DirectDownloadActivity extends ActivityWithDialog implements Direct
     }
 
     @Override
-    public void onProgress(@NotNull DdDownload download, long eta, long speed) {
-        if (adapter != null) adapter.updateProgress(download, eta, speed);
+    public void onProgress(@NotNull DdDownload download) {
+        if (adapter != null) adapter.updateProgress(download);
     }
 
     @Override

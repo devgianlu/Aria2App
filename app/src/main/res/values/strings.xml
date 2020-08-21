@@ -357,4 +357,8 @@
     <string name="ftp">FTP</string>
     <string name="webServer">Web server</string>
     <string name="sftp">SFTP</string>
+    <string name="web">Web</string>
+    <string name="host">Host</string>
+    <string name="invalidHost">Invalid hostname!</string>
+    <string name="invalidUsername">Invalid username!</string>
 </resources>

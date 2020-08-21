@@ -14,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.R;
@@ -181,7 +180,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 break;
         }
 
-        holder.open.setOnClickListener(v -> openFile(v.getContext(), download));
+        holder.open.setOnClickListener(v -> openFile(v.getContext(), download)); // FIXME
         holder.start.setOnClickListener(v -> helper.resume(download));
         holder.pause.setOnClickListener(v -> helper.pause(download));
         holder.restart.setOnClickListener(v -> helper.restart(download, restartListener));
@@ -190,7 +189,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
 
     private void openFile(@NotNull Context context, @NotNull DdDownload download) {
         try {
-            context.startActivity(new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(context, "com.gianlu.aria2app", download.getFile()))
+            context.startActivity(new Intent(Intent.ACTION_VIEW, download.getUri())
                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
         } catch (ActivityNotFoundException | IllegalArgumentException ex) {
             Toaster.with(context).message(R.string.failedOpeningDownload).show();
@@ -235,11 +234,11 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
     }
 
     @UiThread
-    public void updateProgress(@NotNull DdDownload download, long eta, long speed) {
+    public void updateProgress(@NotNull DdDownload download) {
         int index = indexOf(download);
         if (index != -1) {
             downloads.set(index, download);
-            notifyItemChanged(index, download.progress(eta, speed));
+            notifyItemChanged(index, download.progress());
         }
     }
 

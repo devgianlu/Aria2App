@@ -236,7 +236,8 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
     @Override
     public void onProgress(@NotNull Download download, long eta, long speed) {
         DdDownload wrap = DdDownload.wrap(download);
-        forEachListener(listener -> listener.onProgress(wrap, eta, speed));
+        wrap.progress(eta, speed);
+        forEachListener(listener -> listener.onProgress(wrap));
     }
 
     @Override

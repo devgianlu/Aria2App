@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.api.AbstractClient;
 import com.gianlu.aria2app.api.AriaRequests;
 import com.gianlu.aria2app.api.ClientInterface;
@@ -149,7 +150,7 @@ public class Download {
             if (currIndexes == null)
                 return performSelectIndexesOperation(client, gid, client.sendSync(AriaRequests.getFileIndexes(gid)), selIndexes, select);
             else
-                return performSelectIndexesOperation(client, gid, CommonUtils.toIntsList(currIndexes.string(), ","), selIndexes, select);
+                return performSelectIndexesOperation(client, gid, Utils.toIntsList(currIndexes.string(), ","), selIndexes, select);
         }, listener);
     }
 
