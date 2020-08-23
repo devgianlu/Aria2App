@@ -584,29 +584,33 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             public final int port;
             public final String username;
             public final String password;
+            public final String hostKey;
 
             Sftp(@NonNull JSONObject obj) throws JSONException {
                 hostname = obj.getString("hostname");
                 port = obj.getInt("port");
                 username = obj.getString("username");
                 password = obj.getString("password");
+                hostKey = obj.optString("hostKey", "");
             }
 
-            public Sftp(@NonNull String hostname, int port, @NonNull String username, @NonNull String password) {
+            public Sftp(@NonNull String hostname, int port, @NonNull String username, @NonNull String password, @NonNull String hostKey) {
                 this.hostname = hostname;
                 this.port = port;
                 this.username = username;
                 this.password = password;
+                this.hostKey = hostKey;
             }
 
             @NonNull
             public JSONObject toJson() throws JSONException {
                 return new JSONObject().put("hostname", hostname).put("port", port)
-                        .put("username", username).put("password", password);
+                        .put("username", username).put("password", password)
+                        .put("hostKey", hostKey);
             }
         }
 
-        public static class Smb {
+        public static class Smb { // TODO: Samba struct
 
             Smb(@NonNull JSONObject obj) {
 
@@ -614,7 +618,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
             @NonNull
             public JSONObject toJson() {
-                return null; // TODO
+                return null;
             }
         }
 

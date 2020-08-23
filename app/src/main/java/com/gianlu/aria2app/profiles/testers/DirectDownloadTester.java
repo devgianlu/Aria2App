@@ -9,7 +9,6 @@ import androidx.annotation.WorkerThread;
 
 import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2app.api.StatusCodeException;
-import com.gianlu.aria2app.downloader.SftpHelper;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -109,7 +108,7 @@ class DirectDownloadTester extends BaseTester<Boolean> {
         try {
             JSch jSch = new JSch();
             session = jSch.getSession(dd.username, dd.hostname, dd.port);
-            session.setUserInfo(new SftpHelper.BasicUserInfo(dd.password));
+            session.setPassword(dd.password);
             session.connect();
 
             publishMessage("Your DirectDownload configuration is working", Level.SUCCESS);
@@ -169,7 +168,7 @@ class DirectDownloadTester extends BaseTester<Boolean> {
     @Nullable
     @WorkerThread
     private Boolean callSmb() {
-        return null; // TODO
+        return null; // TODO: Samba test
     }
 
     @NonNull

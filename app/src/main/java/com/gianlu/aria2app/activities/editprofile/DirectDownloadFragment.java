@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -18,12 +19,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.downloader.SftpHelper;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.permissions.AskPermission;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputLayout;
+import com.jcraft.jsch.HostKey;
+import com.jcraft.jsch.JSchException;
 
 import java.net.URL;
 import java.security.cert.X509Certificate;
@@ -58,6 +62,8 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     private TextInputLayout sftpPort;
     private TextInputLayout sftpUsername;
     private TextInputLayout sftpPassword;
+    private Button sftpVerify;
+    private HostKey sftpHostKey;
 
     @NonNull
     public static DirectDownloadFragment getInstance(@NonNull Context context) {
@@ -123,6 +129,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                     sftpBundle.putString("port", String.valueOf(sftp.port));
                     sftpBundle.putString("username", sftp.username);
                     sftpBundle.putString("password", sftp.password);
+                    sftpBundle.putString("hostKey", sftp.hostKey);
                     bundle.putBundle("sftp", sftpBundle);
                     break;
                 case SMB:
@@ -228,7 +235,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         String password = sftpBundle.getString("password");
         if (password == null) password = "";
 
-        return new MultiProfile.DirectDownload.Sftp(host, port, username, password);
+        return new MultiProfile.DirectDownload.Sftp(host, port, username, password, sftpBundle.getString("hostKey", ""));
     }
 
     @NonNull
@@ -317,6 +324,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                 sftpBundle.putString("port", CommonUtils.getText(sftpPort));
                 sftpBundle.putString("username", CommonUtils.getText(sftpUsername));
                 sftpBundle.putString("password", CommonUtils.getText(sftpPassword));
+                sftpBundle.putString("hostKey", SftpHelper.toString(sftpHostKey));
                 outState.putBundle("sftp", sftpBundle);
                 outState.remove("web");
                 outState.remove("ftp");
@@ -361,6 +369,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
             CommonUtils.setText(sftpPort, sftpBundle.getString("port"));
             CommonUtils.setText(sftpUsername, sftpBundle.getString("username"));
             CommonUtils.setText(sftpPassword, sftpBundle.getString("password"));
+            sftpHostKey = SftpHelper.parseHostKey(sftpBundle.getString("hostKey", ""));
         }
 
         Bundle smbBundle = bundle.getBundle("smb");
@@ -483,6 +492,39 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         CommonUtils.clearErrorOnEdit(sftpUsername);
         sftpPassword = sftpContainer.findViewById(R.id.editProfile_ddSftp_password);
         CommonUtils.clearErrorOnEdit(sftpPassword);
+        sftpVerify = sftpContainer.findViewById(R.id.editProfile_ddSftp_verify);
+        sftpVerify.setOnClickListener(v -> {
+            MultiProfile.DirectDownload.Sftp sftp = null;
+            try {
+                Fields fields = validateStateAndCreateFields(save());
+                if (fields.dd != null) sftp = fields.dd.sftp;
+            } catch (InvalidFieldException ex) {
+                if (ex.where == Where.DIRECT_DOWNLOAD)
+                    onFieldError(ex.fieldId, getString(ex.reasonRes));
+            }
+
+            if (getActivity() == null || sftp == null)
+                return;
+
+            sftpVerify.setEnabled(false);
+            SftpHelper.firstConnection(requireActivity(), sftp, new SftpHelper.FirstConnectionListener() {
+                @Override
+                public void onDone(@NonNull HostKey hostKey) {
+                    sftpHostKey = hostKey;
+                    sftpVerify.setEnabled(true);
+
+                    showToast(Toaster.build().message(R.string.connectionVerified));
+                }
+
+                @Override
+                public void onFailed(@NonNull JSchException ex) {
+                    sftpHostKey = null;
+                    sftpVerify.setEnabled(true);
+
+                    showToast(Toaster.build().message(R.string.failedVerifyingConnection, ex.getMessage()));
+                }
+            });
+        });
         //endregion
 
         //region Samba

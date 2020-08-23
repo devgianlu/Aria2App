@@ -361,4 +361,9 @@
     <string name="host">Host</string>
     <string name="invalidHost">Invalid hostname!</string>
     <string name="invalidUsername">Invalid username!</string>
+    <string name="verify">Verify</string>
+    <string name="sftpDdFirstConnection">If it\'s the first time you are configuring this or you are experiencing issues please press the button below to initialize the connection.</string>
+    <string name="connectionVerified">Connection verified successfully!</string>
+    <string name="failedVerifyingConnection">Failed verifying connection: %s</string>
+    <string name="sftpPrompt">SFTP prompt</string>
 </resources>
