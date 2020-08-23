@@ -99,19 +99,19 @@ public final class FtpHelper extends AbsStreamDownloadHelper {
                     try (InputStream in = client.retrieveFileStream(remotePath)) {
                         downloaded = 0;
                         long lastTime = System.currentTimeMillis();
+                        long lastDownloaded = 0;
 
                         byte[] buffer = new byte[512 * 1024];
                         int read;
                         while (!shouldStop && (read = in.read(buffer)) > 0) {
                             out.write(buffer, 0, read);
                             downloaded += read;
+                            lastDownloaded += read;
 
-                            float diff = ((float) (System.currentTimeMillis() - lastTime)) / 1000;
-                            lastTime = System.currentTimeMillis();
-
-                            long speed = (long) (read / diff);
-                            long eta = (long) (((float) (length - downloaded) / (float) speed) * 1000);
-                            updateProgress(eta, speed);
+                            if (updateProgress(lastTime, lastDownloaded)) {
+                                lastTime = System.currentTimeMillis();
+                                lastDownloaded = 0;
+                            }
                         }
 
                         if (shouldStop)

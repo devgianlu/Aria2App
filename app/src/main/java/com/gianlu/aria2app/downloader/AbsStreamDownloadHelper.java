@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
     private static final String TAG = AbsStreamDownloadHelper.class.getSimpleName();
+    private static final int REPORTING_INTERVAL = 1000;
     private final ContentResolver contentResolver;
     private final ExecutorService executorService;
     private final AtomicInteger counter = new AtomicInteger(0);
@@ -197,10 +198,19 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
             callUpdated(this);
         }
 
-        protected void updateProgress(long eta, long speed) {
-            DdDownload wrap = DdDownload.wrap(this);
-            wrap.progress(eta, speed);
-            forEachListener(listener -> listener.onProgress(wrap));
+        protected boolean updateProgress(long lastTime, long lastDownloaded) {
+            long diff;
+            if ((diff = System.currentTimeMillis() - lastTime) >= REPORTING_INTERVAL) {
+                long speed = (long) (lastDownloaded / diff) * 1000;
+                long eta = (long) (((float) (length - downloaded) / (float) speed) * 1000);
+
+                DdDownload wrap = DdDownload.wrap(this);
+                wrap.progress(eta, speed);
+                forEachListener(listener -> listener.onProgress(wrap));
+                return true;
+            }
+
+            return false;
         }
 
         @NonNull

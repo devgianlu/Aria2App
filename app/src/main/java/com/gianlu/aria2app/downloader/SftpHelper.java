@@ -235,21 +235,24 @@ public final class SftpHelper extends AbsStreamDownloadHelper {
                 try (OutputStream out = openDestination()) {
                     ch.get(remotePath, out, new SftpProgressMonitor() {
                         long lastTime;
+                        long lastDownloaded;
 
                         @Override
                         public void init(int op, String src, String dest, long max) {
                             downloaded = 0;
                             lastTime = System.currentTimeMillis();
+                            lastDownloaded = 0;
                         }
 
                         @Override
                         public boolean count(long count) {
-                            float diff = ((float) (System.currentTimeMillis() - lastTime)) / 1000;
-                            lastTime = System.currentTimeMillis();
+                            downloaded += count;
+                            lastDownloaded += count;
 
-                            long speed = (long) (count / diff);
-                            long eta = (long) (((float) (length - downloaded) / (float) speed) * 1000);
-                            updateProgress(eta, speed);
+                            if (updateProgress(lastTime, lastDownloaded)) {
+                                lastTime = System.currentTimeMillis();
+                                lastDownloaded = 0;
+                            }
 
                             return !shouldStop;
                         }
