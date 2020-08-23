@@ -9,6 +9,7 @@ import androidx.annotation.WorkerThread;
 
 import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2app.api.StatusCodeException;
+import com.gianlu.aria2app.downloader.SftpHelper;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.hierynomus.smbj.SMBClient;
 import com.hierynomus.smbj.auth.AuthenticationContext;
@@ -88,7 +89,7 @@ class DirectDownloadTester extends BaseTester<Boolean> {
             if (dd.auth) builder.header("Authorization", dd.getAuthorizationHeader());
             try (Response resp = client.newCall(builder.build()).execute()) {
                 if (resp.code() == 200) {
-                    publishMessage("Your DirectDownload configuration is working", Level.SUCCESS);
+                    publishMessage("Your HTTP DirectDownload configuration is working", Level.SUCCESS);
                     return true;
                 } else {
                     publishError(new StatusCodeException(resp));
@@ -111,12 +112,12 @@ class DirectDownloadTester extends BaseTester<Boolean> {
 
         Session session = null;
         try {
-            JSch jSch = new JSch();
+            JSch jSch = SftpHelper.createJsch(dd);
             session = jSch.getSession(dd.username, dd.hostname, dd.port);
             session.setPassword(dd.password);
             session.connect();
 
-            publishMessage("Your DirectDownload configuration is working", Level.SUCCESS);
+            publishMessage("Your SFTP DirectDownload configuration is working", Level.SUCCESS);
             return true;
         } catch (JSchException ex) {
             publishError(ex);
@@ -149,12 +150,15 @@ class DirectDownloadTester extends BaseTester<Boolean> {
                 return null;
             }
 
+            publishMessage("Connected successfully", Level.INFO);
+
             if (!client.login(dd.username, dd.password)) {
                 reply = client.getReplyCode();
                 publishMessage("Failed logging in, code: " + reply, Level.ERROR);
                 return null;
             }
 
+            publishMessage("Your FTP DirectDownload configuration is working", Level.SUCCESS);
             return true;
         } catch (GeneralSecurityException | IOException ex) {
             publishError(ex);
@@ -182,8 +186,13 @@ class DirectDownloadTester extends BaseTester<Boolean> {
             else
                 ac = new AuthenticationContext(dd.username, dd.password.toCharArray(), dd.domain);
 
+            publishMessage("Connected successfully", Level.INFO);
+
             com.hierynomus.smbj.session.Session session = connection.authenticate(ac);
+            publishMessage("Authenticated successfully", Level.INFO);
+
             try (DiskShare share = (DiskShare) session.connectShare(dd.shareName)) {
+                publishMessage("Your Samba DirectDownload configuration is working", Level.SUCCESS);
                 return true;
             }
         } catch (IOException | SMBRuntimeException ex) {
@@ -195,6 +204,6 @@ class DirectDownloadTester extends BaseTester<Boolean> {
     @NonNull
     @Override
     public String describe() {
-        return "DirectDownload test";
+        return "DirectDownload " + profile.directDownload.type.name() + " test";
     }
 }

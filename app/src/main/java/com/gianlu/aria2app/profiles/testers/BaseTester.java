@@ -36,7 +36,7 @@ public abstract class BaseTester<T> implements Runnable {
 
     final void publishMessage(String message, Level level) {
         if (listener == null) return;
-        handler.post(() -> listener.publishGeneralMessage(message, level.color));
+        listener.publishGeneralMessage(message, level.color);
     }
 
     public final T start(@Nullable Object prevResult) {
