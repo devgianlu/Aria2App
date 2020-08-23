@@ -65,6 +65,15 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     private Button sftpVerify;
     private HostKey sftpHostKey;
 
+    private TextInputLayout smbHost;
+    private CheckBox smbAnonymous;
+    private LinearLayout smbAuth;
+    private TextInputLayout smbUsername;
+    private TextInputLayout smbPassword;
+    private TextInputLayout smbDomain;
+    private TextInputLayout smbShare;
+    private TextInputLayout smbPath;
+
     @NonNull
     public static DirectDownloadFragment getInstance(@NonNull Context context) {
         DirectDownloadFragment fragment = new DirectDownloadFragment();
@@ -133,7 +142,16 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                     bundle.putBundle("sftp", sftpBundle);
                     break;
                 case SMB:
-                    // TODO
+                    MultiProfile.DirectDownload.Smb smb = profile.directDownload.smb;
+                    Bundle smbBundle = new Bundle();
+                    smbBundle.putString("host", smb.hostname);
+                    smbBundle.putBoolean("anonymous", smb.anonymous);
+                    smbBundle.putString("username", smb.username);
+                    smbBundle.putString("password", smb.password);
+                    smbBundle.putString("domain", smb.domain);
+                    smbBundle.putString("shareName", smb.shareName);
+                    smbBundle.putString("path", smb.path);
+                    bundle.putBundle("smb", smbBundle);
                     break;
             }
         }
@@ -239,8 +257,31 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     }
 
     @NonNull
-    private static MultiProfile.DirectDownload.Smb validateSmbState(@NonNull Bundle smbBundle) {
-        return null; // TODO
+    private static MultiProfile.DirectDownload.Smb validateSmbState(@NonNull Bundle smbBundle) throws InvalidFieldException {
+        String host = smbBundle.getString("host");
+        if (host == null || host.isEmpty())
+            throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddSamba_host, R.string.invalidHost);
+
+        String username = "";
+        String password = "";
+        String domain = "";
+        boolean anonymous = smbBundle.getBoolean("anonymous");
+        if (!anonymous) {
+            username = smbBundle.getString("username");
+            if (username == null || username.isEmpty())
+                throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddSamba_username, R.string.invalidUsername);
+
+            password = smbBundle.getString("password", "");
+            domain = smbBundle.getString("domain", "");
+        }
+
+        String shareName = smbBundle.getString("shareName");
+        if (shareName == null || shareName.isEmpty())
+            throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddSamba_share, R.string.invalidShareName);
+
+        String path = smbBundle.getString("path", "");
+
+        return new MultiProfile.DirectDownload.Smb(host, anonymous, username, password, domain, shareName, path);
     }
 
     @NonNull
@@ -331,7 +372,18 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                 outState.remove("smb");
                 break;
             case R.id.editProfile_ddType_samba:
-                // TODO
+                Bundle smbBundle = new Bundle();
+                smbBundle.putString("host", CommonUtils.getText(smbHost));
+                smbBundle.putBoolean("anonymous", smbAnonymous.isChecked());
+                smbBundle.putString("username", CommonUtils.getText(smbUsername));
+                smbBundle.putString("password", CommonUtils.getText(smbPassword));
+                smbBundle.putString("domain", CommonUtils.getText(smbDomain));
+                smbBundle.putString("shareName", CommonUtils.getText(smbShare));
+                smbBundle.putString("path", CommonUtils.getText(smbPath));
+                outState.putBundle("smb", smbBundle);
+                outState.remove("web");
+                outState.remove("ftp");
+                outState.remove("sftp");
                 break;
         }
     }
@@ -374,7 +426,13 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
 
         Bundle smbBundle = bundle.getBundle("smb");
         if (smbBundle != null) {
-            // TODO
+            CommonUtils.setText(smbHost, smbBundle.getString("host"));
+            smbAnonymous.setChecked(smbBundle.getBoolean("anonymous"));
+            CommonUtils.setText(smbUsername, smbBundle.getString("username"));
+            CommonUtils.setText(smbPassword, smbBundle.getString("password"));
+            CommonUtils.setText(smbDomain, smbBundle.getString("domain"));
+            CommonUtils.setText(smbShare, smbBundle.getString("shareName"));
+            CommonUtils.setText(smbPath, smbBundle.getString("path"));
         }
     }
 
@@ -528,7 +586,21 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         //endregion
 
         //region Samba
-        // TODO
+        smbHost = smbContainer.findViewById(R.id.editProfile_ddSamba_host);
+        CommonUtils.clearErrorOnEdit(smbHost);
+        smbAuth = smbContainer.findViewById(R.id.editProfile_ddSamba_auth);
+        smbAnonymous = smbContainer.findViewById(R.id.editProfile_ddSamba_anonymous);
+        smbAnonymous.setOnCheckedChangeListener((buttonView, isChecked) -> smbAuth.setVisibility(isChecked ? View.GONE : View.VISIBLE));
+        smbUsername = smbContainer.findViewById(R.id.editProfile_ddSamba_username);
+        CommonUtils.clearErrorOnEdit(smbUsername);
+        smbPassword = smbContainer.findViewById(R.id.editProfile_ddSamba_password);
+        CommonUtils.clearErrorOnEdit(smbPassword);
+        smbDomain = smbContainer.findViewById(R.id.editProfile_ddSamba_domain);
+        CommonUtils.clearErrorOnEdit(smbDomain);
+        smbShare = smbContainer.findViewById(R.id.editProfile_ddSamba_share);
+        CommonUtils.clearErrorOnEdit(smbShare);
+        smbPath = smbContainer.findViewById(R.id.editProfile_ddSamba_path);
+        CommonUtils.clearErrorOnEdit(smbPath);
         //endregion
 
         return layout;

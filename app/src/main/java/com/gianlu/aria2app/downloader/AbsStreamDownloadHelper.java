@@ -75,7 +75,7 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
         DocumentFile dest = createDestFile(global, ddDir, file);
 
         int id = counter.getAndIncrement();
-        DownloadRunnable runnable = makeRunnableFor(id, dest, file.getAbsolutePath());
+        DownloadRunnable runnable = makeRunnableFor(id, dest, global, file);
         downloads.put(id, runnable);
         executorService.execute(runnable);
 
@@ -172,7 +172,7 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
     }
 
     @NonNull
-    protected abstract DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull String remotePath);
+    protected abstract DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull AriaFile remoteFile);
 
     protected abstract class DownloadRunnable implements Runnable {
         final int id;

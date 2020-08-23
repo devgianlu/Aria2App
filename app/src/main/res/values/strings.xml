@@ -366,4 +366,11 @@
     <string name="connectionVerified">Connection verified successfully!</string>
     <string name="failedVerifyingConnection">Failed verifying connection: %s</string>
     <string name="sftpPrompt">SFTP prompt</string>
+    <string name="anonymous">Anonymous</string>
+    <string name="domainLabel">Domain</string>
+    <string name="shareName">Share name</string>
+    <string name="invalidShareName">Invalid share name!</string>
+    <string name="invalidPath">Invalid path!</string>
+    <string name="pathLabel">Path</string>
+    <string name="sambaPathHelp">This is the relative path from the share to the downloads folder of aria2.</string>
 </resources>

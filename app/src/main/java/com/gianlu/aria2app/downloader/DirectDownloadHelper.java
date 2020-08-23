@@ -132,7 +132,7 @@ public abstract class DirectDownloadHelper implements Closeable {
 
     public static void invalidate() {
         try {
-            instance.close();
+            if (instance != null) instance.close();
         } catch (IOException ex) {
             Log.e(TAG, "Failed closing DirectDownload helper instance.", ex);
         } finally {

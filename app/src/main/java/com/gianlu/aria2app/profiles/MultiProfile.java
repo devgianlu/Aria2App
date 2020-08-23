@@ -610,15 +610,40 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             }
         }
 
-        public static class Smb { // TODO: Samba struct
+        public static class Smb {
+            public final String hostname;
+            public final boolean anonymous;
+            public final String username;
+            public final String password;
+            public final String domain;
+            public final String shareName;
+            public final String path;
 
-            Smb(@NonNull JSONObject obj) {
+            Smb(@NonNull JSONObject obj) throws JSONException {
+                hostname = obj.getString("hostname");
+                anonymous = obj.getBoolean("anonymous");
+                username = obj.getString("username");
+                password = obj.getString("password");
+                domain = obj.getString("domain");
+                shareName = obj.getString("shareName");
+                path = obj.optString("path", "");
+            }
 
+            public Smb(@NonNull String hostname, boolean anonymous, @NonNull String username, @NonNull String password, @NonNull String domain, @NonNull String shareName, @NonNull String path) {
+                this.hostname = hostname;
+                this.anonymous = anonymous;
+                this.username = username;
+                this.password = password;
+                this.domain = domain;
+                this.shareName = shareName;
+                this.path = path;
             }
 
             @NonNull
-            public JSONObject toJson() {
-                return null;
+            public JSONObject toJson() throws JSONException {
+                return new JSONObject().put("hostname", hostname).put("anonymous", anonymous)
+                        .put("username", username).put("password", password)
+                        .put("domain", domain).put("shareName", shareName).put("path", path);
             }
         }
 

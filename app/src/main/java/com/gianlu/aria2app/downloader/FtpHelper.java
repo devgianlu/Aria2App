@@ -9,6 +9,8 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
+import com.gianlu.aria2app.api.aria2.AriaFile;
+import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.aria2app.profiles.MultiProfile;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -31,8 +33,8 @@ public final class FtpHelper extends AbsStreamDownloadHelper {
 
     @NonNull
     @Override
-    protected AbsStreamDownloadHelper.DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull String remotePath) {
-        return new FtpRunnable(id, file, remotePath);
+    protected AbsStreamDownloadHelper.DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull AriaFile remoteFile) {
+        return new FtpRunnable(id, file, remoteFile.getAbsolutePath());
     }
 
     public static class FtpException extends Exception {
@@ -45,7 +47,7 @@ public final class FtpHelper extends AbsStreamDownloadHelper {
     }
 
     private class FtpRunnable extends DownloadRunnable {
-        final String remotePath;
+        private final String remotePath;
 
         FtpRunnable(int id, @NonNull DocumentFile file, @NonNull String remotePath) {
             super(id, file);

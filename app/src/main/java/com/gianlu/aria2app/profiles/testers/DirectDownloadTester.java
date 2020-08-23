@@ -10,6 +10,11 @@ import androidx.annotation.WorkerThread;
 import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2app.api.StatusCodeException;
 import com.gianlu.aria2app.profiles.MultiProfile;
+import com.hierynomus.smbj.SMBClient;
+import com.hierynomus.smbj.auth.AuthenticationContext;
+import com.hierynomus.smbj.common.SMBRuntimeException;
+import com.hierynomus.smbj.connection.Connection;
+import com.hierynomus.smbj.share.DiskShare;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -168,7 +173,23 @@ class DirectDownloadTester extends BaseTester<Boolean> {
     @Nullable
     @WorkerThread
     private Boolean callSmb() {
-        return null; // TODO: Samba test
+        MultiProfile.DirectDownload.Smb dd = profile.directDownload.smb;
+
+        try (SMBClient client = new SMBClient(); Connection connection = client.connect(dd.hostname)) {
+            AuthenticationContext ac;
+            if (dd.anonymous)
+                ac = AuthenticationContext.anonymous();
+            else
+                ac = new AuthenticationContext(dd.username, dd.password.toCharArray(), dd.domain);
+
+            com.hierynomus.smbj.session.Session session = connection.authenticate(ac);
+            try (DiskShare share = (DiskShare) session.connectShare(dd.shareName)) {
+                return true;
+            }
+        } catch (IOException | SMBRuntimeException ex) {
+            publishError(ex);
+            return null;
+        }
     }
 
     @NonNull
