@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
-import com.gianlu.aria2app.api.aria2.AriaFile;
 import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.hierynomus.msdtyp.AccessMask;
@@ -24,6 +23,9 @@ import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
 import com.hierynomus.smbj.share.File;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.EnumSet;
@@ -36,13 +38,22 @@ public final class SambaHelper extends AbsStreamDownloadHelper {
     SambaHelper(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull MultiProfile.DirectDownload.Smb dd) throws Aria2Helper.InitializingException {
         super(context, profile);
         this.dd = dd;
+
+        loadDb(context);
     }
 
     @NonNull
     @Override
-    protected DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull AriaFile remoteFile) {
+    protected DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull RemoteFile remoteFile) {
         java.io.File remote = new java.io.File(dd.path, remoteFile.getRelativePath(globalOptions));
         return new SambaRunnable(id, file, remote.getAbsolutePath().substring(1));
+    }
+
+    @NotNull
+    @Contract("_ -> new")
+    @Override
+    protected DownloadRunnable makeRunnableFor(@NonNull DownloadRunnable old) {
+        return new SambaRunnable(old.id, old.file, ((SambaRunnable) old).remotePath);
     }
 
     private class SambaRunnable extends AbsStreamDownloadHelper.DownloadRunnable {
@@ -70,7 +81,7 @@ public final class SambaHelper extends AbsStreamDownloadHelper {
                             SMB2CreateDisposition.FILE_OPEN,
                             EnumSet.noneOf(SMB2CreateOptions.class))) {
                         try (OutputStream out = openDestination()) {
-                            downloaded = 0;
+                            if (downloaded < 0) downloaded = 0;
                             long lastTime = System.currentTimeMillis();
                             long lastDownloaded = 0;
 

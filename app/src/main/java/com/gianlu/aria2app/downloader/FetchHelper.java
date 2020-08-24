@@ -56,7 +56,7 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
 
         FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(context)
                 .setDownloadConcurrentLimit(Prefs.getInt(PK.DD_MAX_SIMULTANEOUS_DOWNLOADS))
-                .setProgressReportingInterval(1000)
+                .setProgressReportingInterval(REPORTING_INTERVAL)
                 .enableAutoStart(Prefs.getBoolean(PK.DD_RESUME))
                 .setHttpDownloader(new OkHttpDownloader(client.build()))
                 .build();
@@ -67,7 +67,7 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
 
     @NonNull
     private static Request createFetchRequest(HttpUrl base, OptionsMap global, DocumentFile ddDir, @NotNull AriaFile file) throws PreparationException {
-        DocumentFile dest = createDestFile(global, ddDir, file);
+        DocumentFile dest = createDestFile(global, ddDir, new AriaRemoteFile(file));
         return createFetchRequest(file.getDownloadUrl(global, base), dest.getUri());
     }
 

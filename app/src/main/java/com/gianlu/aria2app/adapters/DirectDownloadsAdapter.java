@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.R;
@@ -24,6 +26,7 @@ import com.gianlu.commonutils.ui.Toaster;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
@@ -180,7 +183,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 break;
         }
 
-        holder.open.setOnClickListener(v -> openFile(v.getContext(), download)); // FIXME
+        holder.open.setOnClickListener(v -> openFile(v.getContext(), download));
         holder.start.setOnClickListener(v -> helper.resume(download));
         holder.pause.setOnClickListener(v -> helper.pause(download));
         holder.restart.setOnClickListener(v -> helper.restart(download, restartListener));
@@ -188,8 +191,12 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
     }
 
     private void openFile(@NotNull Context context, @NotNull DdDownload download) {
+        Uri uri = download.getUri();
+        if ("file".equals(uri.getScheme()) && uri.getPath() != null)
+            uri = FileProvider.getUriForFile(context, "com.gianlu.aria2app", new File(uri.getPath()));
+
         try {
-            context.startActivity(new Intent(Intent.ACTION_VIEW, download.getUri())
+            context.startActivity(new Intent(Intent.ACTION_VIEW, uri)
                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
         } catch (ActivityNotFoundException | IllegalArgumentException ex) {
             Toaster.with(context).message(R.string.failedOpeningDownload).show();

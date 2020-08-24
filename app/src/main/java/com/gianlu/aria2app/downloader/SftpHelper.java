@@ -16,7 +16,6 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
-import com.gianlu.aria2app.api.aria2.AriaFile;
 import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.commonutils.dialogs.DialogUtils;
@@ -51,6 +50,8 @@ public final class SftpHelper extends AbsStreamDownloadHelper {
         } catch (JSchException ex) {
             throw new Aria2Helper.InitializingException(ex);
         }
+
+        loadDb(context);
     }
 
     private static int sftpNameToType(@NonNull String name) {
@@ -197,8 +198,14 @@ public final class SftpHelper extends AbsStreamDownloadHelper {
 
     @NonNull
     @Override
-    protected DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull AriaFile remoteFile) {
+    protected DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull RemoteFile remoteFile) {
         return new SftpRunnable(id, file, remoteFile.getAbsolutePath());
+    }
+
+    @NonNull
+    @Override
+    protected DownloadRunnable makeRunnableFor(@NonNull DownloadRunnable old) {
+        return new SftpRunnable(old.id, old.file, ((SftpRunnable) old).remotePath);
     }
 
     @UiThread
@@ -233,7 +240,7 @@ public final class SftpHelper extends AbsStreamDownloadHelper {
                 Log.d(TAG, "File size is " + length);
 
                 try (OutputStream out = openDestination()) {
-                    ch.get(remotePath, out, new SftpProgressMonitor() {
+                    SftpProgressMonitor monitor = new SftpProgressMonitor() {
                         long lastTime;
                         long lastDownloaded;
 
@@ -260,7 +267,12 @@ public final class SftpHelper extends AbsStreamDownloadHelper {
                         @Override
                         public void end() {
                         }
-                    });
+                    };
+
+                    if (downloaded > 0)
+                        ch.get(remotePath, out, monitor, ChannelSftp.RESUME, downloaded);
+                    else
+                        ch.get(remotePath, out, monitor);
                 }
 
                 return true;

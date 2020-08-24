@@ -9,7 +9,6 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
-import com.gianlu.aria2app.api.aria2.AriaFile;
 import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.aria2app.profiles.MultiProfile;
 
@@ -29,12 +28,20 @@ public final class FtpHelper extends AbsStreamDownloadHelper {
     FtpHelper(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull MultiProfile.DirectDownload.Ftp dd) throws Aria2Helper.InitializingException {
         super(context, profile);
         this.dd = dd;
+
+        loadDb(context);
     }
 
     @NonNull
     @Override
-    protected AbsStreamDownloadHelper.DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull AriaFile remoteFile) {
+    protected AbsStreamDownloadHelper.DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull RemoteFile remoteFile) {
         return new FtpRunnable(id, file, remoteFile.getAbsolutePath());
+    }
+
+    @NonNull
+    @Override
+    protected DownloadRunnable makeRunnableFor(@NonNull DownloadRunnable old) {
+        return new FtpRunnable(old.id, old.file, ((FtpRunnable) old).remotePath);
     }
 
     public static class FtpException extends Exception {
@@ -96,6 +103,7 @@ public final class FtpHelper extends AbsStreamDownloadHelper {
                 }
 
                 try (OutputStream out = openDestination()) {
+                    if (downloaded > 0) client.setRestartOffset(downloaded);
                     try (InputStream in = client.retrieveFileStream(remotePath)) {
                         downloaded = 0;
                         long lastTime = System.currentTimeMillis();

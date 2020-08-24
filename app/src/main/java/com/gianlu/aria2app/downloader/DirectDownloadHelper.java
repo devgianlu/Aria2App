@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 import okhttp3.HttpUrl;
 
 public abstract class DirectDownloadHelper implements Closeable {
+    protected static final int REPORTING_INTERVAL = 1000;
     private static final String TAG = DirectDownloadHelper.class.getSimpleName();
     private static DirectDownloadHelper instance;
     protected final Handler handler;
@@ -199,7 +200,7 @@ public abstract class DirectDownloadHelper implements Closeable {
     }
 
     @NonNull
-    protected static DocumentFile createDestFile(@NotNull OptionsMap global, @NotNull DocumentFile ddDir, @NotNull AriaFile file) throws PreparationException {
+    protected static DocumentFile createDestFile(@NotNull OptionsMap global, @NotNull DocumentFile ddDir, @NotNull RemoteFile file) throws PreparationException {
         String mime = file.getMimeType();
         String fileName = file.getName();
         if (mime == null) {
@@ -216,8 +217,6 @@ public abstract class DirectDownloadHelper implements Closeable {
 
         return dest;
     }
-
-    //endregion
 
     public boolean canStream(@NonNull String mime) {
         if (!Utils.isStreamable(mime))
@@ -248,17 +247,19 @@ public abstract class DirectDownloadHelper implements Closeable {
         return intent;
     }
 
+    //endregion
+
     public abstract void start(@NonNull Context context, @NonNull AriaFile file, @NonNull StartListener listener);
 
     protected void callFailed(StartListener listener, Throwable ex) {
         handler.post(() -> listener.onFailed(ex));
     }
 
-    //region Download actions
-
     public abstract void start(@NonNull Context context, @NonNull AriaDirectory dir, @NonNull StartListener listener);
 
     public abstract void resume(@NonNull DdDownload download);
+
+    //region Download actions
 
     public abstract void pause(@NonNull DdDownload download);
 
@@ -271,10 +272,6 @@ public abstract class DirectDownloadHelper implements Closeable {
         reloadListener(listener);
     }
 
-    //endregion
-
-    //region Listeners
-
     public final void removeListener(@NonNull Listener listener) {
         listeners.remove(listener);
     }
@@ -286,16 +283,34 @@ public abstract class DirectDownloadHelper implements Closeable {
      */
     public abstract void reloadListener(@NonNull Listener listener);
 
+    //endregion
+
+    //region Listeners
+
     protected final void forEachListener(@NonNull Consumer<Listener> consumer) {
         for (Listener listener : new ArrayList<>(listeners))
             handler.post(() -> consumer.accept(listener));
     }
 
-    //endregion
+    protected interface RemoteFile {
+        @Nullable
+        String getMimeType();
+
+        @NonNull
+        String getName();
+
+        @NonNull
+        String getRelativePath(@NonNull OptionsMap global);
+
+        @NonNull
+        String getAbsolutePath();
+    }
 
     public interface UpdateDownloadCountListener {
         void onDdDownloadCount(int count);
     }
+
+    //endregion
 
     @UiThread
     public interface StartListener {
@@ -315,6 +330,38 @@ public abstract class DirectDownloadHelper implements Closeable {
         void onProgress(@NonNull DdDownload download);
 
         void onRemoved(@NonNull DdDownload download);
+    }
+
+    protected static class AriaRemoteFile implements RemoteFile {
+        private final AriaFile file;
+
+        AriaRemoteFile(@NonNull AriaFile file) {
+            this.file = file;
+        }
+
+        @Override
+        @Nullable
+        public String getMimeType() {
+            return file.getMimeType();
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return file.getName();
+        }
+
+        @NotNull
+        @Override
+        public String getRelativePath(@NotNull OptionsMap global) {
+            return file.getRelativePath(global);
+        }
+
+        @NonNull
+        @Override
+        public String getAbsolutePath() {
+            return file.getAbsolutePath();
+        }
     }
 
     public static class DirectDownloadNotEnabledException extends InitializationException {
