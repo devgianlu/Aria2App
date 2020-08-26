@@ -40,8 +40,8 @@ public final class FtpHelper extends AbsStreamDownloadHelper {
 
     @NonNull
     @Override
-    protected DownloadRunnable makeRunnableFor(@NonNull DownloadRunnable old) {
-        return new FtpRunnable(old.id, old.file, ((FtpRunnable) old).remotePath);
+    protected DownloadRunnable makeRunnableFor(int id, @NonNull DownloadRunnable old) {
+        return new FtpRunnable(id, old.file, ((FtpRunnable) old).remotePath);
     }
 
     public static class FtpException extends Exception {
@@ -54,11 +54,8 @@ public final class FtpHelper extends AbsStreamDownloadHelper {
     }
 
     private class FtpRunnable extends DownloadRunnable {
-        private final String remotePath;
-
         FtpRunnable(int id, @NonNull DocumentFile file, @NonNull String remotePath) {
-            super(id, file);
-            this.remotePath = remotePath;
+            super(id, file, remotePath);
         }
 
         @Override

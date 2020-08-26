@@ -184,8 +184,24 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
     }
 
     @Override
-    public final void restart(@NonNull DdDownload wrap, @NonNull StartListener listener) {
-        // TODO: Restart
+    public final void restart(@NonNull DdDownload oldWrap, @NonNull StartListener listener) {
+        DownloadRunnable download = unwrap(oldWrap);
+        if (download == null) return;
+
+        int id = db.addDownload(getDownloaderType(), download.remotePath);
+        if (id == -1) {
+            callFailed(listener, new PreparationException("Failed adding download to database."));
+            return;
+        }
+
+        DownloadRunnable runnable = makeRunnableFor(id, download);
+        downloads.put(id, runnable);
+        executorService.execute(runnable);
+
+        handler.post(listener::onSuccess);
+
+        DdDownload wrap = DdDownload.wrap(runnable);
+        forEachListener(l -> l.onAdded(wrap));
     }
 
     @Override
@@ -225,7 +241,12 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
     protected abstract DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull RemoteFile remoteFile);
 
     @NonNull
-    protected abstract DownloadRunnable makeRunnableFor(@NonNull DownloadRunnable old);
+    private DownloadRunnable makeRunnableFor(@NonNull DownloadRunnable old) {
+        return makeRunnableFor(old.id, old);
+    }
+
+    @NonNull
+    protected abstract DownloadRunnable makeRunnableFor(int id, @NonNull DownloadRunnable old);
 
     private void removeDownload(int id) {
         downloads.remove(id);
@@ -283,6 +304,7 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
     protected abstract class DownloadRunnable implements Runnable {
         final int id;
         final DocumentFile file;
+        final String remotePath;
         private final Object pauseLock = new Object();
         volatile long length = -1;
         volatile long downloaded = -1;
@@ -292,9 +314,10 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
         private volatile boolean paused = false;
         private volatile boolean terminated = false;
 
-        public DownloadRunnable(int id, @NonNull DocumentFile file) {
+        public DownloadRunnable(int id, @NonNull DocumentFile file, @NonNull String remotePath) {
             this.id = id;
             this.file = file;
+            this.remotePath = remotePath;
 
             this.status = DdDownload.Status.QUEUED;
         }

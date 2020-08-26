@@ -204,8 +204,8 @@ public final class SftpHelper extends AbsStreamDownloadHelper {
 
     @NonNull
     @Override
-    protected DownloadRunnable makeRunnableFor(@NonNull DownloadRunnable old) {
-        return new SftpRunnable(old.id, old.file, ((SftpRunnable) old).remotePath);
+    protected DownloadRunnable makeRunnableFor(int id, @NonNull DownloadRunnable old) {
+        return new SftpRunnable(id, old.file, ((SftpRunnable) old).remotePath);
     }
 
     @UiThread
@@ -216,11 +216,8 @@ public final class SftpHelper extends AbsStreamDownloadHelper {
     }
 
     private class SftpRunnable extends DownloadRunnable {
-        private final String remotePath;
-
         SftpRunnable(int id, @NonNull DocumentFile file, @NonNull String remotePath) {
-            super(id, file);
-            this.remotePath = remotePath;
+            super(id, file, remotePath);
         }
 
         @Override

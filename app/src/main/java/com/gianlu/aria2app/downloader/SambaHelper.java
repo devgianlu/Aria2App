@@ -50,18 +50,15 @@ public final class SambaHelper extends AbsStreamDownloadHelper {
     }
 
     @NotNull
-    @Contract("_ -> new")
+    @Contract("_, _ -> new")
     @Override
-    protected DownloadRunnable makeRunnableFor(@NonNull DownloadRunnable old) {
-        return new SambaRunnable(old.id, old.file, ((SambaRunnable) old).remotePath);
+    protected DownloadRunnable makeRunnableFor(int id, @NonNull DownloadRunnable old) {
+        return new SambaRunnable(id, old.file, ((SambaRunnable) old).remotePath);
     }
 
     private class SambaRunnable extends AbsStreamDownloadHelper.DownloadRunnable {
-        private final String remotePath;
-
         SambaRunnable(int id, @NonNull DocumentFile file, @NonNull String remotePath) {
-            super(id, file);
-            this.remotePath = remotePath;
+            super(id, file, remotePath);
         }
 
         @Override
