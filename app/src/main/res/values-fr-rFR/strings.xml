@@ -187,7 +187,7 @@
     <string name="bluetooth">Bluetooth</string>
     <string name="wifi">Wi-Fi</string>
     <string name="always">Toujours</string>
-    <string name="connectivityCondition">Condition de connectivité</string>
+    <string name="connectivityCondition">Mode de connexion</string>
     <string name="create">Créer</string>
     <string name="emptySSID">Le champ SSID est vide !</string>
     <string name="newCondition">Créer une nouvelle condition</string>
