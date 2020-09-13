@@ -258,7 +258,7 @@
     <string name="paused">중지됨</string>
     <string name="failedOpeningDownload">다운로드 열기 실패함!</string>
     <string name="noDirectDownloads">There are no downloads. You can start downloading a file from the Files tab of a download. Read more about DirectDownload here: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
-    <string name="remainingTime">Remaining time</string>
+    <string name="remainingTime">남은 시간</string>
     <string name="connectionsLabel">연결</string>
     <string name="numSeederLabel">시더들</string>
     <string name="selectCertificate">인종서 선택/변환</string>
