@@ -1,6 +1,4 @@
-### Fixed
-- Fixed loading progress bar color
-- Fixed WebView reloading when changing orientation
-
-### Changed
-- Changes best trackers source
+### Added
+- Copy magnet link for BitTorrent download
+- Added password toggles
+- Added support for FTP, SFTP and Samba in DirectDownload
