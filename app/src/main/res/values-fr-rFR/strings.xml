@@ -111,7 +111,7 @@
     <string name="uploadSpeed">Vitesse de téléversement</string>
     <string name="none">Aucun(e)</string>
     <string name="enableDirectDownload">Activer le DirectDownload</string>
-    <string name="directDownload_help">Le DirectDownload permet de télécharger directement des fichier depuis le serveur aria2 sur votre appareil avec un simple bouton. Vous aurez simplement besoin d\'un serveur web avec un adresse pointant les doffiser de téléchargement d\'aria2. Cela nécessitera les droits d\'écriture sur le stockage externe. Vous pouvez suivre ce guide pour le configurer correctement : https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
+    <string name="directDownload_help">DirectDownload provides the ability to download files from your aria2 server to your device with a single tap! This will require the permission to write to the external storage. You can follow this guide to set it up: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="username">Nom d\'utilisateur</string>
     <string name="password">Mot de passe</string>
     <string name="more">Plus</string>
@@ -187,7 +187,7 @@
     <string name="bluetooth">Bluetooth</string>
     <string name="wifi">Wi-Fi</string>
     <string name="always">Toujours</string>
-    <string name="connectivityCondition">Condition de connectivité</string>
+    <string name="connectivityCondition">Mode de connexion</string>
     <string name="create">Créer</string>
     <string name="emptySSID">Le champ SSID est vide !</string>
     <string name="newCondition">Créer une nouvelle condition</string>
@@ -348,4 +348,24 @@
     <string name="prefs_skipWebViewDialog_summary">Passer la fenêtre WebView au partage d\'un lien</string>
     <string name="desktopMode">Mode bureau</string>
     <string name="copyMagnetLink">Copier le lien Magnet</string>
+    <string name="samba">Samba</string>
+    <string name="ftp">FTP</string>
+    <string name="webServer">Web server</string>
+    <string name="sftp">SFTP</string>
+    <string name="web">Web</string>
+    <string name="host">Host</string>
+    <string name="invalidHost">Invalid hostname!</string>
+    <string name="invalidUsername">Invalid username!</string>
+    <string name="verify">Verify</string>
+    <string name="sftpDdFirstConnection">If it\'s the first time you are configuring this or you are experiencing issues please press the button below to initialize the connection.</string>
+    <string name="connectionVerified">Connection verified successfully!</string>
+    <string name="failedVerifyingConnection">Failed verifying connection: %s</string>
+    <string name="sftpPrompt">SFTP prompt</string>
+    <string name="anonymous">Anonymous</string>
+    <string name="domainLabel">Domain</string>
+    <string name="shareName">Share name</string>
+    <string name="invalidShareName">Invalid share name!</string>
+    <string name="invalidPath">Invalid path!</string>
+    <string name="pathLabel">Path</string>
+    <string name="sambaPathHelp">This is the relative path from the share to the downloads folder of aria2.</string>
 </resources>

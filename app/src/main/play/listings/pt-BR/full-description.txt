@@ -1,6 +1,4 @@
-Graças ao Aria2App você pode lidar com quantos servidores aria2 você quiser!
-
-IMPORTANTE: Aria2App usa a interface JSONRPC! Veja aqui o seguinte: https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface
+Aria2App é o seu gerenciador de downloads portátil do servidor apoiado por aria2 diretamente no seu dispositivo. Você também pode gerenciar instâncias aria2 em dispositivos externos graças à interface JSON-RPC.
 
 Alguns dos recursos são:
 - Operar mais servidores simultaneamente
@@ -15,8 +13,6 @@ Alguns dos recursos são:
 - Alterar as opções gerais de um único download ou do aria2
 - Receba notificações ao vivo dos seus downloads ou dos downloads selecionados
 E ainda mais
-
-Aria2App foi desenvolvido para rodar na versão mais recente do aria2, então mantenha sua compilação atualizada para evitar problemas e vários erros.
 
 Este projeto é de código aberto em https://github.com/devgianlu/Aria2App
 ---------------------------------------

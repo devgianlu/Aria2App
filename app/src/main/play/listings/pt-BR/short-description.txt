@@ -1,1 +1,1 @@
-Aria2App allows you to handle your downloads on aria2 wherever you are!
+Um gerenciador de download avançado e um cliente aria2 em seu bolso.

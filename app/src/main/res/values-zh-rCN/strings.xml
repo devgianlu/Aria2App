@@ -111,7 +111,7 @@
     <string name="uploadSpeed">上传速度</string>
     <string name="none">无</string>
     <string name="enableDirectDownload">启用直接下载</string>
-    <string name="directDownload_help">通过直接下载，您只需要轻轻一按，即可从Aria2服务器下载文件到您的设备！您只需要一个适当的webserver配置：地址必须是一个指向aria2下载目录的目录列表。此功能需要Aria2App拥有写入设备外部存储的权限。您可以按照本指南进行设置: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
+    <string name="directDownload_help">DirectDownload provides the ability to download files from your aria2 server to your device with a single tap! This will require the permission to write to the external storage. You can follow this guide to set it up: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="username">用户名</string>
     <string name="password">密码</string>
     <string name="more">更多</string>
@@ -348,4 +348,24 @@
     <string name="prefs_skipWebViewDialog_summary">分享链接时，是否跳过打开WebView对话框</string>
     <string name="desktopMode">桌面模式</string>
     <string name="copyMagnetLink">复制磁力链接</string>
+    <string name="samba">Samba</string>
+    <string name="ftp">FTP</string>
+    <string name="webServer">Web server</string>
+    <string name="sftp">SFTP</string>
+    <string name="web">Web</string>
+    <string name="host">Host</string>
+    <string name="invalidHost">Invalid hostname!</string>
+    <string name="invalidUsername">Invalid username!</string>
+    <string name="verify">Verify</string>
+    <string name="sftpDdFirstConnection">If it\'s the first time you are configuring this or you are experiencing issues please press the button below to initialize the connection.</string>
+    <string name="connectionVerified">Connection verified successfully!</string>
+    <string name="failedVerifyingConnection">Failed verifying connection: %s</string>
+    <string name="sftpPrompt">SFTP prompt</string>
+    <string name="anonymous">Anonymous</string>
+    <string name="domainLabel">Domain</string>
+    <string name="shareName">Share name</string>
+    <string name="invalidShareName">Invalid share name!</string>
+    <string name="invalidPath">Invalid path!</string>
+    <string name="pathLabel">Path</string>
+    <string name="sambaPathHelp">This is the relative path from the share to the downloads folder of aria2.</string>
 </resources>

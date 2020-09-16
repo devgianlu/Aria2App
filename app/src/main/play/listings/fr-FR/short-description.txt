@@ -1,1 +1,1 @@
-Avec Aria2App, gérez vos téléchargements d'un serveur aria2 où que vous soyez !
+Un gestionnaire de téléchargement avancé et un client aria2 dans votre poche.
