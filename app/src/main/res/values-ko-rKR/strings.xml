@@ -111,7 +111,7 @@
     <string name="uploadSpeed">업로드 속도</string>
     <string name="none">없음</string>
     <string name="enableDirectDownload">디렉트 다운로드 활성화</string>
-    <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration: the address must be pointing to a directory listing of the aria2 download directory. This will require the permission to write to the external storage. You can follow this guide to set it up: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
+    <string name="directDownload_help">DirectDownload provides the ability to download files from your aria2 server to your device with a single tap! This will require the permission to write to the external storage. You can follow this guide to set it up: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="username">사용자 이름</string>
     <string name="password">비밀번호</string>
     <string name="more">더 보기</string>
@@ -348,4 +348,24 @@
     <string name="prefs_skipWebViewDialog_summary">Whether to skip the WebView dialog when sharing a link</string>
     <string name="desktopMode">데스크탑 모드</string>
     <string name="copyMagnetLink">Copy Magnet link</string>
+    <string name="samba">Samba</string>
+    <string name="ftp">FTP</string>
+    <string name="webServer">Web server</string>
+    <string name="sftp">SFTP</string>
+    <string name="web">Web</string>
+    <string name="host">Host</string>
+    <string name="invalidHost">Invalid hostname!</string>
+    <string name="invalidUsername">Invalid username!</string>
+    <string name="verify">Verify</string>
+    <string name="sftpDdFirstConnection">If it\'s the first time you are configuring this or you are experiencing issues please press the button below to initialize the connection.</string>
+    <string name="connectionVerified">Connection verified successfully!</string>
+    <string name="failedVerifyingConnection">Failed verifying connection: %s</string>
+    <string name="sftpPrompt">SFTP prompt</string>
+    <string name="anonymous">Anonymous</string>
+    <string name="domainLabel">Domain</string>
+    <string name="shareName">Share name</string>
+    <string name="invalidShareName">Invalid share name!</string>
+    <string name="invalidPath">Invalid path!</string>
+    <string name="pathLabel">Path</string>
+    <string name="sambaPathHelp">This is the relative path from the share to the downloads folder of aria2.</string>
 </resources>
