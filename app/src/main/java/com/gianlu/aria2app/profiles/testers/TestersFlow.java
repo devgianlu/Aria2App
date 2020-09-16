@@ -39,7 +39,7 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
         startTime = System.currentTimeMillis();
 
         Object lastResult = null;
-        for (BaseTester tester : testers) {
+        for (BaseTester<?> tester : testers) {
             lastResult = tester.start(lastResult);
             if (lastResult == null) break;
         }
@@ -55,7 +55,7 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
     }
 
     @Override
-    public void publishGeneralMessage(@NonNull String message, @NonNull final BaseTester.Color color) {
+    public void publishGeneralMessage(@NonNull String message, @NonNull BaseTester.Color color) {
         handler.post(() -> {
             if (listener != null)
                 listener.addItem((System.currentTimeMillis() - startTime) + ": " + message, color);

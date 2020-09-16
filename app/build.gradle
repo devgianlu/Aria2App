@@ -92,8 +92,12 @@ dependencies {
     implementation project(':CommonUtils')
     implementation project(':aria2lib')
 
-    implementation 'androidx.tonyodev.fetch2:xfetch2:3.1.4'
-    implementation 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.4'
+    implementation 'androidx.tonyodev.fetch2:xfetch2:3.1.5'
+    implementation 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.5'
+
+    implementation 'commons-net:commons-net:3.7'
+    implementation 'com.hierynomus:smbj:0.10.0'
+    implementation 'com.jcraft:jsch:0.1.55'
 
     implementation 'com.squareup.okhttp3:okhttp:4.8.0'
 

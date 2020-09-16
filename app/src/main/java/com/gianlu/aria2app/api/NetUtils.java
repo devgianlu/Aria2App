@@ -7,6 +7,7 @@ import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.commonutils.preferences.Prefs;
 
+import org.apache.commons.net.ftp.FTPSClient;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -46,7 +47,10 @@ public final class NetUtils {
         }
     }
 
-    public static void setSslSocketFactory(@NonNull OkHttpClient.Builder builder, @NonNull Certificate ca) throws GeneralSecurityException, IOException {
+    //region SSL
+
+    @NonNull
+    private static X509TrustManager getTrustManager(@NonNull Certificate ca) throws GeneralSecurityException, IOException {
         char[] password = "password".toCharArray();
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         keyStore.load(null, password);
@@ -60,12 +64,30 @@ public final class NetUtils {
         if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager))
             throw new GeneralSecurityException("Unexpected default trust managers:" + Arrays.toString(trustManagers));
 
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, new TrustManager[]{trustManagers[0]}, null);
-        SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
-        builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustManagers[0]);
+        return (X509TrustManager) trustManagers[0];
     }
+
+    @NonNull
+    private static SSLSocketFactory getSslSocketFactory(@NonNull TrustManager trustManager) throws GeneralSecurityException {
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, new TrustManager[]{trustManager}, null);
+        return sslContext.getSocketFactory();
+    }
+
+    public static void setSslSocketFactory(@NonNull FTPSClient client, @NonNull Certificate ca) throws GeneralSecurityException, IOException {
+        X509TrustManager trustManager = getTrustManager(ca);
+        SSLSocketFactory sslSocketFactory = getSslSocketFactory(trustManager);
+        client.setTrustManager(trustManager);
+        client.setSocketFactory(sslSocketFactory);
+    }
+
+    public static void setSslSocketFactory(@NonNull OkHttpClient.Builder client, @NonNull Certificate ca) throws GeneralSecurityException, IOException {
+        X509TrustManager trustManager = getTrustManager(ca);
+        SSLSocketFactory sslSocketFactory = getSslSocketFactory(trustManager);
+        client.sslSocketFactory(sslSocketFactory, trustManager);
+    }
+
+    //endregion
 
     @NonNull
     public static OkHttpClient buildClient(@NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException {
@@ -127,21 +149,6 @@ public final class NetUtils {
     public static Request createWebsocketRequest(@NonNull MultiProfile.UserProfile profile) throws InvalidUrlException {
         Request.Builder builder = new Request.Builder();
         builder.url(createWebSocketURL(profile).toString());
-        return builder.build();
-    }
-
-    @NonNull
-    public static Request createDirectDownloadRequest(@NonNull MultiProfile.DirectDownload dd) throws InvalidUrlException {
-        HttpUrl baseUrl = dd.getUrl();
-        if (baseUrl == null)
-            throw new InvalidUrlException("DirectDownload url is invalid.");
-
-        Request.Builder builder = new Request.Builder()
-                .get().url(baseUrl);
-
-        if (dd.auth)
-            builder.header("Authorization", dd.getAuthorizationHeader());
-
         return builder.build();
     }
 

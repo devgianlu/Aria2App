@@ -3,16 +3,12 @@ package com.gianlu.aria2app;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import com.gianlu.aria2app.api.aria2.AriaFile;
-import com.gianlu.aria2app.api.aria2.OptionsMap;
-import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -21,10 +17,10 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.HashSet;
-
-import okhttp3.HttpUrl;
 
 public final class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
@@ -101,21 +97,7 @@ public final class Utils {
         return false;
     }
 
-    @Nullable
-    public static Intent getStreamIntent(@NonNull MultiProfile.UserProfile profile, @NonNull OptionsMap global, @NonNull AriaFile file) {
-        MultiProfile.DirectDownload dd = profile.directDownload;
-        if (dd == null) throw new IllegalStateException("WTF?!");
-
-        HttpUrl base = dd.getUrl();
-        if (base == null) return null;
-
-        HttpUrl url = file.getDownloadUrl(global, base);
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(url.toString()), file.getMimeType());
-        return intent;
-    }
-
-    public static boolean canHandleIntent(Context context, @NonNull Intent intent) {
+    public static boolean canHandleIntent(@NotNull Context context, @NonNull Intent intent) {
         return intent.resolveActivity(context.getPackageManager()) != null;
     }
 
@@ -204,6 +186,14 @@ public final class Utils {
             first = false;
         }
         return sb.toString();
+    }
+
+    @NonNull
+    public static Integer[] toIntsList(@NonNull String str, String separator) throws NumberFormatException {
+        String[] split = str.split(separator);
+        Integer[] ints = new Integer[split.length];
+        for (int i = 0; i < split.length; i++) ints[i] = Integer.parseInt(split[i].trim());
+        return ints;
     }
 
     private static class CustomYAxisValueFormatter extends ValueFormatter {

@@ -5,6 +5,7 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,13 +28,12 @@ public class AriaFile {
     private String mime;
     private String name;
 
-    public AriaFile(JSONObject obj) throws JSONException {
+    public AriaFile(@NotNull JSONObject obj) throws JSONException {
         index = obj.getInt("index");
         path = obj.getString("path");
         length = obj.getLong("length");
         completedLength = obj.getLong("completedLength");
         selected = obj.getBoolean("selected");
-
 
         if (obj.has("uris")) {
             uris = new Uris(obj.getJSONArray("uris"));
@@ -42,7 +42,8 @@ public class AriaFile {
         }
     }
 
-    public static Integer[] allIndexes(Collection<AriaFile> files) {
+    @NotNull
+    public static Integer[] allIndexes(@NotNull Collection<AriaFile> files) {
         Integer[] indexes = new Integer[files.size()];
         Iterator<AriaFile> iterator = files.iterator();
         for (int i = 0; i < files.size(); i++) indexes[i] = iterator.next().index;
@@ -82,6 +83,11 @@ public class AriaFile {
         String dirStr = dir == null ? null : dir.string();
         if (dirStr == null) dirStr = "";
         return path.substring(dirStr.length() + 1);
+    }
+
+    @NonNull
+    public String getAbsolutePath() {
+        return path;
     }
 
     public boolean completed() {
@@ -125,7 +131,7 @@ public class AriaFile {
             statuses = new Status[0];
         }
 
-        private Uris(JSONArray array) throws JSONException {
+        private Uris(@NotNull JSONArray array) throws JSONException {
             uris = new String[array.length()];
             statuses = new Status[array.length()];
 

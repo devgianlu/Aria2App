@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,26 +19,26 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.downloader.FetchDownloadWrapper;
-import com.gianlu.aria2app.downloader.FetchHelper;
+import com.gianlu.aria2app.downloader.DdDownload;
+import com.gianlu.aria2app.downloader.DirectDownloadHelper;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.ui.Toaster;
-import com.tonyodev.fetch2.Download;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
 public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloadsAdapter.ViewHolder> {
     private final LayoutInflater inflater;
-    private final List<FetchDownloadWrapper> downloads;
-    private final FetchHelper helper;
-    private final FetchHelper.StartListener restartListener;
+    private final List<DdDownload> downloads;
+    private final DirectDownloadHelper helper;
+    private final DirectDownloadHelper.StartListener restartListener;
 
-    public DirectDownloadsAdapter(Context context, FetchHelper helper, List<Download> downloads, FetchHelper.StartListener restartListener) {
+    public DirectDownloadsAdapter(Context context, DirectDownloadHelper helper, List<DdDownload> downloads, DirectDownloadHelper.StartListener restartListener) {
         this.inflater = LayoutInflater.from(context);
-        this.downloads = FetchDownloadWrapper.wrap(downloads);
+        this.downloads = downloads;
         this.helper = helper;
         this.restartListener = restartListener;
     }
@@ -48,8 +49,8 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         return new ViewHolder(parent);
     }
 
-    private void updateViewHolder(@NonNull ViewHolder holder, int pos, @Nullable FetchDownloadWrapper.ProgressBundle bundle) {
-        FetchDownloadWrapper download = downloads.get(pos);
+    private void updateViewHolder(@NonNull ViewHolder holder, int pos, @Nullable DdDownload.ProgressBundle bundle) {
+        DdDownload download = downloads.get(pos);
 
         long eta = bundle == null ? download.getEta() : bundle.eta;
         if (eta == -1) {
@@ -64,6 +65,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             holder.progress.setIndeterminate(true);
             holder.percentage.setVisibility(View.GONE);
         } else {
+            holder.progress.setIndeterminate(false);
             holder.progress.setProgress(progress);
             holder.percentage.setVisibility(View.VISIBLE);
             holder.percentage.setText(String.format(Locale.getDefault(), "%d%%", progress));
@@ -81,13 +83,13 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             return;
         }
 
-        FetchDownloadWrapper.ProgressBundle bundle = (FetchDownloadWrapper.ProgressBundle) payloads.get(0);
+        DdDownload.ProgressBundle bundle = (DdDownload.ProgressBundle) payloads.get(0);
         updateViewHolder(holder, position, bundle);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final FetchDownloadWrapper download = downloads.get(position);
+        DdDownload download = downloads.get(position);
 
         holder.title.setText(download.getName());
         holder.uri.setText(download.getDecodedUrl());
@@ -176,10 +178,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 holder.restart.setVisibility(View.GONE);
                 holder.remove.setVisibility(View.VISIBLE);
                 break;
-            case REMOVED:
-            case DELETED:
-            case ADDED:
-            case NONE:
+            case UNKNOWN:
                 holder.status.setText(R.string.unknown);
                 holder.status.setTextColor(Color.WHITE);
                 break;
@@ -192,9 +191,13 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         holder.remove.setOnClickListener(v -> helper.remove(download));
     }
 
-    private void openFile(Context context, FetchDownloadWrapper download) {
+    private void openFile(@NotNull Context context, @NotNull DdDownload download) {
+        Uri uri = download.getUri();
+        if ("file".equals(uri.getScheme()) && uri.getPath() != null)
+            uri = FileProvider.getUriForFile(context, "com.gianlu.aria2app", new File(uri.getPath()));
+
         try {
-            context.startActivity(new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(context, "com.gianlu.aria2app", download.getFile()))
+            context.startActivity(new Intent(Intent.ACTION_VIEW, uri)
                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
         } catch (ActivityNotFoundException | IllegalArgumentException ex) {
             Toaster.with(context).message(R.string.failedOpeningDownload).show();
@@ -206,7 +209,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         return downloads.size();
     }
 
-    private int indexOf(@NotNull Download download) {
+    private int indexOf(@NotNull DdDownload download) {
         for (int i = 0; i < downloads.size(); i++)
             if (downloads.get(i).is(download))
                 return i;
@@ -215,13 +218,13 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
     }
 
     @UiThread
-    public void add(Download download) {
-        downloads.add(FetchDownloadWrapper.wrap(download));
+    public void add(DdDownload download) {
+        downloads.add(download);
         notifyItemInserted(downloads.size() - 1);
     }
 
     @UiThread
-    public void remove(Download download) {
+    public void remove(DdDownload download) {
         int index = indexOf(download);
         if (index != -1) {
             downloads.remove(index);
@@ -230,21 +233,20 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
     }
 
     @UiThread
-    public void update(@NotNull Download download) {
+    public void update(@NotNull DdDownload download) {
         int index = indexOf(download);
         if (index != -1) {
-            downloads.get(index).set(download);
+            downloads.set(index, download);
             notifyItemChanged(index);
         }
     }
 
     @UiThread
-    public void updateProgress(@NotNull Download download, long eta, long speed) {
+    public void updateProgress(@NotNull DdDownload download) {
         int index = indexOf(download);
         if (index != -1) {
-            FetchDownloadWrapper wrapper = downloads.get(index);
-            wrapper.set(download);
-            notifyItemChanged(index, wrapper.progress(eta, speed));
+            downloads.set(index, download);
+            notifyItemChanged(index, download.progress());
         }
     }
 

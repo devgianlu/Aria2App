@@ -179,7 +179,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     }
 
     @NonNull
-    public UserProfile getProfile(ProfilesManager manager) {
+    public UserProfile getProfile(@NotNull ProfilesManager manager) {
         return getProfile(manager.getConnectivityManager(), manager.getWifiManager());
     }
 
@@ -422,60 +422,287 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
     public static class DirectDownload implements Serializable {
         private static final long serialVersionUID = 1L;
-        public final String address;
-        public final boolean auth;
-        public final String username;
-        public final String password;
-        public final boolean hostnameVerifier;
-        public final X509Certificate certificate;
-        public final boolean serverSsl;
-        private transient HttpUrl cachedUri;
+        public final Type type;
+        public final Ftp ftp;
+        public final Sftp sftp;
+        public final Web web;
+        public final Smb smb;
 
-        public DirectDownload(JSONObject obj) throws JSONException {
-            address = obj.getString("addr");
-            auth = obj.getBoolean("auth");
-            username = CommonUtils.optString(obj, "username");
-            password = CommonUtils.optString(obj, "password");
-            hostnameVerifier = obj.optBoolean("hostnameVerifier", false);
-            serverSsl = obj.optBoolean("serverSsl", false);
+        public DirectDownload(@Nullable Web web, @Nullable Ftp ftp, @Nullable Sftp sftp, @Nullable Smb smb) {
+            this.ftp = ftp;
+            this.sftp = sftp;
+            this.web = web;
+            this.smb = smb;
 
-            String base64 = CommonUtils.optString(obj, "certificate");
-            if (base64 == null) certificate = null;
-            else certificate = CertUtils.decodeCertificate(base64);
+            if (ftp == null && web == null && smb == null && sftp == null)
+                throw new IllegalArgumentException();
+
+            if (web != null && (ftp != null || sftp != null || smb != null))
+                throw new IllegalArgumentException();
+
+            if (ftp != null && (sftp != null || smb != null))
+                throw new IllegalArgumentException();
+
+            if (sftp != null && smb != null)
+                throw new IllegalArgumentException();
+
+            if (smb != null) type = Type.SMB;
+            else if (ftp != null) type = Type.FTP;
+            else if (sftp != null) type = Type.SFTP;
+            else type = Type.SMB;
         }
 
-        public DirectDownload(String address, boolean auth, @Nullable String username, @Nullable String password, boolean serverSsl, @Nullable X509Certificate certificate, boolean hostnameVerifier) {
-            this.address = address;
-            this.auth = auth;
-            this.username = username;
-            this.password = password;
-            this.serverSsl = serverSsl;
-            this.certificate = certificate;
-            this.hostnameVerifier = hostnameVerifier;
-        }
-
-        public String getAuthorizationHeader() {
-            if (!auth) return null;
-            return "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
+        public DirectDownload(@NonNull JSONObject obj) throws JSONException {
+            if (obj.has("type")) {
+                type = Type.parse(obj.getString("type"));
+                switch (type) {
+                    case WEB:
+                        web = new Web(obj.getJSONObject("web"));
+                        smb = null;
+                        ftp = null;
+                        sftp = null;
+                        break;
+                    case FTP:
+                        web = null;
+                        smb = null;
+                        ftp = new Ftp(obj.getJSONObject("ftp"));
+                        sftp = null;
+                        break;
+                    case SFTP:
+                        web = null;
+                        smb = null;
+                        ftp = null;
+                        sftp = new Sftp(obj.getJSONObject("sftp"));
+                        break;
+                    case SMB:
+                        web = null;
+                        smb = new Smb(obj.getJSONObject("smb"));
+                        ftp = null;
+                        sftp = null;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unknown type: " + type);
+                }
+            } else {
+                type = Type.WEB;
+                web = new Web(obj);
+                ftp = null;
+                smb = null;
+                sftp = null;
+            }
         }
 
         @NonNull
-        JSONObject toJson() throws JSONException {
+        public JSONObject toJson() throws JSONException {
             JSONObject obj = new JSONObject();
-            obj.put("addr", address).put("auth", auth).put("serverSsl", serverSsl)
-                    .put("username", username).put("password", password)
-                    .put("hostnameVerifier", hostnameVerifier);
-
-            if (certificate != null && serverSsl)
-                obj.put("certificate", CertUtils.encodeCertificate(certificate));
+            obj.put("type", type.val);
+            switch (type) {
+                case WEB:
+                    obj.put("web", web.toJson());
+                    break;
+                case FTP:
+                    obj.put("ftp", ftp.toJson());
+                    break;
+                case SFTP:
+                    obj.put("sftp", sftp.toJson());
+                    break;
+                case SMB:
+                    obj.put("smb", smb.toJson());
+                    break;
+            }
 
             return obj;
         }
 
-        @Nullable
-        public HttpUrl getUrl() {
-            if (cachedUri == null) cachedUri = HttpUrl.parse(address);
-            return cachedUri;
+        public enum Type {
+            WEB("web"), FTP("ftp"), SFTP("sftp"), SMB("smb");
+
+            final String val;
+
+            Type(@NonNull String val) {
+                this.val = val;
+            }
+
+            @NotNull
+            public static Type parse(@NotNull String val) {
+                for (Type type : values())
+                    if (type.val.equals(val))
+                        return type;
+
+                throw new IllegalArgumentException("Unknown type: " + val);
+            }
+        }
+
+        public static class Ftp {
+            public final String hostname;
+            public final int port;
+            public final String username;
+            public final String password;
+            public final boolean hostnameVerifier;
+            public final X509Certificate certificate;
+            public final boolean serverSsl;
+
+            Ftp(@NonNull JSONObject obj) throws JSONException {
+                hostname = obj.getString("hostname");
+                port = obj.getInt("port");
+                username = obj.getString("username");
+                password = obj.getString("password");
+                hostnameVerifier = obj.optBoolean("hostnameVerifier", false);
+                serverSsl = obj.optBoolean("serverSsl", false);
+
+                String base64 = CommonUtils.optString(obj, "certificate");
+                if (base64 == null) certificate = null;
+                else certificate = CertUtils.decodeCertificate(base64);
+            }
+
+            public Ftp(@NonNull String hostname, int port, @NonNull String username, @NonNull String password, boolean serverSsl, @Nullable X509Certificate certificate, boolean hostnameVerifier) {
+                this.hostname = hostname;
+                this.port = port;
+                this.username = username;
+                this.password = password;
+                this.serverSsl = serverSsl;
+                this.certificate = certificate;
+                this.hostnameVerifier = hostnameVerifier;
+            }
+
+            @NonNull
+            public JSONObject toJson() throws JSONException {
+                JSONObject obj = new JSONObject();
+                obj.put("hostname", hostname).put("port", port).put("serverSsl", serverSsl)
+                        .put("username", username).put("password", password)
+                        .put("hostnameVerifier", hostnameVerifier);
+
+                if (certificate != null && serverSsl)
+                    obj.put("certificate", CertUtils.encodeCertificate(certificate));
+
+                return obj;
+            }
+        }
+
+        public static class Sftp {
+            public final String hostname;
+            public final int port;
+            public final String username;
+            public final String password;
+            public final String hostKey;
+
+            Sftp(@NonNull JSONObject obj) throws JSONException {
+                hostname = obj.getString("hostname");
+                port = obj.getInt("port");
+                username = obj.getString("username");
+                password = obj.getString("password");
+                hostKey = obj.optString("hostKey", "");
+            }
+
+            public Sftp(@NonNull String hostname, int port, @NonNull String username, @NonNull String password, @NonNull String hostKey) {
+                this.hostname = hostname;
+                this.port = port;
+                this.username = username;
+                this.password = password;
+                this.hostKey = hostKey;
+            }
+
+            @NonNull
+            public JSONObject toJson() throws JSONException {
+                return new JSONObject().put("hostname", hostname).put("port", port)
+                        .put("username", username).put("password", password)
+                        .put("hostKey", hostKey);
+            }
+        }
+
+        public static class Smb {
+            public final String hostname;
+            public final boolean anonymous;
+            public final String username;
+            public final String password;
+            public final String domain;
+            public final String shareName;
+            public final String path;
+
+            Smb(@NonNull JSONObject obj) throws JSONException {
+                hostname = obj.getString("hostname");
+                anonymous = obj.getBoolean("anonymous");
+                username = obj.getString("username");
+                password = obj.getString("password");
+                domain = obj.getString("domain");
+                shareName = obj.getString("shareName");
+                path = obj.optString("path", "");
+            }
+
+            public Smb(@NonNull String hostname, boolean anonymous, @NonNull String username, @NonNull String password, @NonNull String domain, @NonNull String shareName, @NonNull String path) {
+                this.hostname = hostname;
+                this.anonymous = anonymous;
+                this.username = username;
+                this.password = password;
+                this.domain = domain;
+                this.shareName = shareName;
+                this.path = path;
+            }
+
+            @NonNull
+            public JSONObject toJson() throws JSONException {
+                return new JSONObject().put("hostname", hostname).put("anonymous", anonymous)
+                        .put("username", username).put("password", password)
+                        .put("domain", domain).put("shareName", shareName).put("path", path);
+            }
+        }
+
+        public static class Web {
+            public final String address;
+            public final boolean auth;
+            public final String username;
+            public final String password;
+            public final boolean hostnameVerifier;
+            public final X509Certificate certificate;
+            public final boolean serverSsl;
+            private transient HttpUrl cachedUri;
+
+            Web(@NotNull JSONObject obj) throws JSONException {
+                address = obj.getString("addr");
+                auth = obj.getBoolean("auth");
+                username = CommonUtils.optString(obj, "username");
+                password = CommonUtils.optString(obj, "password");
+                hostnameVerifier = obj.optBoolean("hostnameVerifier", false);
+                serverSsl = obj.optBoolean("serverSsl", false);
+
+                String base64 = CommonUtils.optString(obj, "certificate");
+                if (base64 == null) certificate = null;
+                else certificate = CertUtils.decodeCertificate(base64);
+            }
+
+            public Web(String address, boolean auth, @Nullable String username, @Nullable String password, boolean serverSsl, @Nullable X509Certificate certificate, boolean hostnameVerifier) {
+                this.address = address;
+                this.auth = auth;
+                this.username = username;
+                this.password = password;
+                this.serverSsl = serverSsl;
+                this.certificate = certificate;
+                this.hostnameVerifier = hostnameVerifier;
+            }
+
+            public String getAuthorizationHeader() {
+                if (!auth) return null;
+                return "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
+            }
+
+            @NonNull
+            JSONObject toJson() throws JSONException {
+                JSONObject obj = new JSONObject();
+                obj.put("addr", address).put("auth", auth).put("serverSsl", serverSsl)
+                        .put("username", username).put("password", password)
+                        .put("hostnameVerifier", hostnameVerifier);
+
+                if (certificate != null && serverSsl)
+                    obj.put("certificate", CertUtils.encodeCertificate(certificate));
+
+                return obj;
+            }
+
+            @Nullable
+            public HttpUrl getUrl() {
+                if (cachedUri == null) cachedUri = HttpUrl.parse(address);
+                return cachedUri;
+            }
         }
     }
 

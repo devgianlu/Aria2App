@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ThisApplication;
+import com.gianlu.aria2app.downloader.DirectDownloadHelper;
 import com.gianlu.commonutils.preferences.Prefs;
 
 import org.json.JSONArray;
@@ -236,6 +237,7 @@ public class ProfilesManager {
     }
 
     public void reloadCurrentProfile() throws IOException, JSONException, NoCurrentProfileException {
+        DirectDownloadHelper.invalidate();
         setCurrent(retrieveProfile(getCurrent().id));
     }
 
