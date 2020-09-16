@@ -82,6 +82,8 @@ public final class SambaHelper extends AbsStreamDownloadHelper {
                             long lastTime = System.currentTimeMillis();
                             long lastDownloaded = 0;
 
+                            Log.d(TAG, "Start from " + downloaded + ", id: " + id);
+
                             byte[] buffer = new byte[512 * 1024];
                             int read;
                             while (!shouldStop && (read = smbFile.read(buffer, downloaded)) > 0) {

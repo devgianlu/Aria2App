@@ -101,6 +101,8 @@ public final class FtpHelper extends AbsStreamDownloadHelper {
 
                 try (OutputStream out = openDestination()) {
                     if (downloaded > 0) client.setRestartOffset(downloaded);
+                    Log.d(TAG, "Start from " + downloaded + ", id: " + id);
+
                     try (InputStream in = client.retrieveFileStream(remotePath)) {
                         downloaded = 0;
                         long lastTime = System.currentTimeMillis();

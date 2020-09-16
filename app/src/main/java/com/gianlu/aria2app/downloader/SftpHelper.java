@@ -266,6 +266,7 @@ public final class SftpHelper extends AbsStreamDownloadHelper {
                         }
                     };
 
+                    Log.d(TAG, "Start from " + downloaded + ", id: " + id);
                     if (downloaded > 0)
                         ch.get(remotePath, out, monitor, ChannelSftp.RESUME, downloaded);
                     else

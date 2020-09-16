@@ -65,6 +65,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             holder.progress.setIndeterminate(true);
             holder.percentage.setVisibility(View.GONE);
         } else {
+            holder.progress.setIndeterminate(false);
             holder.progress.setProgress(progress);
             holder.percentage.setVisibility(View.VISIBLE);
             holder.percentage.setText(String.format(Locale.getDefault(), "%d%%", progress));
