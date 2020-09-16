@@ -37,6 +37,7 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
     private final ExecutorService executorService;
     private final Map<Integer, DownloadRunnable> downloads = new ArrayMap<>(5);
     private final DdDatabase db;
+    private boolean closed = false;
 
     public AbsStreamDownloadHelper(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Aria2Helper.InitializingException {
         super(context, profile);
@@ -85,6 +86,11 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
 
     @Override
     public final void start(@NonNull Context context, @NonNull AriaFile file, @NonNull StartListener listener) {
+        if (closed) {
+            listener.onFailed(new IllegalStateException("Closed."));
+            return;
+        }
+
         DocumentFile ddDir;
         try {
             ddDir = getAndValidateDownloadPath(context);
@@ -129,6 +135,11 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
 
     @Override
     public final void start(@NonNull Context context, @NonNull AriaDirectory dir, @NonNull StartListener listener) {
+        if (closed) {
+            listener.onFailed(new IllegalStateException("Closed."));
+            return;
+        }
+
         DocumentFile ddDir;
         try {
             ddDir = getAndValidateDownloadPath(context);
@@ -167,6 +178,8 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
 
     @Override
     public final void resume(@NonNull DdDownload wrap) {
+        if (closed) return;
+
         DownloadRunnable download = unwrap(wrap);
         if (download == null) return;
 
@@ -179,12 +192,16 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
 
     @Override
     public final void pause(@NonNull DdDownload wrap) {
+        if (closed) return;
+
         DownloadRunnable download = unwrap(wrap);
         if (download != null) download.pause();
     }
 
     @Override
     public final void restart(@NonNull DdDownload oldWrap, @NonNull StartListener listener) {
+        if (closed) return;
+
         DownloadRunnable download = unwrap(oldWrap);
         if (download == null) return;
 
@@ -206,12 +223,16 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
 
     @Override
     public final void remove(@NonNull DdDownload wrap) {
+        if (closed) return;
+
         DownloadRunnable download = unwrap(wrap);
         if (download != null) download.remove();
     }
 
     @Override
     public final void reloadListener(@NonNull Listener listener) {
+        if (closed) return;
+
         List<DdDownload> wrapped = new ArrayList<>(downloads.size());
         for (DownloadRunnable download : new ArrayList<>(downloads.values()))
             wrapped.add(DdDownload.wrap(download));
@@ -221,18 +242,24 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
 
     @Override
     public final void close() {
-        for (DownloadRunnable download : downloads.values())
-            download.remove();
+        closed = true;
+
+        for (DownloadRunnable download : downloads.values()) download.pause();
+        downloads.clear();
 
         executorService.shutdownNow();
     }
 
     private void callUpdated(@NonNull DownloadRunnable download) {
+        if (closed) return;
+
         DdDownload wrap = DdDownload.wrap(download);
         forEachListener(listener -> listener.onUpdated(wrap));
     }
 
     private void callRemoved(@NonNull DownloadRunnable download) {
+        if (closed) return;
+
         DdDownload wrap = DdDownload.wrap(download);
         forEachListener(listener -> listener.onRemoved(wrap));
     }
