@@ -359,7 +359,7 @@
     <string name="verify">验证</string>
     <string name="sftpDdFirstConnection">如果这是您第一次配置此项或您遇到问题，请按下面的按钮初始化连接。</string>
     <string name="connectionVerified">连接验证成功！</string>
-    <string name="failedVerifyingConnection">验证失败连接： %s</string>
+    <string name="failedVerifyingConnection">验证连接失败： %s</string>
     <string name="sftpPrompt">SFTP提示符</string>
     <string name="anonymous">匿名用户</string>
     <string name="domainLabel">域</string>
