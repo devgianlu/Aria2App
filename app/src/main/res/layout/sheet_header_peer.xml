@@ -12,6 +12,7 @@
         android:layout_height="32dp"
         android:src="@drawable/baseline_clear_24"
         android:tint="@color/white"
+        android:background="?selectableItemBackgroundBorderless"
         android:visibility="gone" />
 
     <LinearLayout

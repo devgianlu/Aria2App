@@ -10,6 +10,7 @@
         android:id="@+id/sheetToolbar_close"
         android:layout_width="32dp"
         android:layout_height="32dp"
+        android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/baseline_clear_24"
         android:tint="@color/white"
         android:visibility="gone" />
@@ -32,8 +33,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="-8dp"
-            android:textColor="@color/white"
             android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/white"
             android:textSize="30sp" />
 
     </LinearLayout>
