@@ -38,7 +38,7 @@ public final class DdDatabase extends SQLiteOpenHelper {
             ContentValues values = new ContentValues(2);
             values.put("type", type.name());
             values.put("remotePath", remotePath);
-            long id = db.insert("downloads", null, values);
+            long id = db.insertWithOnConflict("downloads", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             if (id != -1) {
                 db.setTransactionSuccessful();
                 return new Download((int) id, remotePath);
