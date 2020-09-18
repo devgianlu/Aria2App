@@ -70,7 +70,7 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
             public void onResult(@NonNull OptionsMap result) {
                 for (DdDatabase.Download download : db.getDownloads(getDownloaderType())) {
                     try {
-                        startInternal(result, ddDir, new DbRemoteFile(download.path), !autoStart);
+                        startInternal(result, ddDir, download, !autoStart);
                     } catch (PreparationException ex) {
                         Log.e(TAG, "Failed preparing stored download.", ex);
                     }
@@ -82,6 +82,19 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
                 Log.e(TAG, "Failed getting global options when loading stored downloads.", ex);
             }
         });
+    }
+
+    private void startInternal(OptionsMap global, DocumentFile ddDir, DdDatabase.Download download, boolean paused) throws PreparationException {
+        DocumentFile dest = createDestFile(global, ddDir, download.file);
+
+        DownloadRunnable runnable = makeRunnableFor(download.id, dest, global, download.file);
+        if (paused) runnable.pause();
+
+        downloads.put(download.id, runnable);
+        executorService.execute(runnable);
+
+        DdDownload wrap = DdDownload.wrap(runnable);
+        forEachListener(l -> l.onAdded(wrap));
     }
 
     @Override
@@ -118,19 +131,10 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
     }
 
     private void startInternal(OptionsMap global, DocumentFile ddDir, @NotNull RemoteFile file, boolean paused) throws PreparationException {
-        DocumentFile dest = createDestFile(global, ddDir, file);
+        DdDatabase.Download download = db.addDownload(getDownloaderType(), file.getAbsolutePath());
+        if (download == null) throw new PreparationException("Failed adding download to database.");
 
-        int id = db.addDownload(getDownloaderType(), file.getAbsolutePath());
-        if (id == -1) throw new PreparationException("Failed adding download to database.");
-
-        DownloadRunnable runnable = makeRunnableFor(id, dest, global, file);
-        if (paused) runnable.pause();
-
-        downloads.put(id, runnable);
-        executorService.execute(runnable);
-
-        DdDownload wrap = DdDownload.wrap(runnable);
-        forEachListener(l -> l.onAdded(wrap));
+        startInternal(global, ddDir, download, paused);
     }
 
     @Override
@@ -202,17 +206,17 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
     public final void restart(@NonNull DdDownload oldWrap, @NonNull StartListener listener) {
         if (closed) return;
 
-        DownloadRunnable download = unwrap(oldWrap);
-        if (download == null) return;
+        DownloadRunnable oldRunnable = unwrap(oldWrap);
+        if (oldRunnable == null) return;
 
-        int id = db.addDownload(getDownloaderType(), download.remotePath);
-        if (id == -1) {
+        DdDatabase.Download download = db.addDownload(getDownloaderType(), oldRunnable.remotePath);
+        if (download == null) {
             callFailed(listener, new PreparationException("Failed adding download to database."));
             return;
         }
 
-        DownloadRunnable runnable = makeRunnableFor(id, download);
-        downloads.put(id, runnable);
+        DownloadRunnable runnable = makeRunnableFor(download.id, oldRunnable);
+        downloads.put(download.id, runnable);
         executorService.execute(runnable);
 
         handler.post(listener::onSuccess);

@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.gianlu.aria2app.downloader.AbsStreamDownloadHelper.DbRemoteFile;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -28,7 +30,8 @@ public final class DdDatabase extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
 
-    public int addDownload(@NonNull Type type, @NonNull String remotePath) {
+    @Nullable
+    public Download addDownload(@NonNull Type type, @NonNull String remotePath) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
         try {
@@ -36,9 +39,12 @@ public final class DdDatabase extends SQLiteOpenHelper {
             values.put("type", type.name());
             values.put("remotePath", remotePath);
             long id = db.insert("downloads", null, values);
-            if (id != -1) db.setTransactionSuccessful();
+            if (id != -1) {
+                db.setTransactionSuccessful();
+                return new Download((int) id, remotePath);
+            }
 
-            return (int) id;
+            return null;
         } finally {
             db.endTransaction();
         }
@@ -73,10 +79,17 @@ public final class DdDatabase extends SQLiteOpenHelper {
     }
 
     public static class Download {
-        public final String path;
+        public final DbRemoteFile file;
+        public final int id;
 
         Download(@NonNull Cursor cursor) {
-            path = cursor.getString(cursor.getColumnIndex("remotePath"));
+            file = new DbRemoteFile(cursor.getString(cursor.getColumnIndex("remotePath")));
+            id = cursor.getInt(cursor.getColumnIndex("id"));
+        }
+
+        Download(int id, String path) {
+            this.file = new DbRemoteFile(path);
+            this.id = id;
         }
     }
 }
