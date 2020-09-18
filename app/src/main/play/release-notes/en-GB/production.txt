@@ -1,4 +1,3 @@
-### Added
-- Copy magnet link for BitTorrent download
-- Added password toggles
-- Added support for FTP, SFTP and Samba in DirectDownload
+### Fixed
+- Fixed issue with errored DirectDownloads
+- Fixed minor layout issues
