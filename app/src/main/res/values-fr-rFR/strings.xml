@@ -360,12 +360,12 @@
     <string name="sftpDdFirstConnection">Si c\'est la première fois que vous configurez ceci ou que vous rencontrez des problèmes, veuillez appuyer sur le bouton ci-dessous pour initialiser la connexion.</string>
     <string name="connectionVerified">Connexion vérifiée avec succès !</string>
     <string name="failedVerifyingConnection">Échec de la vérification de la connexion : %s</string>
-    <string name="sftpPrompt">SFTP prompt</string>
+    <string name="sftpPrompt">Demande SFTP</string>
     <string name="anonymous">Anonyme</string>
     <string name="domainLabel">Domaine</string>
     <string name="shareName">Nom de partage</string>
     <string name="invalidShareName">Nom de partage invalide !</string>
-    <string name="invalidPath">Chemin invalide !</string>
+    <string name="invalidPath">Chemin d\'accès invalide !</string>
     <string name="pathLabel">Chemin d\'accès</string>
-    <string name="sambaPathHelp">This is the relative path from the share to the downloads folder of aria2.</string>
+    <string name="sambaPathHelp">Il s\'agit du chemin relatif depuis le dossier du partage vers le dossier de téléchargement de aria2.</string>
 </resources>
