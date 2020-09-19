@@ -70,8 +70,8 @@
     <string name="comment"><![CDATA[<b>Commentaire :</b>]]> %s</string>
     <string name="index"><![CDATA[<b>Index :</b>]]> %d</string>
     <string name="path"><![CDATA[<b>Chemin :</b>]]> %s</string>
-    <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
-    <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
+    <string name="amChoking"><![CDATA[<b>Choke local :</b>]]> %s</string>
+    <string name="peerChoking"><![CDATA[<b>Choke des pairs :</b>]]> %s</string>
     <string name="notificationComplete">Téléchargement terminé</string>
     <string name="notificationStarted">Téléchargement démarré</string>
     <string name="notificationStopped">Téléchargement arrêté</string>
