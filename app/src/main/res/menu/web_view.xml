@@ -9,6 +9,12 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/webView_download"
+        android:icon="@drawable/baseline_download_24"
+        android:title="@string/download"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/webView_toggleDesktop"
         android:checkable="true"
         android:title="@string/desktopMode" />

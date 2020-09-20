@@ -36,6 +36,8 @@ import com.gianlu.commonutils.dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -155,13 +157,13 @@ public class WebViewActivity extends ActivityWithDialog {
                 for (InterceptedRequest req : interceptedRequests) {
                     if (req.matches(url)) {
                         req.contentDisposition(contentDisposition);
-                        interceptedDownload(req);
+                        interceptedDownload(req, null);
                         return;
                     }
                 }
             }
 
-            interceptedDownload(InterceptedRequest.from(url, userAgent, contentDisposition));
+            interceptedDownload(InterceptedRequest.from(url, userAgent, contentDisposition), null);
         });
 
         web.setWebViewClient(new WebViewClient() {
@@ -240,22 +242,36 @@ public class WebViewActivity extends ActivityWithDialog {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.webView_goTo) {
-            showGoToDialog(false);
-            return true;
-        } else if (item.getItemId() == android.R.id.home) {
-            customBackPressed();
-            return true;
-        } else if (item.getItemId() == R.id.webView_toggleDesktop) {
-            toggleDesktopMode(!item.isChecked());
-            web.reload();
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.webView_goTo:
+                showGoToDialog(false);
+                return true;
+            case R.id.webView_download:
+                int pos;
+                InterceptedRequest req;
+                synchronized (interceptedRequests) {
+                    if (interceptedRequests.isEmpty())
+                        return false;
 
-            item.setChecked(!item.isChecked());
-            return true;
+                    pos = interceptedRequests.size() - 1;
+                    req = interceptedRequests.get(pos);
+                }
+
+                interceptedDownload(req, pos);
+                return true;
+            case android.R.id.home:
+                customBackPressed();
+                return true;
+            case R.id.webView_toggleDesktop:
+                toggleDesktopMode(!item.isChecked());
+                web.reload();
+
+                item.setChecked(!item.isChecked());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void showGoToDialog(boolean compulsory) {
@@ -289,12 +305,24 @@ public class WebViewActivity extends ActivityWithDialog {
         showDialog(builder);
     }
 
-    private void interceptedDownload(@NonNull InterceptedRequest req) {
+    private void interceptedDownload(@NonNull InterceptedRequest req, @Nullable Integer pos) {
         AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.isThisToDownload)
                 .setMessage(getString(R.string.isThisToDownload_message, req.url()))
                 .setPositiveButton(android.R.string.yes, (dialog, which) -> launchAddUri(req))
                 .setNegativeButton(android.R.string.no, null);
+
+        if (pos != null && pos > 0) {
+            builder.setNeutralButton(R.string.previous, (dialog, which) -> {
+                int prev = pos - 1;
+                InterceptedRequest prevReq;
+                synchronized (interceptedRequests) {
+                    prevReq = interceptedRequests.get(pos);
+                }
+
+                interceptedDownload(prevReq, prev);
+            });
+        }
 
         showDialog(builder);
         AnalyticsApplication.sendAnalytics(Utils.ACTION_INTERCEPTED_WEBVIEW);
