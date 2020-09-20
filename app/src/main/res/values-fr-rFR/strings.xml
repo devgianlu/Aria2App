@@ -368,4 +368,5 @@
     <string name="invalidPath">Chemin d\'accès invalide !</string>
     <string name="pathLabel">Chemin d\'accès</string>
     <string name="sambaPathHelp">Il s\'agit du chemin relatif depuis le dossier du partage vers le dossier de téléchargement de aria2.</string>
+    <string name="previous">Previous</string>
 </resources>
