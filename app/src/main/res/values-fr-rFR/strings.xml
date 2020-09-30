@@ -161,7 +161,7 @@
     <string name="failedLoading">Chargement échoué !</string>
     <string name="currentUri"><![CDATA[<b>URL actuelle :</b>]]> %s</string>
     <string name="uri"><![CDATA[<b>URL :</b>]]> %s</string>
-    <string name="selectForDownload">Sélectionner un fichier à télécharger</string>
+    <string name="selectForDownload">Sélectionner comme fichier à télécharger</string>
     <string name="shareRatio"><![CDATA[<b>Ratio de partage :</b>]]> %s</string>
     <string name="currentValue"><![CDATA[<b>Valeur actuelle :</b>]]> %s</string>
     <string name="newValue">Nouvelle valeur :</string>
