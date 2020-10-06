@@ -368,4 +368,5 @@
     <string name="invalidPath">无效路径！</string>
     <string name="pathLabel">路径</string>
     <string name="sambaPathHelp">这是从共享到aria2下载文件夹的相对路径。</string>
+    <string name="previous">上一个</string>
 </resources>
