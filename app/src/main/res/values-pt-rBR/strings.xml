@@ -368,4 +368,5 @@
     <string name="invalidPath">Caminho inválido!</string>
     <string name="pathLabel">Caminho</string>
     <string name="sambaPathHelp">Este é o caminho relativo do compartilhamento para a pasta de downloads do aria2.</string>
+    <string name="previous">Previous</string>
 </resources>
