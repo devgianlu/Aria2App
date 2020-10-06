@@ -72,8 +72,8 @@ public class TrackersListFetch {
                     Set<String> trackers = new HashSet<>();
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(body.byteStream()))) {
                         String line;
-                        while ((line = reader.readLine()) != null && !line.isEmpty())
-                            trackers.add(line);
+                        while ((line = reader.readLine()) != null)
+                            if (!line.isEmpty()) trackers.add(line);
                     }
 
                     Prefs.putLong(PK.TRACKERS_LIST_CACHE_AGE, System.currentTimeMillis());
