@@ -214,7 +214,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         else return profile;
     }
 
-    private UserProfile getProfile(ConnectivityManager connManager, WifiManager wifiManager) {
+    private UserProfile getProfile(@NotNull ConnectivityManager connManager, WifiManager wifiManager) {
         NetworkInfo activeNet = connManager.getActiveNetworkInfo();
         if (activeNet == null) return getDefaultProfile();
         return getProfile(activeNet.getType(), wifiManager);
@@ -449,7 +449,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             if (smb != null) type = Type.SMB;
             else if (ftp != null) type = Type.FTP;
             else if (sftp != null) type = Type.SFTP;
-            else type = Type.SMB;
+            else type = Type.WEB;
         }
 
         public DirectDownload(@NonNull JSONObject obj) throws JSONException {
