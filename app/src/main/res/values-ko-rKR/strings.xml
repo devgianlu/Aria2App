@@ -5,10 +5,10 @@
     <string name="tutorial_evenMoreDetails">모든 정보를 보려면 더보기 버튼을 탭하기</string>
     <string name="tutorial_search">Filter downloads by name or by GID</string>
     <string name="tutorial_filters">Filter downloads by status</string>
-    <string name="tutorial_fileDetails">Tap on a file to reveal details or to download it</string>
-    <string name="tutorial_folderDetails">Tap and hold on a folder to reveal details or to download it</string>
-    <string name="tutorial_serverDetails">서버에 대한 자세한 정보를 보려면 탭하십시오</string>
-    <string name="tutorial_peerDetails">피어에 대한 자세한 정보를 보려면 탭하십시오</string>
+    <string name="tutorial_fileDetails">파일의 자세한 정보를 보거나 다운로드하려면 탭하기</string>
+    <string name="tutorial_folderDetails">폴더의 자세한 정보를 보거나 다운로드하려면 탭하고 유지하기</string>
+    <string name="tutorial_serverDetails">서버에 대한 자세한 정보를 보려면 탭하기</string>
+    <string name="tutorial_peerDetails">피어에 대한 자세한 정보를 보려면 탭하기</string>
     <!-- Prefs -->
     <string name="prefs_hideMetadata">링크된 메타 데이터 숨기기</string>
     <string name="prefs_hideMetadata_summary">다른 다운로드 시작한 메타 데이터는 숨기기</string>
