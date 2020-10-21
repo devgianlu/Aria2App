@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
-    <string name="tutorial_moreDetails">Tap on the card to reveal more details</string>
-    <string name="tutorial_evenMoreDetails">Tap on the more button to show all the details</string>
+    <string name="tutorial_moreDetails">더 자세한 정보를 보려면 카드를 탭하기</string>
+    <string name="tutorial_evenMoreDetails">모든 정보를 보려면 더보기 버튼을 탭하기</string>
     <string name="tutorial_search">Filter downloads by name or by GID</string>
     <string name="tutorial_filters">Filter downloads by status</string>
     <string name="tutorial_fileDetails">Tap on a file to reveal details or to download it</string>
@@ -254,7 +254,7 @@ https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
     <string name="searchEngines">검색 엔진</string>
     <string name="noEnginesSelected">Select at least one search engine!</string>
     <string name="pending">대기 중</string>
-    <string name="noFiles">There are no files to display. This might occur when the download is added with \"pause=true\"</string>
+    <string name="noFiles">표시할 파일이 없습니다. 이는 \"pause=true\" 옵션으로 다운로드를 추가할 때 발생할 수 있습니다.</string>
     <string name="failed">실패함</string>
     <string name="running">실행 중</string>
     <string name="paused">중지됨</string>
@@ -295,20 +295,20 @@ https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
     <string name="noActivity">활동 없음</string>
     <string name="multipleOptions_help">This option can be specified multiple times on the command line. The equivalent here is to have them on different lines.</string>
     <string name="couldStreamVideo">동영상 스트림</string>
-    <string name="couldStreamVideo_message">One of your application could stream this video. Would you like to watch it now or just download it?</string>
+    <string name="couldStreamVideo_message">하나 이상의 애플리케이션이 이 비디오를 스트림할 수 있습니다. 즉시 시청하실겁니까 아니면 다운로드하시겠습니까?</string>
     <string name="stream">스트림</string>
     <string name="select">선택</string>
     <string name="deselect">선택 취소</string>
     <string name="selectAll">모두 선택</string>
-    <string name="secondSpace_selectDownload">Tap more on a download to bring up additional information.</string>
-    <string name="writePermissionDenied">You denied the write permission!</string>
-    <string name="readPermissionDenied">You denied the read permission!</string>
+    <string name="secondSpace_selectDownload">다운로드의 더보기를 탭하면 추가적인 정보를 얻을 수 있습니다.</string>
+    <string name="writePermissionDenied">당신은 쓰기 권한을 거부했습니다.</string>
+    <string name="readPermissionDenied">당신은 읽기 권한을 거부했습니다.</string>
     <string name="batchAdd">일괄 추가</string>
     <string name="torrents">토렌트</string>
     <string name="metalinks">메타링크들</string>
     <string name="addSingle">단일 추가</string>
     <string name="noBatchAdd">There are no batch operations. Add some with the buttons below.</string>
-    <string name="downloadsAddedBatch">All downloads added.</string>
+    <string name="downloadsAddedBatch">모든 다운로드들이 추가되었습니다.</string>
     <string name="failedAddingDownloads">Failed adding some downloads.</string>
     <string name="torrentFiles">토렌트 파일</string>
     <string name="metalinkFiles">Metalink files</string>
@@ -327,15 +327,15 @@ https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
     <string name="webView">WebView</string>
     <string name="visit">방문하기</string>
     <string name="goTo">이동</string>
-    <string name="prefs_addBestTrackers">Add best trackers to new downloads</string>
+    <string name="prefs_addBestTrackers">새 다운로드에 최고의 트래커 추가하기</string>
     <string name="prefs_addBestTrackers_summary">Add best trackers from XIU2/TrackersListCollection to new downloads automatically</string>
     <string name="addBestTrackers">가장 좋은 트래커를 추가하기</string>
     <string name="health"><![CDATA[<b>건강:</b>]]> %.2f%% (%d/%d)</string>
     <string name="inAppDownloader_serviceStarted">서비스는 작동중입니다</string>
     <string name="inAppDownloader_serviceNotStarted">서비스가 시작하지 않았습니다.</string>
-    <string name="inAppDownloader_serviceNotConfigured">Service hasn\'t been configured.</string>
-    <string name="inAppDownloader_configuration">In-App downloader configuration</string>
-    <string name="oldAria2AppNoInApp">This feature is not supported anymore</string>
+    <string name="inAppDownloader_serviceNotConfigured">서비스가 구성되지 않았습니다.</string>
+    <string name="inAppDownloader_configuration">인-앱 다운로더 설정</string>
+    <string name="oldAria2AppNoInApp">이 기능은 더 이상 제공되지 않습니다.</string>
     <string name="oldAria2AppNoInApp_message">A recent update made possible to have all the functionalities of Aria2Android from Aria2App itself. Update the latter to access all those features.</string>
     <string name="cannotStartInAppWithoutWritePermission">The Aria2App in-app downloader needs to access the device storage to save files.</string>
     <string name="addWebViewShortcutToHomePage">Add WebView shortcut to homepage</string>
