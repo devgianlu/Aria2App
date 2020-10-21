@@ -21,7 +21,7 @@
     <string name="prefs_versionCheck">시작 시 aria2의 버전을 확인하기</string>
     <string name="prefs_versionCheck_summary">aria2의 최신 버전의 운행 확인하기</string>
     <string name="prefs_ddDownloadPath">다운로드 경로</string>
-    <string name="prefs_ddDownloadPath_summary">모든 파일을 여기에서 다운로드 됩니다</string>
+    <string name="prefs_ddDownloadPath_summary">모든 파일이 이곳에서 다운로드 됩니다</string>
     <string name="prefs_ddMaxSimultaneousDownloads">최대 동시 다운로드</string>
     <string name="prefs_ddMaxSimultaneousDownloads_summary">최대 동시 다운로드 개수</string>
     <string name="prefs_ddResume">다운로드 계속</string>
@@ -132,7 +132,7 @@
     <string name="readExternalStorageRequest_base64Message">In order to load the torrent/metalink file Aria2App needs to read from your external storage.</string>
     <string name="search">검색</string>
     <string name="addUri">URI 추가</string>
-    <string name="directDownload">디렉트 다운로드</string>
+    <string name="directDownload">즉시 다운로드</string>
     <string name="quickGlobalOptions">빠른 글로벌 옵션</string>
     <string name="connecting">연결 중…</string>
     <string name="completed">완료됨</string>
@@ -341,8 +341,8 @@
     <string name="setAsDefault">기본값으로 설정</string>
     <string name="webViewUrlHint">방문할 URL을 입력하세요…</string>
     <string name="startPaused">추가때 일시 중지</string>
-    <string name="noDownloads_addOne">There are no downloads! You can add one by tapping the plus icon in the bottom right corner.</string>
-    <string name="noDownloads_changeFilters">There are no downloads to display! Try changing your filters.</string>
+    <string name="noDownloads_addOne">다운로드 중인 항목이 없습니다! 오른쪽 아래의 + 아이콘을 클릭하여 추가할 수 있습니다.</string>
+    <string name="noDownloads_changeFilters">표시할 다운로드 항목이 없습니다! 필터를 변경해보세요.</string>
     <string name="filtersShowingOnly">%s (%d)만 보기</string>
     <string name="prefs_skipWebViewDialog">Skip WebView dialog</string>
     <string name="prefs_skipWebViewDialog_summary">Whether to skip the WebView dialog when sharing a link</string>
