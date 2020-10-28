@@ -1,1 +1,1 @@
-An advanced download manager and aria2 client for your pocket.
+یک مدیر بارگیری پیشرفته و کارخواه aria2 در جیب شما.
