@@ -44,7 +44,7 @@
     <string name="failedExportingProfiles">Failed exporting profiles file!</string>
     <string name="profilesImportedSuccessfully">Imported profiles successfully.</string>
     <string name="profilesExportedSuccessfully">Exported profiles successfully to %s.</string>
-    <string name="userPasswd">User - passwd</string>
+    <string name="userPasswd">کاربر - گذرواژه</string>
     <!-- General -->
     <string name="downloadStatus_waiting">Waiting in queue</string>
     <string name="downloadStatus_error">خطا</string>
