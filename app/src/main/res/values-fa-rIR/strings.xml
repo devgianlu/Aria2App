@@ -46,7 +46,7 @@
     <string name="profilesExportedSuccessfully">Exported profiles successfully to %s.</string>
     <string name="userPasswd">کاربر - گذرواژه</string>
     <!-- General -->
-    <string name="downloadStatus_waiting">Waiting in queue</string>
+    <string name="downloadStatus_waiting">منتظر در صف بارگیری</string>
     <string name="downloadStatus_error">خطا</string>
     <string name="downloadStatus_paused">متوقف شده</string>
     <string name="downloadStatus_unknown">ناشناخته</string>
@@ -69,7 +69,7 @@
     <string name="mode"><![CDATA[<b>Mode:</b>]]> %s</string>
     <string name="comment"><![CDATA[<b>Comment:</b>]]> %s</string>
     <string name="index"><![CDATA[<b>Index:</b>]]> %d</string>
-    <string name="path"><![CDATA[<b>Path:</b>]]> %s</string>
+    <string name="path"><![CDATA[<b>مسیر:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
     <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
     <string name="notificationComplete">بارگیری کامل شد</string>
@@ -103,10 +103,10 @@
     <string name="apply">اعمال</string>
     <string name="uris">Uris</string>
     <string name="save">Save</string>
-    <string name="support">Support</string>
+    <string name="support">پشتیبانی</string>
     <string name="add">افزودن</string>
     <string name="options">تنظیمات</string>
-    <string name="position">Queue position:</string>
+    <string name="position">مکان در صف:</string>
     <string name="downloadSpeed">سرعت بارگیری</string>
     <string name="uploadSpeed">سرعت بارگذاری</string>
     <string name="none">هیچ کدام</string>
