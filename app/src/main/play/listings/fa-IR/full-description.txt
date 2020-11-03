@@ -1,11 +1,11 @@
-Aria2App is your portable server-grade download manager backed by aria2 directly on your device. You can also manage aria2 instances running on external devices thanks to the JSON-RPC interface.
+Aria2App مدیر بارگیری درجه-سرور قابل حمل شماست که توسط aria2 مستقیماً بر روی دستگاه شما پشتیبانی می‌شود. به لطف رابط JSON-RPC می توانید نمونه‌های aria2 که در دستگاه های بیرونی در حال اجرا هستند را نیز مدیریت کنید.
 
 برخی از ویژگی‌ها:
-- Handle more servers simultaneously
-- Add HTTP(s), (s)FTP, BitTorrent, Metalink downloads
-- Add Torrents with the integrated search engine
-- Start downloads by clicking on links on the browser
-- Handle downloads (pause, resume, stop)
+- مدیریت همزمان سرورهای بیشتر
+- افزودن بارگیری‌های HTTP(s), (s)FTP, BitTorrent, Metalink
+- افزودن تورنت‌ها با موتور جستجوی یکپارچه
+- آغاز بارگیری‌ها با کلیک روی پیوندها در مرورگر
+- مدیریت بارگیری‌ها (مکث، ادامه، توقف)
 - Find basic and in-depth information
 - View statistics about peers and server of your downloads
 - Display the information about every file in download
