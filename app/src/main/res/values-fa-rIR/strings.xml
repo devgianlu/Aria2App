@@ -13,7 +13,7 @@
     <string name="prefs_hideMetadata">Hide linked metadata</string>
     <string name="prefs_hideMetadata_summary">Hide metadata that started another download.</string>
     <string name="prefs_updateRate">نرخ به‌روزرسانی</string>
-    <string name="prefs_updateRate_summary">UI update rate in seconds.</string>
+    <string name="prefs_updateRate_summary">نرخ به‌روزرسانی رابط کاربری به ثانیه.</string>
     <string name="prefs_networkTimeout">Network timeout</string>
     <string name="prefs_networkTimeout_summary">If your network has a very high latency, increase this value (in seconds) to avoid errors.</string>
     <string name="prefs_downloadDisplayInfo">Download display info</string>
@@ -26,7 +26,7 @@
     <string name="prefs_ddMaxSimultaneousDownloads_summary">Maximum number of downloads running at the same time.</string>
     <string name="prefs_ddResume">ادامه بارگیری‌ها</string>
     <string name="prefs_ddResume_summary">Resume paused downloads at startup</string>
-    <string name="prefs_enableNotifications">Enable notification service</string>
+    <string name="prefs_enableNotifications">فعال‌کردن خدمات اعلان</string>
     <string name="prefs_enableNotifications_summary">You\'ll receive notifications for your selected profiles</string>
     <string name="prefs_notificationType">انواع اعلان‌</string>
     <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
@@ -37,13 +37,13 @@
     <string name="locationAccess_message">The application needs to have the location permission in order to read the WiFi SSID, no other operations will be performed.</string>
     <string name="profiles">نمایه‌ها</string>
     <string name="importProfiles">وارد کردن نمایه‌ها</string>
-    <string name="importProfiles_summary">Import profiles from a previously exported file.</string>
-    <string name="exportProfiles">Export profiles</string>
-    <string name="exportProfiles_summary">Export all your profiles to a single file.</string>
+    <string name="importProfiles_summary">وارد کردن نمایه‌ها از یک پرونده قبلی.</string>
+    <string name="exportProfiles">برون‌بری نمایه‌ها</string>
+    <string name="exportProfiles_summary">برون‌بردن همه نمایه‌ها به یک پرونده.</string>
     <string name="failedImportingProfiles">Failed importing profiles file!</string>
-    <string name="failedExportingProfiles">Failed exporting profiles file!</string>
+    <string name="failedExportingProfiles">برون‌بری نمایه‌ها شکست خورد!</string>
     <string name="profilesImportedSuccessfully">Imported profiles successfully.</string>
-    <string name="profilesExportedSuccessfully">Exported profiles successfully to %s.</string>
+    <string name="profilesExportedSuccessfully">نمایه‌ها با موفقیت به %s برون برده شده.</string>
     <string name="userPasswd">کاربر - گذرواژه</string>
     <!-- General -->
     <string name="downloadStatus_waiting">منتظر در صف بارگیری</string>
@@ -286,10 +286,10 @@
     <string name="notificationException">Notification service for %s failed!</string>
     <string name="notificationUnsupportedConnMethod">Unsupported connection method for %s!</string>
     <string name="notificationUnsupportedConnMethod_details">Cannot start notification service for this profile. Please switch to WebSockets if you want to enable notifications.</string>
-    <string name="export">استخراج</string>
-    <string name="exportOptionsGrantWrite">In order to export the options you must grant the write permission and retry.</string>
-    <string name="failedExportingOptions">Failed exporting the options!</string>
-    <string name="exportedOptions">Options exported successfully to %s</string>
+    <string name="export">برون‌بری</string>
+    <string name="exportOptionsGrantWrite">برای برون بردن تنظیمات باید مجوز نوشتن داده شود.</string>
+    <string name="failedExportingOptions">برون‌بری تنظیمات شکست خورد!</string>
+    <string name="exportedOptions">تنظیمات با موفقیت به %s برون برده شد</string>
     <string name="noActivity">No activity</string>
     <string name="multipleOptions_help">This option can be specified multiple times on the command line. The equivalent here is to have them on different lines.</string>
     <string name="couldStreamVideo">Stream video</string>
