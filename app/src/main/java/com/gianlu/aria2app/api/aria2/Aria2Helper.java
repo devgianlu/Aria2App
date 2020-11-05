@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
@@ -17,6 +16,7 @@ import com.gianlu.aria2app.api.ClientInterface;
 import com.gianlu.aria2app.api.NetInstanceHolder;
 import com.gianlu.aria2app.profiles.ProfilesManager;
 import com.gianlu.aria2lib.Aria2PK;
+import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.preferences.json.JsonStoring;
 import com.gianlu.commonutils.ui.Toaster;
@@ -125,9 +125,9 @@ public class Aria2Helper {
     public static class DownloadActionClick implements View.OnClickListener, AbstractClient.OnSuccess, AbstractClient.OnResult<Download.RemoveResult> {
         private final DownloadWithUpdate download;
         private final WhatAction what;
-        private final Listener listener;
+        private final DialogUtils.ShowStuffInterface listener;
 
-        public DownloadActionClick(DownloadWithUpdate download, WhatAction what, Listener listener) {
+        public DownloadActionClick(DownloadWithUpdate download, WhatAction what, DialogUtils.ShowStuffInterface listener) {
             this.download = download;
             this.what = what;
             this.listener = listener;
@@ -225,12 +225,6 @@ public class Aria2Helper {
         public void onException(@NonNull Exception ex) {
             Log.e(TAG, "Failed performing action.", ex);
             listener.showToast(Toaster.build().message(R.string.failedAction));
-        }
-
-        public interface Listener {
-            void showDialog(@NonNull AlertDialog.Builder builder);
-
-            void showToast(@NonNull Toaster toaster);
         }
     }
 

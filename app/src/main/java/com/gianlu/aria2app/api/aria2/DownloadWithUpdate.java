@@ -4,6 +4,7 @@ import android.os.Build;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 
 import com.gianlu.aria2app.R;
@@ -56,15 +57,15 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
         }
     }
 
-    @Override
-    @NonNull
-    public Status getFilterable() {
-        return update().status;
-    }
-
     @NonNull
     public BigUpdate bigUpdate() {
         return (BigUpdate) update;
+    }
+
+    @Nullable
+    @Override
+    public Status[] getMatchingFilters() {
+        return new Status[]{update().status};
     }
 
     private abstract static class UpdateComparator implements Comparator<DownloadWithUpdate> {

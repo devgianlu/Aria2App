@@ -43,7 +43,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Locale;
 
-public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements OnBackPressed, Aria2Helper.DownloadActionClick.Listener {
+public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements OnBackPressed {
     private static final String TAG = InfoFragment.class.getSimpleName();
     private final CountryFlags flags = CountryFlags.get();
     private final GeoIP geoIP = GeoIP.get();

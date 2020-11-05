@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import com.gianlu.aria2app.api.PeerIdParser;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.adapters.Filterable;
-import com.gianlu.commonutils.adapters.NotFilterable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +14,7 @@ import org.json.JSONObject;
 import java.util.Comparator;
 import java.util.Objects;
 
-public class Peer implements Filterable<NotFilterable> {
+public class Peer implements Filterable<Void> {
     private static final String TAG = Peer.class.getSimpleName();
     public final boolean amChoking;
     public final boolean peerChoking;
@@ -57,9 +56,10 @@ public class Peer implements Filterable<NotFilterable> {
         return port == peer.port && Objects.equals(ip, peer.ip);
     }
 
+    @Nullable
     @Override
-    public NotFilterable getFilterable() {
-        return new NotFilterable();
+    public Void[] getMatchingFilters() {
+        return null;
     }
 
     public static class DownloadSpeedComparator implements Comparator<Peer> {

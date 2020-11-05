@@ -11,13 +11,12 @@ import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.CountryFlags;
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.api.PeerIdParser;
 import com.gianlu.aria2app.api.aria2.Peer;
 import com.gianlu.aria2app.api.geolocalization.GeoIP;
 import com.gianlu.aria2app.api.geolocalization.IPDetails;
-import com.gianlu.aria2app.api.PeerIdParser;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.adapters.NotFilterable;
 import com.gianlu.commonutils.adapters.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.misc.SuperTextView;
 
@@ -26,7 +25,7 @@ import java.util.Comparator;
 import java.util.Locale;
 
 @UiThread
-public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> {
+public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, Void> {
     private final Listener listener;
     private final LayoutInflater inflater;
     private final GeoIP geoIP;

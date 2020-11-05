@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,9 +32,9 @@ import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.services.NotificationService;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.adapters.OrderedRecyclerViewAdapter;
+import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.misc.SuperTextView;
 import com.gianlu.commonutils.preferences.Prefs;
-import com.gianlu.commonutils.ui.Toaster;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -50,7 +49,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 
-public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCardsAdapter.ViewHolder, DownloadWithUpdate, DownloadCardsAdapter.SortBy, Download.Status> implements ServiceConnection, Aria2Helper.DownloadActionClick.Listener {
+public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCardsAdapter.ViewHolder, DownloadWithUpdate, DownloadCardsAdapter.SortBy, Download.Status> implements ServiceConnection {
     private final Context context;
     private final Listener listener;
     private final LayoutInflater inflater;
@@ -136,13 +135,13 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             if (listener != null) listener.onMoreClick(item);
         });
 
-        holder.pause.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.PAUSE, this));
-        holder.restart.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.RESTART, this));
-        holder.start.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.RESUME, this));
-        holder.stop.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.STOP, this));
-        holder.remove.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.REMOVE, this));
-        holder.moveUp.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.MOVE_UP, this));
-        holder.moveDown.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.MOVE_DOWN, this));
+        holder.pause.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.PAUSE, listener));
+        holder.restart.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.RESTART, listener));
+        holder.start.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.RESUME, listener));
+        holder.stop.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.STOP, listener));
+        holder.remove.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.REMOVE, listener));
+        holder.moveUp.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.MOVE_UP, listener));
+        holder.moveDown.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.MOVE_DOWN, listener));
         holder.customInfo.setDisplayInfo(CustomDownloadInfo.Info.toArray(Prefs.getSet(PK.A2_CUSTOM_INFO, new HashSet<>()), update.isTorrent()));
         holder.update(item);
 
@@ -183,8 +182,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     protected boolean matchQuery(@NonNull DownloadWithUpdate item, @Nullable String query) {
         return (query == null
                 || item.update().getName().toLowerCase().contains(query.toLowerCase())
-                || item.gid.toLowerCase().contains(query.toLowerCase()))
-                && !filters.contains(item.getFilterable());
+                || item.gid.toLowerCase().contains(query.toLowerCase()));
     }
 
     @Override
@@ -243,16 +241,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         if (broadcastManager != null) broadcastManager.unregisterReceiver(receiver);
     }
 
-    @Override
-    public void showDialog(@NonNull AlertDialog.Builder builder) {
-        listener.showDialog(builder);
-    }
-
-    @Override
-    public void showToast(@NonNull Toaster toaster) {
-        toaster.show(context);
-    }
-
     public enum SortBy {
         NAME,
         STATUS,
@@ -263,12 +251,10 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         LENGTH
     }
 
-    public interface Listener {
+    public interface Listener extends DialogUtils.ShowStuffInterface {
         void onMoreClick(@NonNull DownloadWithUpdate item);
 
         void onItemCountUpdated(int count);
-
-        void showDialog(@NonNull AlertDialog.Builder builder);
     }
 
     private class LocalReceiver extends BroadcastReceiver {
