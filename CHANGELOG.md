@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.9.3] - 05-11-2020
+### Fixed
+- Fixed crash with some DirectDownload profiles
+
+
 ## [5.9.2] - 06-10-2020
 ### Added
 - Added button to manually intercept download in WebView
