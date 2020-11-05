@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
-    <string name="tutorial_moreDetails">Tap on the card to reveal more details</string>
+    <string name="tutorial_moreDetails">برای نشان دادن جزئیات بیشتر روی کارت بزنید</string>
     <string name="tutorial_evenMoreDetails">Tap on the more button to show all the details</string>
     <string name="tutorial_search">Filter downloads by name or by GID</string>
     <string name="tutorial_filters">Filter downloads by status</string>
@@ -16,7 +16,7 @@
     <string name="prefs_updateRate_summary">نرخ به‌روزرسانی رابط کاربری به ثانیه.</string>
     <string name="prefs_networkTimeout">Network timeout</string>
     <string name="prefs_networkTimeout_summary">If your network has a very high latency, increase this value (in seconds) to avoid errors.</string>
-    <string name="prefs_downloadDisplayInfo">Download display info</string>
+    <string name="prefs_downloadDisplayInfo">بارگیری اطلاعات نمایش</string>
     <string name="prefs_downloadDisplayInfo_summary">Customize the info shown in the download card.</string>
     <string name="prefs_versionCheck">نگارش aria2 را هنگام آغاز بررسی کن</string>
     <string name="prefs_versionCheck_summary">Check that the latest version of aria2 is running.</string>
@@ -54,21 +54,21 @@
     <string name="downloadStatus_removed">حذف شد</string>
     <string name="downloadStatus_active">فعال</string>
     <string name="completed_length"><![CDATA[<b>Completed length:</b>]]> %s</string>
-    <string name="total_length"><![CDATA[<b>Total length:</b>]]> %s</string>
-    <string name="uploaded_length"><![CDATA[<b>Uploaded length:</b>]]> %s</string>
+    <string name="total_length"><![CDATA[<b>طول کلی:</b>]]> %s</string>
+    <string name="uploaded_length"><![CDATA[<b>طول بارگذاری شده:</b>]]> %s</string>
     <string name="pieces"><![CDATA[<b>تکه‌ها:</b>]]> %d</string>
-    <string name="pieces_length"><![CDATA[<b>Piece length:</b>]]> %s</string>
+    <string name="pieces_length"><![CDATA[<b>طول قطعه:</b>]]> %s</string>
     <string name="connections"><![CDATA[<b>اتصال‌ها:</b>]]> %d</string>
     <string name="verifyIntegrityPending"><![CDATA[<b>Integrity verification pending:</b>]]> %s</string>
-    <string name="verifiedLength"><![CDATA[<b>Verified length:</b>]]> %s</string>
+    <string name="verifiedLength"><![CDATA[<b>طول تایید شده:</b>]]> %s</string>
     <string name="gid"><![CDATA[<b>GID:</b>]]> %s</string>
-    <string name="directory"><![CDATA[<b>Destination directory:</b>]]> %s</string>
+    <string name="directory"><![CDATA[<b>مسیر اصلی مقصد:</b>]]> %s</string>
     <string name="seeder"><![CDATA[<b>Seeder:</b>]]> %s</string>
     <string name="numSeeder"><![CDATA[<b>Seeders number:</b>]]> %d</string>
-    <string name="creation_date"><![CDATA[<b>Creation date:</b>]]> %s</string>
+    <string name="creation_date"><![CDATA[<b>تاریخ ساخته شدن:</b>]]> %s</string>
     <string name="mode"><![CDATA[<b>شیوه:</b>]]> %s</string>
     <string name="comment"><![CDATA[<b>Comment:</b>]]> %s</string>
-    <string name="index"><![CDATA[<b>Index:</b>]]> %d</string>
+    <string name="index"><![CDATA[<b>شاخص:</b>]]> %d</string>
     <string name="path"><![CDATA[<b>مسیر:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
     <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
@@ -141,7 +141,7 @@
     <string name="size"><![CDATA[<b>اندازه:</b>]]> %s</string>
     <string name="sorting">چینش بر اساس</string>
     <string name="status">وضعیت</string>
-    <string name="totalLengthLabel">Total length</string>
+    <string name="totalLengthLabel">طول کلی</string>
     <string name="progress">پیشرفت</string>
     <string name="addMetalink">افزودن Metalink</string>
     <string name="addTorrent">افزودن تورنت</string>
@@ -163,7 +163,7 @@
     <string name="uri"><![CDATA[<b>URI:</b>]]> %s</string>
     <string name="selectForDownload">پرونده را برای بارگیری انتخاب کنید</string>
     <string name="shareRatio"><![CDATA[<b>نرخ هم‌رسانی:</b>]]> %s</string>
-    <string name="currentValue"><![CDATA[<b>Current value:</b>]]> %s</string>
+    <string name="currentValue"><![CDATA[<b>مقدار کنونی:</b>]]> %s</string>
     <string name="newValue">مقدار جدید:</string>
     <string name="set">اعمال</string>
     <string name="noUris_help">There are no uris. Please add at least one by clicking the button down below.</string>
@@ -200,7 +200,7 @@
     <string name="certDisclaimer">A certificate isn\'t required if your server is already trusted by this system (usually if you installed the certificate or if your certificate is signed by a trusted source)</string>
     <string name="test">آزمایشی</string>
     <string name="test_help">Pressing the test button Aria2App will check your configuration and help you diagnose network problems. To get further help contact me at altomanigianluca@gmail.com.</string>
-    <string name="completedLengthLabel">Completed length</string>
+    <string name="completedLengthLabel">طول کامل شده</string>
     <string name="filename">نام پرونده:</string>
     <string name="filename_help" tools:ignore="TypographyDashes">File name of the downloaded file. Leave empty to let aria2 generate one. This will override the --out option.</string>
     <string name="sessionSaved">نشست به درستی ذخیره شد.</string>
@@ -214,8 +214,8 @@
     <string name="downloadRemoved">بارگیری حذف شد.</string>
     <string name="downloadMoved">بارگیری در صف جابه‌جا شد.</string>
     <string name="downloadResultRemoved">نتیجه بارگیری حذف شد.</string>
-    <string name="invalidFile">Invalid file!</string>
-    <string name="failedSavingSession">Failed saving current session!</string>
+    <string name="invalidFile">پرونده نامعتبر است!</string>
+    <string name="failedSavingSession">ذخیره‌سازی نشست کنونی شکست خورد!</string>
     <string name="failedDownloadingFile">بارگیری پرونده شکست خورد!</string>
     <string name="globalOptionsChanged">تنظیمات کلی با موفقیت تغییر یافت.</string>
     <string name="fileSelected">پرونده انتخاب شده برای بارگیری.</string>
@@ -261,9 +261,9 @@
     <string name="remainingTime">زمان باقی‌مانده</string>
     <string name="connectionsLabel">اتصال‌ها</string>
     <string name="numSeederLabel">Seeders</string>
-    <string name="selectCertificate">Select/change certificate</string>
+    <string name="selectCertificate">انتخاب/تغییر گواهی</string>
     <string name="certificateDetails">جزئیات گواهی</string>
-    <string name="serialNumber"><![CDATA[<b>Serial number:</b>]]> %s</string>
+    <string name="serialNumber"><![CDATA[<b>شماره سریال:</b>]]> %s</string>
     <string name="subject">عنوان</string>
     <string name="issuer">صادر کننده</string>
     <string name="signatureAlgorithm">الگوریتم امضا</string>
@@ -301,7 +301,7 @@
     <string name="secondSpace_selectDownload">Tap more on a download to bring up additional information.</string>
     <string name="writePermissionDenied">You denied the write permission!</string>
     <string name="readPermissionDenied">You denied the read permission!</string>
-    <string name="batchAdd">Batch add</string>
+    <string name="batchAdd">افزودن دسته‌ای</string>
     <string name="torrents">تورنت‌ها</string>
     <string name="metalinks">Metalinks</string>
     <string name="addSingle">Add single</string>
@@ -313,7 +313,7 @@
     <string name="urisFile">پرونده های Uris</string>
     <string name="urisFile_help">To know more about URI files, visit this page: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
     <string name="cancelled">لفو شد</string>
-    <string name="failedStartingAria2Android">Failed starting Aria2Android!</string>
+    <string name="failedStartingAria2Android">راه‌اندازی Aria2Android شکست خورد!</string>
     <string name="prefs_ddUseExternal">استفاده از بارگیرنده بیرونی</string>
     <string name="prefs_ddUseExternal_summary">Send the download to the system or another app.</string>
     <string name="cannotDownloadDirWithExternal">نمی توان مسیر اصلی را بارگیری کرد</string>
@@ -333,10 +333,10 @@
     <string name="inAppDownloader_serviceNotStarted">Service hasn\'t been started.</string>
     <string name="inAppDownloader_serviceNotConfigured">Service hasn\'t been configured.</string>
     <string name="inAppDownloader_configuration">In-App downloader configuration</string>
-    <string name="oldAria2AppNoInApp">This feature is not supported anymore</string>
+    <string name="oldAria2AppNoInApp">این ویژگی دیگر پشتیبانی نمی‌شود</string>
     <string name="oldAria2AppNoInApp_message">A recent update made possible to have all the functionalities of Aria2Android from Aria2App itself. Update the latter to access all those features.</string>
     <string name="cannotStartInAppWithoutWritePermission">The Aria2App in-app downloader needs to access the device storage to save files.</string>
-    <string name="addWebViewShortcutToHomePage">Add WebView shortcut to homepage</string>
+    <string name="addWebViewShortcutToHomePage">افزودن میانبر WebView به صفحه نخست</string>
     <string name="addWebViewShortcutToHomePage_summary">Add a shortcut to the WebView on your homepage.</string>
     <string name="setAsDefault">تنظیم به حالت پیش‌فرض</string>
     <string name="webViewUrlHint">یک نشانی برای بازدید وارد کنید…</string>
