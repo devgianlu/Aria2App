@@ -8,11 +8,11 @@ Aria2App مدیر بارگیری درجه-سرور قابل حمل شماست ک
 - مدیریت بارگیری‌ها (مکث، ادامه، توقف)
 - اطلاعات ابتدایی و کامل را بیابید
 - آمار مربوط به همتاها و سرور بارگیری‌های خود را مشاهده کنید
-- Display the information about every file in download
-- Download files from the server to your device through DirectDownload
-- Change a single download or aria2 general options
-- Receive live notifications of your downloads or your selected downloads
-And even more
+- نمایش اطلاعات مربوط به هر پرونده بارگیری شده
+- از طریق بارگیری مستقیم فایلها را از سرور به دستگاه خود بارگیری کنید
+- تنظیمات یک بارگیری یا کلی aria2 را تغییر دهید
+- اعلان‌های زنده بارگیری‌ها یا بارگیری‌های انتخابی خود را دریافت کنید
+و حتی بیشتر
 
 این پروژه در https://github.com/devgianlu/Aria2App منبع باز است
 ---------------------------------------
