@@ -6,8 +6,8 @@ Aria2App مدیر بارگیری درجه-سرور قابل حمل شماست ک
 - افزودن تورنت‌ها با موتور جستجوی یکپارچه
 - آغاز بارگیری‌ها با کلیک روی پیوندها در مرورگر
 - مدیریت بارگیری‌ها (مکث، ادامه، توقف)
-- Find basic and in-depth information
-- View statistics about peers and server of your downloads
+- اطلاعات ابتدایی و کامل را بیابید
+- آمار مربوط به همتاها و سرور بارگیری‌های خود را مشاهده کنید
 - Display the information about every file in download
 - Download files from the server to your device through DirectDownload
 - Change a single download or aria2 general options
