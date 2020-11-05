@@ -1,0 +1,22 @@
+Aria2App مدیر بارگیری درجه-سرور قابل حمل شماست که توسط aria2 مستقیماً بر روی دستگاه شما پشتیبانی می‌شود. به لطف رابط JSON-RPC می توانید نمونه‌های aria2 که در دستگاه های بیرونی در حال اجرا هستند را نیز مدیریت کنید.
+
+برخی از ویژگی‌ها:
+- مدیریت همزمان سرورهای بیشتر
+- افزودن بارگیری‌های HTTP(s), (s)FTP, BitTorrent, Metalink
+- افزودن تورنت‌ها با موتور جستجوی یکپارچه
+- آغاز بارگیری‌ها با کلیک روی پیوندها در مرورگر
+- مدیریت بارگیری‌ها (مکث، ادامه، توقف)
+- Find basic and in-depth information
+- View statistics about peers and server of your downloads
+- Display the information about every file in download
+- Download files from the server to your device through DirectDownload
+- Change a single download or aria2 general options
+- Receive live notifications of your downloads or your selected downloads
+And even more
+
+این پروژه در https://github.com/devgianlu/Aria2App منبع باز است
+---------------------------------------
+
+aria2 توسط Tatsuhiro Tsujikawa توسعه داده شده است
+(https://github.com/tatsuhiro-t).
+بیت تورنت یک نشان تجاری ثبت شده توسط شرکت بیت تورنت است.
