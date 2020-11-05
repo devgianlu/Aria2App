@@ -66,7 +66,7 @@
     <string name="seeder"><![CDATA[<b>Seeder:</b>]]> %s</string>
     <string name="numSeeder"><![CDATA[<b>Seeders number:</b>]]> %d</string>
     <string name="creation_date"><![CDATA[<b>Creation date:</b>]]> %s</string>
-    <string name="mode"><![CDATA[<b>Mode:</b>]]> %s</string>
+    <string name="mode"><![CDATA[<b>شیوه:</b>]]> %s</string>
     <string name="comment"><![CDATA[<b>Comment:</b>]]> %s</string>
     <string name="index"><![CDATA[<b>Index:</b>]]> %d</string>
     <string name="path"><![CDATA[<b>مسیر:</b>]]> %s</string>
@@ -80,7 +80,7 @@
     <string name="notificationBTComplete">بارگیری بیت تورنت کامل شد</string>
     <string name="noPeers">هیچ همتایی یافت نشد</string>
     <string name="features"><![CDATA[<b>Enabled features:</b>]]> %s</string>
-    <string name="sessionId"><![CDATA[<b>Session ID:</b>]]> %s</string>
+    <string name="sessionId"><![CDATA[<b>شناسه نشست:</b>]]> %s</string>
     <string name="versionLabel"><![CDATA[<b>نگارش:</b>]]> %s</string>
     <string name="gathering_information">در حال جمع آوری اطلاعات. لطفا صبر کنید…</string>
     <string name="info">اطلاعات</string>
@@ -138,7 +138,7 @@
     <string name="completed">کامل شد</string>
     <string name="searchTorrent">جستجو برای تورنت‌ها</string>
     <string name="download">بارگیری</string>
-    <string name="size"><![CDATA[<b>Size:</b>]]> %s</string>
+    <string name="size"><![CDATA[<b>اندازه:</b>]]> %s</string>
     <string name="sorting">چینش بر اساس</string>
     <string name="status">وضعیت</string>
     <string name="totalLengthLabel">Total length</string>
@@ -250,7 +250,7 @@
     <string name="missingEngines_message">Some engines couldn\'t complete the request.</string>
     <string name="missingEngines">موتورهای ناقص</string>
     <string name="searchEngines">موتورهای جستجو</string>
-    <string name="noEnginesSelected">Select at least one search engine!</string>
+    <string name="noEnginesSelected">حداقل یک موتور جستجو را انتخاب کنید!</string>
     <string name="pending">در حال انتظار</string>
     <string name="noFiles">There are no files to display. This might occur when the download is added with \"pause=true\"</string>
     <string name="failed">شکست خورد</string>
@@ -269,17 +269,17 @@
     <string name="signatureAlgorithm">الگوریتم امضا</string>
     <string name="name">نام: %s</string>
     <string name="oid">OID: %s</string>
-    <string name="alternativeNames">Alternative names: %s</string>
+    <string name="alternativeNames">نام‌های جایگزین: %s</string>
     <string name="ip">نشانی IP: %s</string>
-    <string name="localization">Localization: %s</string>
+    <string name="localization">بومی سازی: %s</string>
     <string name="ipDetails">جزییات IP</string>
     <string name="ssids_help">You can provide a list of comma separated SSIDs.</string>
     <string name="pauseAll">توقف همه</string>
     <string name="unpauseAll">ادامه‌ همه</string>
     <string name="purgeDownloadResult">پاک‌سازی نتایج بارگیری</string>
-    <string name="pausedAll">Paused all downloads.</string>
-    <string name="resumedAll">Resumed all downloads.</string>
-    <string name="purgedDownloadResult">Purged all download results.</string>
+    <string name="pausedAll">همه بارگیری‌ها را متوقف کن.</string>
+    <string name="resumedAll">همه بارگیری‌ها را ادامه بده.</string>
+    <string name="purgedDownloadResult">نتایج همه بارگیری را پاک‌ کن.</string>
     <string name="skipThisVersion">از این نگارش صرف‌ نظر کن</string>
     <string name="selectDirForDownload">Select all files in directory for download</string>
     <string name="pickProfile_someAction">Choose a profile to complete the action:</string>
@@ -290,7 +290,7 @@
     <string name="exportOptionsGrantWrite">برای برون بردن تنظیمات باید مجوز نوشتن داده شود.</string>
     <string name="failedExportingOptions">برون‌بری تنظیمات شکست خورد!</string>
     <string name="exportedOptions">تنظیمات با موفقیت به %s برون برده شد</string>
-    <string name="noActivity">No activity</string>
+    <string name="noActivity">بدون فعالیت</string>
     <string name="multipleOptions_help">This option can be specified multiple times on the command line. The equivalent here is to have them on different lines.</string>
     <string name="couldStreamVideo">Stream video</string>
     <string name="couldStreamVideo_message">One of your application could stream this video. Would you like to watch it now or just download it?</string>
@@ -312,13 +312,13 @@
     <string name="metalinkFiles">پرونده های Metalink</string>
     <string name="urisFile">پرونده های Uris</string>
     <string name="urisFile_help">To know more about URI files, visit this page: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
-    <string name="cancelled">Cancelled</string>
+    <string name="cancelled">لفو شد</string>
     <string name="failedStartingAria2Android">Failed starting Aria2Android!</string>
-    <string name="prefs_ddUseExternal">Use external downloader</string>
+    <string name="prefs_ddUseExternal">استفاده از بارگیرنده بیرونی</string>
     <string name="prefs_ddUseExternal_summary">Send the download to the system or another app.</string>
-    <string name="cannotDownloadDirWithExternal">Cannot download directory</string>
+    <string name="cannotDownloadDirWithExternal">نمی توان مسیر اصلی را بارگیری کرد</string>
     <string name="cannotDownloadDirWithExternal_message">You can\'t download a directory using an external downloader. Do you want to start the download with the integrated downloader?</string>
-    <string name="isThisToDownload">Is this what you want to download?</string>
+    <string name="isThisToDownload">آیا این چیزی است که می‌خواهید بارگیری کنید؟</string>
     <string name="isThisToDownload_message">Do you want to start a download for `%s`?</string>
     <string name="useWebView">از WebView استفاده شود؟</string>
     <string name="useWebView_message">If you\'re trying to download something that hasn\'t a permanent URL, you can use this feature to intercept the download as if it was happening on your browser. Do you want to open a WebView?</string>
@@ -327,7 +327,7 @@
     <string name="goTo">برو به</string>
     <string name="prefs_addBestTrackers">Add best trackers to new downloads</string>
     <string name="prefs_addBestTrackers_summary">Add best trackers from XIU2/TrackersListCollection to new downloads automatically</string>
-    <string name="addBestTrackers">Add best trackers</string>
+    <string name="addBestTrackers">افزودن بهترین ردیاب‌ها</string>
     <string name="health"><![CDATA[<b>Health:</b>]]> %.2f%% (%d/%d)</string>
     <string name="inAppDownloader_serviceStarted">Service is up and running.</string>
     <string name="inAppDownloader_serviceNotStarted">Service hasn\'t been started.</string>
@@ -338,9 +338,9 @@
     <string name="cannotStartInAppWithoutWritePermission">The Aria2App in-app downloader needs to access the device storage to save files.</string>
     <string name="addWebViewShortcutToHomePage">Add WebView shortcut to homepage</string>
     <string name="addWebViewShortcutToHomePage_summary">Add a shortcut to the WebView on your homepage.</string>
-    <string name="setAsDefault">Set as default</string>
-    <string name="webViewUrlHint">Enter an URL to visit…</string>
-    <string name="startPaused">Pause download when added</string>
+    <string name="setAsDefault">تنظیم به حالت پیش‌فرض</string>
+    <string name="webViewUrlHint">یک نشانی برای بازدید وارد کنید…</string>
+    <string name="startPaused">بارگیری را هنگامی که افزوده شد متوقف کن</string>
     <string name="noDownloads_addOne">There are no downloads! You can add one by tapping the plus icon in the bottom right corner.</string>
     <string name="noDownloads_changeFilters">There are no downloads to display! Try changing your filters.</string>
     <string name="filtersShowingOnly">Showing only %s (%d)</string>
@@ -355,7 +355,7 @@
     <string name="web">وب</string>
     <string name="host">میزبان</string>
     <string name="invalidHost">Invalid hostname!</string>
-    <string name="invalidUsername">Invalid username!</string>
+    <string name="invalidUsername">نام کاربری نامعتبر است!</string>
     <string name="verify">تایید</string>
     <string name="sftpDdFirstConnection">If it\'s the first time you are configuring this or you are experiencing issues please press the button below to initialize the connection.</string>
     <string name="connectionVerified">Connection verified successfully!</string>
