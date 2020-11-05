@@ -363,9 +363,9 @@
     <string name="sftpPrompt">SFTP prompt</string>
     <string name="anonymous">ناشناس</string>
     <string name="domainLabel">دامنه</string>
-    <string name="shareName">Share name</string>
-    <string name="invalidShareName">Invalid share name!</string>
-    <string name="invalidPath">Invalid path!</string>
+    <string name="shareName">نام هم‌رسانی</string>
+    <string name="invalidShareName">نام هم‌رسانی نامعتبر است!</string>
+    <string name="invalidPath">مسیر نامعتبر است!</string>
     <string name="pathLabel">مسیر</string>
     <string name="sambaPathHelp">This is the relative path from the share to the downloads folder of aria2.</string>
     <string name="previous">پیشین</string>
