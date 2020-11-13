@@ -3,14 +3,14 @@
     <!-- Tutorial -->
     <string name="tutorial_moreDetails">برای نشان دادن جزئیات بیشتر روی کارت بزنید</string>
     <string name="tutorial_evenMoreDetails">Tap on the more button to show all the details</string>
-    <string name="tutorial_search">Filter downloads by name or by GID</string>
-    <string name="tutorial_filters">Filter downloads by status</string>
+    <string name="tutorial_search">پالودن بارگیری‌ها بر اساس نام یا GID</string>
+    <string name="tutorial_filters">پالودن بارگیری‌ها بر اساس وضعیت</string>
     <string name="tutorial_fileDetails">Tap on a file to reveal details or to download it</string>
     <string name="tutorial_folderDetails">Tap and hold on a folder to reveal details or to download it</string>
     <string name="tutorial_serverDetails">Tap a server to reveal details about it</string>
     <string name="tutorial_peerDetails">Tap a peer to reveal details about it</string>
     <!-- Prefs -->
-    <string name="prefs_hideMetadata">Hide linked metadata</string>
+    <string name="prefs_hideMetadata">فرا داده پیوند خورده را پنهان کن</string>
     <string name="prefs_hideMetadata_summary">Hide metadata that started another download.</string>
     <string name="prefs_updateRate">نرخ به‌روزرسانی</string>
     <string name="prefs_updateRate_summary">نرخ به‌روزرسانی رابط کاربری به ثانیه.</string>
@@ -79,7 +79,7 @@
     <string name="notificationError">خطای بارگیری</string>
     <string name="notificationBTComplete">بارگیری بیت تورنت کامل شد</string>
     <string name="noPeers">هیچ همتایی یافت نشد</string>
-    <string name="features"><![CDATA[<b>Enabled features:</b>]]> %s</string>
+    <string name="features"><![CDATA[<b>ویژگی‌های فعال شده:</b>]]> %s</string>
     <string name="sessionId"><![CDATA[<b>شناسه نشست:</b>]]> %s</string>
     <string name="versionLabel"><![CDATA[<b>نگارش:</b>]]> %s</string>
     <string name="gathering_information">در حال جمع آوری اطلاعات. لطفا صبر کنید…</string>
@@ -98,7 +98,7 @@
     <string name="token">توکن</string>
     <string name="authentication">شناسایی</string>
     <string name="pickFromFile">انتخاب از پرونده</string>
-    <string name="filters">فیلترها</string>
+    <string name="filters">پالایه‌ها</string>
     <string name="encryption">فعال کردن رمزنگاری TLS/SSL</string>
     <string name="apply">اعمال</string>
     <string name="uris">Uriها</string>
@@ -126,7 +126,7 @@
     <string name="menu_downloadQuickOptions">تنظیمات سریع</string>
     <string name="notificationService">خدمات اعلان</string>
     <string name="writeExternalStorageRequest_title">دسترسی نوشتن مورد نیاز است</string>
-    <string name="writeExternalStorageRequest_message">In order to save files to your devices, Aria2App needs to write to your external storage.</string>
+    <string name="writeExternalStorageRequest_message">برای اینکه پرونده‌ها در دستگاه‌ شما ذخیره شوند، Aria2App به دسترسی نوشتن محل ذخیره نیاز دارد.</string>
     <string name="readExternalStorageRequest_title">دسترسی خواندن مورد نیاز است</string>
     <string name="readExternalStorageRequest_certMessage">In order to load the certificate Aria2App needs to read from your external storage.</string>
     <string name="readExternalStorageRequest_base64Message">In order to load the torrent/metalink file Aria2App needs to read from your external storage.</string>
@@ -342,7 +342,7 @@
     <string name="webViewUrlHint">یک نشانی برای بازدید وارد کنید…</string>
     <string name="startPaused">بارگیری را هنگامی که افزوده شد متوقف کن</string>
     <string name="noDownloads_addOne">There are no downloads! You can add one by tapping the plus icon in the bottom right corner.</string>
-    <string name="noDownloads_changeFilters">There are no downloads to display! Try changing your filters.</string>
+    <string name="noDownloads_changeFilters">هیچ بارگیری برای نمایش نیست! یا پالایه‌های خود را تغییر دهید.</string>
     <string name="filtersShowingOnly">Showing only %s (%d)</string>
     <string name="prefs_skipWebViewDialog">Skip WebView dialog</string>
     <string name="prefs_skipWebViewDialog_summary">Whether to skip the WebView dialog when sharing a link</string>
