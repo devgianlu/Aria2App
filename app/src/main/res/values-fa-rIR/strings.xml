@@ -25,13 +25,13 @@
     <string name="prefs_ddMaxSimultaneousDownloads">Max simultaneous downloads</string>
     <string name="prefs_ddMaxSimultaneousDownloads_summary">Maximum number of downloads running at the same time.</string>
     <string name="prefs_ddResume">ادامه بارگیری‌ها</string>
-    <string name="prefs_ddResume_summary">هنگام راه‌اندازی بارگیری‌های متوقف شده را ادامه بده</string>
+    <string name="prefs_ddResume_summary">هنگام آغاز بارگیری‌های متوقف شده را ادامه بده</string>
     <string name="prefs_enableNotifications">فعال‌کردن خدمات اعلان</string>
     <string name="prefs_enableNotifications_summary">برای نمایه‌های انتخاب شده اعلان دریافت خواهید کرد</string>
     <string name="prefs_notificationType">انواع اعلان‌</string>
     <string name="prefs_notificationType_summary">انتخاب کنید که کدام نوع اعلان را دریافت کنید</string>
     <string name="prefs_enableNotificationsAtBoot">خدمات اعلان را هنگام راه‌اندازی آغاز کن</string>
-    <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
+    <string name="prefs_enableNotificationsAtBoot_summary">خدمات اعلان هنگام راه اندازی دستگاه آغاز خواهد شد</string>
     <string name="locationAccessDenied">شما مجوز دسترسی به مکان را رد کردید.</string>
     <string name="locationAccess_title">دسترسی مکان مورد نیاز است</string>
     <string name="locationAccess_message">The application needs to have the location permission in order to read the WiFi SSID, no other operations will be performed.</string>
@@ -94,7 +94,7 @@
     <string name="home">خانه</string>
     <string name="announceList">فهرست اعلام</string>
     <string name="port">درگاه</string>
-    <string name="endpoint">Endpoint</string>
+    <string name="endpoint">نقطه پایان</string>
     <string name="token">توکن</string>
     <string name="authentication">شناسایی</string>
     <string name="pickFromFile">انتخاب از پرونده</string>
@@ -118,7 +118,7 @@
     <string name="globalOptions">تنظیمات عمومی</string>
     <string name="downloadOptions">تنظیمات بارگیری</string>
     <string name="general">عمومی</string>
-    <string name="notifications">آگاهی‌ها</string>
+    <string name="notifications">اعلان‌ها</string>
     <string name="about_aria2">درباره aria2</string>
     <string name="saveSession">ذخیره نشست</string>
     <string name="editProfile">ویرایش یا حذف نمایه</string>
@@ -150,7 +150,7 @@
     <string name="invalidProfileName">نام نمایه نامعتبر است!</string>
     <string name="addressEmpty">بخش نشانی خالی است!</string>
     <string name="invalidPort">شماره درگاه نامعتبر است!</string>
-    <string name="endpointEmpty">The endpoint field is empty!</string>
+    <string name="endpointEmpty">بخش نقطه پایان خالی است!</string>
     <string name="invalidCertificate">گواهی نامعتبر است!</string>
     <string name="invalidCompleteAddress">An address cannot be created with these settings!</string>
     <string name="emptyToken">بخش توکن خالی است!</string>
@@ -194,7 +194,7 @@
     <string name="deleteProfile">حذف نمایه</string>
     <string name="deleteCondition">حذف شرط</string>
     <string name="setDefaultCondition">تنظیم شرط پیشفرض</string>
-    <string name="removeMetadataName">Remove metadata for %s</string>
+    <string name="removeMetadataName">فرا داده را برای %s حذف کن</string>
     <string name="removeDownload_removeMetadata">Do you want to remove the metadata that generated this download?</string>
     <string name="base64NotSelected">هیچ پرونده‌ای را انتخاب نکرده‌اید!</string>
     <string name="certDisclaimer">A certificate isn\'t required if your server is already trusted by this system (usually if you installed the certificate or if your certificate is signed by a trusted source)</string>
@@ -208,7 +208,7 @@
     <string name="downloadPaused">بارگیری موقتا متوقف شد.</string>
     <string name="cannotSaveProfile">نمی‌توان نمایه را ذخیره کرد!</string>
     <string name="failedConnecting">اتصال شکست خورد!</string>
-    <string name="failedAction">Failed performing the action!</string>
+    <string name="failedAction">انجام عمل شکست خورد!</string>
     <string name="downloadRestarted">بارگیری دوباره راه اندازی شد.</string>
     <string name="downloadResumed">بارگیری ادامه داده شد.</string>
     <string name="downloadRemoved">بارگیری حذف شد.</string>
@@ -227,7 +227,7 @@
     <string name="duplicatedCondition">This condition is already present in this profile.</string>
     <string name="fileDeselected">File(s) deselected from download.</string>
     <string name="noFilemanager">مدیر پرونده‌ای یافت نشد!</string>
-    <string name="onlyOneTorrentUri">When adding torrent magnets only one link should be added at once.</string>
+    <string name="onlyOneTorrentUri">هنگام افزودن مگنت‌های تورنت هر بار باید یک پیوند افزوده شود.</string>
     <string name="hasAlwaysCondition">You cannot add a new condition if you already specified one to use every time.</string>
     <string name="cannotAddAlwaysCondition">You cannot add an \"always\" condition if you already have others.</string>
     <string name="failedChangingOptions">تغییر تنظیمات شکست خورد!</string>
@@ -236,7 +236,7 @@
     <string name="failedLoading_reason">بارگذاری شکست خورد: %s</string>
     <string name="searchEngine_disclaimer">This search engine is powered by me (the developer). It combines results from various sources.</string>
     <string name="noServers">هیچ سروری یافت نشد</string>
-    <string name="enableHostnameVerifier">Enable hostname verifier</string>
+    <string name="enableHostnameVerifier">فعال‌سازی تایید کننده نام میزبان</string>
     <string name="hostnameVerifier_disclaimer">You should enable this option if your certificate contains Subject Alternative Names (SAN). It is recommended to add SANs to your certificate.</string>
     <string name="searchEngine_offline">The service is temporary unavailable, it will be online again in a few minutes.</string>
     <string name="show">نمایش</string>
@@ -284,7 +284,7 @@
     <string name="selectDirForDownload">Select all files in directory for download</string>
     <string name="pickProfile_someAction">Choose a profile to complete the action:</string>
     <string name="notificationException">خدمات اعلان برای %s شکست خورد!</string>
-    <string name="notificationUnsupportedConnMethod">Unsupported connection method for %s!</string>
+    <string name="notificationUnsupportedConnMethod">شیوه اتصال برای %s پشتیبانی نمی‌شود!</string>
     <string name="notificationUnsupportedConnMethod_details">Cannot start notification service for this profile. Please switch to WebSockets if you want to enable notifications.</string>
     <string name="export">برون‌بری</string>
     <string name="exportOptionsGrantWrite">برای برون بردن تنظیمات باید مجوز نوشتن داده شود.</string>
@@ -347,7 +347,7 @@
     <string name="prefs_skipWebViewDialog">Skip WebView dialog</string>
     <string name="prefs_skipWebViewDialog_summary">Whether to skip the WebView dialog when sharing a link</string>
     <string name="desktopMode">حالت دسکتاپ</string>
-    <string name="copyMagnetLink">Copy Magnet link</string>
+    <string name="copyMagnetLink">روگیری پیوند مگنت</string>
     <string name="samba">سامبا</string>
     <string name="ftp">FTP</string>
     <string name="webServer">وب سرور</string>
@@ -358,8 +358,8 @@
     <string name="invalidUsername">نام کاربری نامعتبر است!</string>
     <string name="verify">تایید</string>
     <string name="sftpDdFirstConnection">If it\'s the first time you are configuring this or you are experiencing issues please press the button below to initialize the connection.</string>
-    <string name="connectionVerified">Connection verified successfully!</string>
-    <string name="failedVerifyingConnection">Failed verifying connection: %s</string>
+    <string name="connectionVerified">اتصال با موفقیت تایید شد!</string>
+    <string name="failedVerifyingConnection">تایید اتصال شکست خورد: %s</string>
     <string name="sftpPrompt">SFTP prompt</string>
     <string name="anonymous">ناشناس</string>
     <string name="domainLabel">دامنه</string>
