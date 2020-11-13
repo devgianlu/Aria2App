@@ -14,7 +14,7 @@
     <string name="prefs_hideMetadata_summary">Hide metadata that started another download.</string>
     <string name="prefs_updateRate">نرخ به‌روزرسانی</string>
     <string name="prefs_updateRate_summary">نرخ به‌روزرسانی رابط کاربری به ثانیه.</string>
-    <string name="prefs_networkTimeout">Network timeout</string>
+    <string name="prefs_networkTimeout">تایم اوت شبکه</string>
     <string name="prefs_networkTimeout_summary">If your network has a very high latency, increase this value (in seconds) to avoid errors.</string>
     <string name="prefs_downloadDisplayInfo">بارگیری اطلاعات نمایش</string>
     <string name="prefs_downloadDisplayInfo_summary">Customize the info shown in the download card.</string>
@@ -25,11 +25,11 @@
     <string name="prefs_ddMaxSimultaneousDownloads">Max simultaneous downloads</string>
     <string name="prefs_ddMaxSimultaneousDownloads_summary">Maximum number of downloads running at the same time.</string>
     <string name="prefs_ddResume">ادامه بارگیری‌ها</string>
-    <string name="prefs_ddResume_summary">Resume paused downloads at startup</string>
+    <string name="prefs_ddResume_summary">هنگام راه‌اندازی بارگیری‌های متوقف شده را ادامه بده</string>
     <string name="prefs_enableNotifications">فعال‌کردن خدمات اعلان</string>
-    <string name="prefs_enableNotifications_summary">You\'ll receive notifications for your selected profiles</string>
+    <string name="prefs_enableNotifications_summary">برای نمایه‌های انتخاب شده اعلان دریافت خواهید کرد</string>
     <string name="prefs_notificationType">انواع اعلان‌</string>
-    <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
+    <string name="prefs_notificationType_summary">انتخاب کنید که کدام نوع اعلان را دریافت کنید</string>
     <string name="prefs_enableNotificationsAtBoot">خدمات اعلان را هنگام راه‌اندازی آغاز کن</string>
     <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
     <string name="locationAccessDenied">شما مجوز دسترسی به مکان را رد کردید.</string>
@@ -283,7 +283,7 @@
     <string name="skipThisVersion">از این نگارش صرف‌ نظر کن</string>
     <string name="selectDirForDownload">Select all files in directory for download</string>
     <string name="pickProfile_someAction">Choose a profile to complete the action:</string>
-    <string name="notificationException">Notification service for %s failed!</string>
+    <string name="notificationException">خدمات اعلان برای %s شکست خورد!</string>
     <string name="notificationUnsupportedConnMethod">Unsupported connection method for %s!</string>
     <string name="notificationUnsupportedConnMethod_details">Cannot start notification service for this profile. Please switch to WebSockets if you want to enable notifications.</string>
     <string name="export">برون‌بری</string>
