@@ -238,7 +238,7 @@
     <string name="noServers">هیچ سروری یافت نشد</string>
     <string name="enableHostnameVerifier">فعال‌سازی تایید کننده نام میزبان</string>
     <string name="hostnameVerifier_disclaimer">You should enable this option if your certificate contains Subject Alternative Names (SAN). It is recommended to add SANs to your certificate.</string>
-    <string name="searchEngine_offline">The service is temporary unavailable, it will be online again in a few minutes.</string>
+    <string name="searchEngine_offline">این سرویس موقتا در دسترس نیست، چند دقیقه دیگر دوباره آنلاین خواهد شد.</string>
     <string name="show">نمایش</string>
     <string name="getTorrent">دریافت تورنت</string>
     <string name="getMagnet">دریافت مگنت</string>
