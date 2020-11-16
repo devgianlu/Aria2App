@@ -67,7 +67,7 @@
     <string name="numSeeder"><![CDATA[<b>Seeders number:</b>]]> %d</string>
     <string name="creation_date"><![CDATA[<b>تاریخ ساخته شدن:</b>]]> %s</string>
     <string name="mode"><![CDATA[<b>شیوه:</b>]]> %s</string>
-    <string name="comment"><![CDATA[<b>Comment:</b>]]> %s</string>
+    <string name="comment"><![CDATA[<b>یادداشت:</b>]]> %s</string>
     <string name="index"><![CDATA[<b>شاخص:</b>]]> %d</string>
     <string name="path"><![CDATA[<b>مسیر:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
@@ -86,7 +86,7 @@
     <string name="info">اطلاعات</string>
     <string name="files">پرونده‌ها</string>
     <string name="profileName">نام نمایه</string>
-    <string name="profile_help">If you don\'t know to setup a profile properly check this guide on my website: https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
+    <string name="profile_help">اگر نمی دانید چگونه یک نمایه را به درستی راه اندازی کنید، این راهنما را در وب سایت من بررسی کنید: https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
     <string name="address">نشانی</string>
     <string name="peers">همتا‌ها</string>
     <string name="servers">سرورها</string>
