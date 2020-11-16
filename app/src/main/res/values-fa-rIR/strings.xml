@@ -111,7 +111,7 @@
     <string name="uploadSpeed">سرعت بارگذاری</string>
     <string name="none">هیچ کدام</string>
     <string name="enableDirectDownload">فعال‌سازی بارگیری مستقیم</string>
-    <string name="directDownload_help">DirectDownload provides the ability to download files from your aria2 server to your device with a single tap! This will require the permission to write to the external storage. You can follow this guide to set it up: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
+    <string name="directDownload_help">بارگیری مستقیم امکان بارگیری پرونده‌ها را از سرور aria2 بر روی دستگاهتان با یک اشاره ساده فراهم می‌کند! برای نوشتن در حافظه خارجی به اجازه دسترسی نیاز خواهد داشت. برای تنظیم آن می توانید این راهنما را دنبال کنید: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="username">نام کاربری</string>
     <string name="password">گذرواژه</string>
     <string name="more">بيشتر</string>
@@ -174,7 +174,7 @@
     <string name="torrentUris_disclaimer">Uris are used for Web-seeding. For single file torrents, the URI can be a complete URI pointing to the resource; if URI ends with /, name in torrent file is added. For multi-file torrents, name and path in torrent are added to form a URI for each file.</string>
     <string name="file">پرونده</string>
     <string name="pickTorrent_help">Select a torrent file. The supported mime type is <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
-    <string name="pickMetalink_help">Select a metalink file. The supported mime types are <![CDATA[<b>application/metalink4+xml</b>]]> and <![CDATA[<b>application/metalink+xml</b>]]>.</string>
+    <string name="pickMetalink_help">یک فراپیوند را انتخاب کنید. انواع mime پشتیبانی شده عبارتند از <![CDATA[<b>application/metalink4+xml</b>]]> و <![CDATA[<b>application/metalink+xml</b>]]>.</string>
     <string name="outdated_aria2">نگارش منسوخ aria2</string>
     <string name="outdated_aria2_message">نگارش aria2 شما منسوخ می‌باشد. Aria2App برای اجرای آخرین نگارش aria2 ساخته شده است و بنابراین باید آن را به‌روز کنید. می‌توانید این پیام را در تنظیمات غیرفعال کنید. \n\nنگارش کنونی: %1$s \n آخرین نگارش: %2$s</string>
     <string name="selectFile_help">File can be selected or deselected from download only on multi-file torrents.</string>
@@ -223,9 +223,9 @@
     <string name="failedAddingDownload">افزودن بارگیری جدید شکست خورد!</string>
     <string name="downloadOptionsChanged">تنظیمات بارگیری با موفقیت تغییر یافت.</string>
     <string name="failedFileChangeSelection">Failed selecting/deselecting file(s)!</string>
-    <string name="cannotDeselectAllFiles">You cannot deselect all files!</string>
+    <string name="cannotDeselectAllFiles">شما نمی‌توانید همه پرونده‌ها را لغو انتخاب کنید!</string>
     <string name="duplicatedCondition">This condition is already present in this profile.</string>
-    <string name="fileDeselected">File(s) deselected from download.</string>
+    <string name="fileDeselected">پرونده(ها) از بارگیری لغو انتخاب شد.</string>
     <string name="noFilemanager">مدیر پرونده‌ای یافت نشد!</string>
     <string name="onlyOneTorrentUri">هنگام افزودن مگنت‌های تورنت هر بار باید یک پیوند افزوده شود.</string>
     <string name="hasAlwaysCondition">You cannot add a new condition if you already specified one to use every time.</string>
