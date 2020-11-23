@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.triplet.play' version '2.6.2'
+    id 'com.github.triplet.play' version '3.0.0'
 }
 
 apply plugin: 'com.android.application'
@@ -74,18 +74,18 @@ android {
 
     playConfigs {
         foss {
-            commit = false
-            enabled = false
+            commit.set(false)
+            enabled.set(false)
         }
     }
 }
 
 play {
-    defaultToAppBundles = true
-    enabled = isTravis
-    serviceAccountCredentials = file("../.travis/secrets.json")
-    track = "production"
-    releaseStatus = "draft"
+    defaultToAppBundles.set(true)
+    enabled.set(isTravis)
+    serviceAccountCredentials.set(file("../.travis/secrets.json"))
+    track.set("production")
+    releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.DRAFT)
 }
 
 dependencies {
