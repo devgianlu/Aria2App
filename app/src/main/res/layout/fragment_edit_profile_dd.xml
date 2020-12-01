@@ -70,6 +70,7 @@
                     android:text="@string/samba" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
+            <!-- Web -->
             <LinearLayout
                 android:id="@+id/editProfile_ddWeb_container"
                 android:layout_width="match_parent"
@@ -136,6 +137,7 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- FTP -->
             <LinearLayout
                 android:id="@+id/editProfile_ddFtp_container"
                 android:layout_width="match_parent"
@@ -206,8 +208,22 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPassword" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/editProfile_ddFtp_path"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/pathLabel">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textUri" />
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
+            <!-- SFTP -->
             <LinearLayout
                 android:id="@+id/editProfile_ddSftp_container"
                 android:layout_width="match_parent"
@@ -279,6 +295,19 @@
                         android:inputType="textPassword" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/editProfile_ddSftp_path"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/pathLabel">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textUri" />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -294,6 +323,7 @@
                     android:text="@string/verify" />
             </LinearLayout>
 
+            <!-- Samba -->
             <LinearLayout
                 android:id="@+id/editProfile_ddSamba_container"
                 android:layout_width="match_parent"

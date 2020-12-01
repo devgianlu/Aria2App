@@ -199,7 +199,8 @@ public final class SftpHelper extends AbsStreamDownloadHelper {
     @NonNull
     @Override
     protected DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull RemoteFile remoteFile) {
-        return new SftpRunnable(id, file, remoteFile.getAbsolutePath());
+        java.io.File remote = new java.io.File(dd.path, remoteFile.getRelativePath(globalOptions));
+        return new SftpRunnable(id, file, remote.getAbsolutePath().substring(1));
     }
 
     @NonNull

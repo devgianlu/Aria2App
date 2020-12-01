@@ -55,11 +55,13 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
 
     private TextInputLayout ftpHost;
     private TextInputLayout ftpPort;
+    private TextInputLayout ftpPath;
     private TextInputLayout ftpUsername;
     private TextInputLayout ftpPassword;
 
     private TextInputLayout sftpHost;
     private TextInputLayout sftpPort;
+    private TextInputLayout sftpPath;
     private TextInputLayout sftpUsername;
     private TextInputLayout sftpPassword;
     private Button sftpVerify;
@@ -99,7 +101,6 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     }
 
     //region Validation
-
     @NonNull
     public static Bundle stateFromProfile(@NonNull MultiProfile.UserProfile profile) {
         Bundle bundle = new Bundle();
@@ -124,6 +125,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                     Bundle ftpBundle = new Bundle();
                     ftpBundle.putString("host", ftp.hostname);
                     ftpBundle.putString("port", String.valueOf(ftp.port));
+                    ftpBundle.putString("path", ftp.path);
                     ftpBundle.putString("username", ftp.username);
                     ftpBundle.putString("password", ftp.password);
                     ftpBundle.putBoolean("encryption", ftp.serverSsl);
@@ -139,6 +141,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                     sftpBundle.putString("username", sftp.username);
                     sftpBundle.putString("password", sftp.password);
                     sftpBundle.putString("hostKey", sftp.hostKey);
+                    sftpBundle.putString("path", sftp.path);
                     bundle.putBundle("sftp", sftpBundle);
                     break;
                 case SMB:
@@ -226,7 +229,9 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
             certificate = (X509Certificate) certBundle.getSerializable("certificate");
         }
 
-        return new MultiProfile.DirectDownload.Ftp(host, port, username, password, encryption, certificate, hostnameVerifier);
+        String path = ftpBundle.getString("path", "");
+
+        return new MultiProfile.DirectDownload.Ftp(host, port, path, username, password, encryption, certificate, hostnameVerifier);
     }
 
     @NonNull
@@ -253,7 +258,9 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         String password = sftpBundle.getString("password");
         if (password == null) password = "";
 
-        return new MultiProfile.DirectDownload.Sftp(host, port, username, password, sftpBundle.getString("hostKey", ""));
+        String path = sftpBundle.getString("path", "");
+
+        return new MultiProfile.DirectDownload.Sftp(host, port, path, username, password, sftpBundle.getString("hostKey", ""));
     }
 
     @NonNull
@@ -314,11 +321,9 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
 
         return new Fields(dd);
     }
-
     //endregion
 
     //region State
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putBoolean("enabled", enableDirectDownload.isChecked());
@@ -346,6 +351,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                 Bundle ftpBundle = new Bundle();
                 ftpBundle.putString("host", CommonUtils.getText(ftpHost));
                 ftpBundle.putString("port", CommonUtils.getText(ftpPort));
+                ftpBundle.putString("path", CommonUtils.getText(ftpPath));
                 ftpBundle.putString("username", CommonUtils.getText(ftpUsername));
                 ftpBundle.putString("password", CommonUtils.getText(ftpPassword));
                 ftpBundle.putBoolean("encryption", encryptionEnabled.isChecked());
@@ -363,6 +369,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                 Bundle sftpBundle = new Bundle();
                 sftpBundle.putString("host", CommonUtils.getText(sftpHost));
                 sftpBundle.putString("port", CommonUtils.getText(sftpPort));
+                sftpBundle.putString("path", CommonUtils.getText(sftpPath));
                 sftpBundle.putString("username", CommonUtils.getText(sftpUsername));
                 sftpBundle.putString("password", CommonUtils.getText(sftpPassword));
                 sftpBundle.putString("hostKey", SftpHelper.toString(sftpHostKey));
@@ -410,6 +417,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
             CommonUtils.setText(ftpPort, ftpBundle.getString("port"));
             CommonUtils.setText(ftpUsername, ftpBundle.getString("username"));
             CommonUtils.setText(ftpPassword, ftpBundle.getString("password"));
+            CommonUtils.setText(ftpPath, ftpBundle.getString("path"));
 
             encryptionEnabled.setChecked(ftpBundle.getBoolean("encryption", false));
             certificate.restore(ftpBundle.getBundle("certificate"), encryptionEnabled.isChecked());
@@ -419,6 +427,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         if (sftpBundle != null) {
             CommonUtils.setText(sftpHost, sftpBundle.getString("host"));
             CommonUtils.setText(sftpPort, sftpBundle.getString("port"));
+            CommonUtils.setText(sftpPath, sftpBundle.getString("path"));
             CommonUtils.setText(sftpUsername, sftpBundle.getString("username"));
             CommonUtils.setText(sftpPassword, sftpBundle.getString("password"));
             sftpHostKey = SftpHelper.parseHostKey(sftpBundle.getString("hostKey", ""));
@@ -435,7 +444,6 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
             CommonUtils.setText(smbPath, smbBundle.getString("path"));
         }
     }
-
     //endregion
 
     @Nullable
@@ -535,6 +543,8 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         CommonUtils.clearErrorOnEdit(ftpHost);
         ftpPort = ftpContainer.findViewById(R.id.editProfile_ddFtp_port);
         CommonUtils.clearErrorOnEdit(ftpPort);
+        ftpPath = ftpContainer.findViewById(R.id.editProfile_ddFtp_path);
+        CommonUtils.clearErrorOnEdit(ftpPath);
         ftpUsername = ftpContainer.findViewById(R.id.editProfile_ddFtp_username);
         CommonUtils.clearErrorOnEdit(ftpUsername);
         ftpPassword = ftpContainer.findViewById(R.id.editProfile_ddFtp_password);
@@ -546,6 +556,8 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         CommonUtils.clearErrorOnEdit(sftpHost);
         sftpPort = sftpContainer.findViewById(R.id.editProfile_ddSftp_port);
         CommonUtils.clearErrorOnEdit(sftpPort);
+        sftpPath = ftpContainer.findViewById(R.id.editProfile_ddSftp_path);
+        CommonUtils.clearErrorOnEdit(sftpPath);
         sftpUsername = sftpContainer.findViewById(R.id.editProfile_ddSftp_username);
         CommonUtils.clearErrorOnEdit(sftpUsername);
         sftpPassword = sftpContainer.findViewById(R.id.editProfile_ddSftp_password);

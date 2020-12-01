@@ -79,7 +79,6 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
     }
 
     //region Download
-
     @Override
     public void start(@NonNull Context context, @NonNull AriaFile file, @NonNull StartListener listener) {
         HttpUrl base = dd.getUrl();
@@ -160,11 +159,9 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
             }
         });
     }
-
     //endregion
 
     //region Internal start
-
     private void startInternal(@NonNull Request request, @NonNull StartListener listener) {
         if (fetch.isClosed())
             return;
@@ -181,7 +178,6 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
     private void startInternal(@NonNull List<Request> requests, @NonNull StartListener listener) {
         if (!fetch.isClosed()) fetch.enqueue(requests, result -> listener.onSuccess());
     }
-
     //endregion
 
     @Override

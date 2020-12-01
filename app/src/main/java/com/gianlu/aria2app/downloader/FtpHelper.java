@@ -35,7 +35,8 @@ public final class FtpHelper extends AbsStreamDownloadHelper {
     @NonNull
     @Override
     protected AbsStreamDownloadHelper.DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull RemoteFile remoteFile) {
-        return new FtpRunnable(id, file, remoteFile.getAbsolutePath());
+        java.io.File remote = new java.io.File(dd.path, remoteFile.getRelativePath(globalOptions));
+        return new FtpRunnable(id, file, remote.getAbsolutePath().substring(1));
     }
 
     @NonNull

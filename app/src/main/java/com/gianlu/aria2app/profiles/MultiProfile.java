@@ -541,6 +541,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             public final boolean hostnameVerifier;
             public final X509Certificate certificate;
             public final boolean serverSsl;
+            public final String path;
 
             Ftp(@NonNull JSONObject obj) throws JSONException {
                 hostname = obj.getString("hostname");
@@ -549,15 +550,17 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 password = obj.getString("password");
                 hostnameVerifier = obj.optBoolean("hostnameVerifier", false);
                 serverSsl = obj.optBoolean("serverSsl", false);
+                path = obj.optString("path", "/");
 
                 String base64 = CommonUtils.optString(obj, "certificate");
                 if (base64 == null) certificate = null;
                 else certificate = CertUtils.decodeCertificate(base64);
             }
 
-            public Ftp(@NonNull String hostname, int port, @NonNull String username, @NonNull String password, boolean serverSsl, @Nullable X509Certificate certificate, boolean hostnameVerifier) {
+            public Ftp(@NonNull String hostname, int port, @NonNull String path, @NonNull String username, @NonNull String password, boolean serverSsl, @Nullable X509Certificate certificate, boolean hostnameVerifier) {
                 this.hostname = hostname;
                 this.port = port;
+                this.path = path;
                 this.username = username;
                 this.password = password;
                 this.serverSsl = serverSsl;
@@ -569,7 +572,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             public JSONObject toJson() throws JSONException {
                 JSONObject obj = new JSONObject();
                 obj.put("hostname", hostname).put("port", port).put("serverSsl", serverSsl)
-                        .put("username", username).put("password", password)
+                        .put("username", username).put("password", password).put("path", path)
                         .put("hostnameVerifier", hostnameVerifier);
 
                 if (certificate != null && serverSsl)
@@ -582,6 +585,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public static class Sftp {
             public final String hostname;
             public final int port;
+            public final String path;
             public final String username;
             public final String password;
             public final String hostKey;
@@ -592,11 +596,13 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 username = obj.getString("username");
                 password = obj.getString("password");
                 hostKey = obj.optString("hostKey", "");
+                path = obj.optString("path", "/");
             }
 
-            public Sftp(@NonNull String hostname, int port, @NonNull String username, @NonNull String password, @NonNull String hostKey) {
+            public Sftp(@NonNull String hostname, int port, @NonNull String path, @NonNull String username, @NonNull String password, @NonNull String hostKey) {
                 this.hostname = hostname;
                 this.port = port;
+                this.path = path;
                 this.username = username;
                 this.password = password;
                 this.hostKey = hostKey;
@@ -605,7 +611,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             @NonNull
             public JSONObject toJson() throws JSONException {
                 return new JSONObject().put("hostname", hostname).put("port", port)
-                        .put("username", username).put("password", password)
+                        .put("username", username).put("password", password).put("path", path)
                         .put("hostKey", hostKey);
             }
         }
