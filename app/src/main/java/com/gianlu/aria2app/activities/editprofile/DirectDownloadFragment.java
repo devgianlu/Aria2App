@@ -556,7 +556,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         CommonUtils.clearErrorOnEdit(sftpHost);
         sftpPort = sftpContainer.findViewById(R.id.editProfile_ddSftp_port);
         CommonUtils.clearErrorOnEdit(sftpPort);
-        sftpPath = ftpContainer.findViewById(R.id.editProfile_ddSftp_path);
+        sftpPath = sftpContainer.findViewById(R.id.editProfile_ddSftp_path);
         CommonUtils.clearErrorOnEdit(sftpPath);
         sftpUsername = sftpContainer.findViewById(R.id.editProfile_ddSftp_username);
         CommonUtils.clearErrorOnEdit(sftpUsername);

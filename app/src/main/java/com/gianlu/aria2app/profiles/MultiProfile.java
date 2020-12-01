@@ -550,7 +550,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 password = obj.getString("password");
                 hostnameVerifier = obj.optBoolean("hostnameVerifier", false);
                 serverSsl = obj.optBoolean("serverSsl", false);
-                path = obj.optString("path", "/");
+                path = obj.optString("path", "");
 
                 String base64 = CommonUtils.optString(obj, "certificate");
                 if (base64 == null) certificate = null;
@@ -596,7 +596,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 username = obj.getString("username");
                 password = obj.getString("password");
                 hostKey = obj.optString("hostKey", "");
-                path = obj.optString("path", "/");
+                path = obj.optString("path", "");
             }
 
             public Sftp(@NonNull String hostname, int port, @NonNull String path, @NonNull String username, @NonNull String password, @NonNull String hostKey) {
