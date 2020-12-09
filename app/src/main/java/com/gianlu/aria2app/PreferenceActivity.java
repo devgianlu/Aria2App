@@ -226,14 +226,17 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
         private void doImport(@NonNull Uri uri) {
             try {
-                ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                ByteArrayOutputStream bout = new ByteArrayOutputStream(2 * 8192);
                 try (InputStream in = requireContext().getContentResolver().openInputStream(uri)) {
                     if (in == null) return;
 
-                    byte[] buffer = new byte[1024];
+                    byte[] buffer = new byte[2048];
                     int count;
-                    while ((count = in.read(buffer)) != -1)
+                    while ((count = in.read(buffer)) != -1) {
                         bout.write(buffer, 0, count);
+                        if (bout.size() > 10 * 1024 * 1024) // 10 MB
+                            throw new IOException("File too big.");
+                    }
                 }
 
                 ProfilesManager.get(requireContext()).importProfiles(new JSONArray(new String(bout.toByteArray())));
