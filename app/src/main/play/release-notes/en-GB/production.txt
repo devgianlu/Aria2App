@@ -1,2 +1,5 @@
+### Added
+- Added support for FTP and SFTP relative path
+
 ### Fixed
-- Fixed crash with some DirectDownload profiles
+- Fixed crash when leaving activity with dialog
