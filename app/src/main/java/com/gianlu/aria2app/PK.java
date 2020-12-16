@@ -36,6 +36,7 @@ public final class PK extends CommonPK {
     public static final Prefs.KeyWithDefault<Boolean> A2_ADD_BEST_TRACKERS = new Prefs.KeyWithDefault<>("a2_addBestTrackers", false);
     public static final Prefs.KeyWithDefault<Boolean> A2_SKIP_WEBVIEW_DIALOG = new Prefs.KeyWithDefault<>("a2_skipWebViewDialog", false);
     public static final Prefs.Key WEBVIEW_HOMEPAGE = new Prefs.Key("webView_homepage");
+    public static final Prefs.KeyWithDefault<Boolean> WEBVIEW_CLEAR_COOKIES = new Prefs.KeyWithDefault<>("webView_clearCookies", true);
     public static final Prefs.Key TRACKERS_LIST_CACHE = new Prefs.Key("trackersListCache");
     public static final Prefs.Key TRACKERS_LIST_CACHE_AGE = new Prefs.Key("trackersListCacheAge");
     @Deprecated

@@ -131,7 +131,8 @@ public class WebViewActivity extends ActivityWithDialog {
 
         setSupportActionBar(findViewById(R.id.webView_toolbar));
 
-        CookieManager.getInstance().removeAllCookies(null);
+        if (Prefs.getBoolean(PK.WEBVIEW_CLEAR_COOKIES))
+            CookieManager.getInstance().removeAllCookies(null);
 
         web = findViewById(R.id.webView_webView);
         progress = findViewById(R.id.webView_progress);
@@ -246,6 +247,9 @@ public class WebViewActivity extends ActivityWithDialog {
         switch (item.getItemId()) {
             case R.id.webView_goTo:
                 showGoToDialog(false);
+                return true;
+            case R.id.webView_clearCookies:
+                CookieManager.getInstance().removeAllCookies(null);
                 return true;
             case R.id.webView_download:
                 int pos;

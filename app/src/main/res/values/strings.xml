@@ -374,4 +374,7 @@
     <string name="pathLabel">Path</string>
     <string name="sambaPathHelp">This is the relative path from the share to the downloads folder of aria2.</string>
     <string name="previous">Previous</string>
+    <string name="prefs_clearWebViewCookies">Clear WebView cookies</string>
+    <string name="prefs_clearWebViewCookies_summary">Clear the cookies when the WebView is opened.</string>
+    <string name="clearCookies">Clear cookies</string>
 </resources>

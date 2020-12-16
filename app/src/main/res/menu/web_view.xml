@@ -18,4 +18,8 @@
         android:id="@+id/webView_toggleDesktop"
         android:checkable="true"
         android:title="@string/desktopMode" />
+
+    <item
+        android:id="@+id/webView_clearCookies"
+        android:title="@string/clearCookies" />
 </menu>
