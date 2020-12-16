@@ -9,7 +9,6 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
-import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.aria2app.profiles.MultiProfile;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -34,9 +33,8 @@ public final class FtpHelper extends AbsStreamDownloadHelper {
 
     @NonNull
     @Override
-    protected AbsStreamDownloadHelper.DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull RemoteFile remoteFile) {
-        java.io.File remote = new java.io.File(dd.path, remoteFile.getRelativePath(globalOptions));
-        return new FtpRunnable(id, file, remote.getAbsolutePath().substring(1));
+    protected AbsStreamDownloadHelper.DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull RemoteFile remoteFile) {
+        return new FtpRunnable(id, file, remoteFile.getRelativePath(dd.path));
     }
 
     @NonNull

@@ -104,6 +104,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
 
                 holder.remainingTime.setVisibility(View.GONE);
                 holder.speed.setVisibility(View.GONE);
+                holder.progress.setVisibility(View.GONE);
 
                 holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
@@ -117,6 +118,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
 
                 holder.remainingTime.setVisibility(View.VISIBLE);
                 holder.speed.setVisibility(View.VISIBLE);
+                holder.progress.setVisibility(View.VISIBLE);
 
                 holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
@@ -130,6 +132,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
 
                 holder.remainingTime.setVisibility(View.GONE);
                 holder.speed.setVisibility(View.GONE);
+                holder.progress.setVisibility(View.VISIBLE);
 
                 holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.VISIBLE);
@@ -143,6 +146,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
 
                 holder.remainingTime.setVisibility(View.GONE);
                 holder.speed.setVisibility(View.GONE);
+                holder.progress.setVisibility(View.VISIBLE);
 
                 holder.open.setVisibility(View.VISIBLE);
                 holder.start.setVisibility(View.GONE);
@@ -156,8 +160,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
 
                 holder.remainingTime.setVisibility(View.GONE);
                 holder.speed.setVisibility(View.GONE);
-                if (holder.progress.isIndeterminate())
-                    holder.progress.setProgress(0);
+                holder.progress.setVisibility(View.GONE);
 
                 holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
@@ -171,6 +174,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
 
                 holder.remainingTime.setVisibility(View.GONE);
                 holder.speed.setVisibility(View.GONE);
+                holder.progress.setVisibility(View.GONE);
 
                 holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);

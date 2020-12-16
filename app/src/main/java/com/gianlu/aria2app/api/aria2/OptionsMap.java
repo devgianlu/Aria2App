@@ -31,6 +31,11 @@ public class OptionsMap extends HashMap<String, OptionsMap.OptionValue> {
     public OptionsMap() {
     }
 
+    public String getString(String key, String fallback) {
+        OptionsMap.OptionValue val = get(key);
+        return val == null ? fallback : val.string();
+    }
+
     @Nullable
     public OptionValue put(String key, String value) {
         if (Objects.equals(key, "header") || Objects.equals(key, "index-out"))

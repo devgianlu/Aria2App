@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
-import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msfscc.FileAttributes;
@@ -44,9 +43,8 @@ public final class SambaHelper extends AbsStreamDownloadHelper {
 
     @NonNull
     @Override
-    protected DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull RemoteFile remoteFile) {
-        java.io.File remote = new java.io.File(dd.path, remoteFile.getRelativePath(globalOptions));
-        return new SambaRunnable(id, file, remote.getAbsolutePath().substring(1));
+    protected DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull RemoteFile remoteFile) {
+        return new SambaRunnable(id, file, remoteFile.getRelativePath(dd.path));
     }
 
     @NotNull

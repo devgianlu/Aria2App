@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -77,12 +78,27 @@ public class AriaFile {
         return ((float) completedLength / (float) length) * 100;
     }
 
+    /**
+     * Gets the relative path of the file from the download directory on the server.
+     *
+     * @param global The global options
+     * @return The relative path
+     */
     @NonNull
     public String getRelativePath(@NonNull OptionsMap global) {
-        OptionsMap.OptionValue dir = global.get("dir");
-        String dirStr = dir == null ? null : dir.string();
-        if (dirStr == null) dirStr = "";
-        return path.substring(dirStr.length() + 1);
+        return getRelativePath(global.getString("dir", "/"));
+    }
+
+    /**
+     * Gets the relative path with respect to the base path specified.
+     *
+     * @param basePath The base path
+     * @return The relative path
+     */
+    @NonNull
+    public String getRelativePath(@NonNull String basePath) {
+        if (path.startsWith(basePath)) return path.substring(basePath.length());
+        else return new File(basePath).toURI().relativize(new File(path).toURI()).getPath();
     }
 
     @NonNull
@@ -105,6 +121,15 @@ public class AriaFile {
         return mime;
     }
 
+    /**
+     * Gets the download URL for the given file.
+     * <p>
+     * NOTE: The base URL must point to the download directory.
+     *
+     * @param global The global options
+     * @param base   The base URL
+     * @return The URL to the file
+     */
     @NonNull
     public HttpUrl getDownloadUrl(@NonNull OptionsMap global, @NonNull HttpUrl base) {
         HttpUrl.Builder builder = base.newBuilder();

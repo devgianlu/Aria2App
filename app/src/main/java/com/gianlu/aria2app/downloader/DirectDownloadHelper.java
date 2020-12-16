@@ -201,6 +201,8 @@ public abstract class DirectDownloadHelper implements Closeable {
 
     @NonNull
     protected static DocumentFile createDestFile(@NotNull OptionsMap global, @NotNull DocumentFile ddDir, @NotNull RemoteFile file) throws PreparationException {
+        DocumentFile parent = createAllDirs(ddDir, file.getRelativePath(global.getString("dir", "/")));
+
         String mime = file.getMimeType();
         String fileName = file.getName();
         if (mime == null) {
@@ -210,7 +212,6 @@ public abstract class DirectDownloadHelper implements Closeable {
             if (index != -1) fileName = fileName.substring(0, index);
         }
 
-        DocumentFile parent = createAllDirs(ddDir, file.getRelativePath(global));
         DocumentFile dest = parent.createFile(mime, fileName);
         if (dest == null)
             throw new PreparationException("Couldn't create file inside directory: " + parent);
@@ -246,27 +247,23 @@ public abstract class DirectDownloadHelper implements Closeable {
 
         return intent;
     }
-
     //endregion
 
+    //region Download actions
     public abstract void start(@NonNull Context context, @NonNull AriaFile file, @NonNull StartListener listener);
-
-    protected void callFailed(StartListener listener, Throwable ex) {
-        handler.post(() -> listener.onFailed(ex));
-    }
 
     public abstract void start(@NonNull Context context, @NonNull AriaDirectory dir, @NonNull StartListener listener);
 
     public abstract void resume(@NonNull DdDownload download);
-
-    //region Download actions
 
     public abstract void pause(@NonNull DdDownload download);
 
     public abstract void restart(@NonNull DdDownload download, @NonNull DirectDownloadHelper.StartListener listener);
 
     public abstract void remove(@NonNull DdDownload download);
+    //endregion
 
+    //region Listeners
     public final void addListener(@NonNull Listener listener) {
         listeners.add(listener);
         reloadListener(listener);
@@ -283,14 +280,15 @@ public abstract class DirectDownloadHelper implements Closeable {
      */
     public abstract void reloadListener(@NonNull Listener listener);
 
-    //endregion
-
-    //region Listeners
-
     protected final void forEachListener(@NonNull Consumer<Listener> consumer) {
         for (Listener listener : new ArrayList<>(listeners))
             handler.post(() -> consumer.accept(listener));
     }
+
+    protected void callFailed(StartListener listener, Throwable ex) {
+        handler.post(() -> listener.onFailed(ex));
+    }
+    //endregion
 
     protected interface RemoteFile {
         @Nullable
@@ -300,7 +298,7 @@ public abstract class DirectDownloadHelper implements Closeable {
         String getName();
 
         @NonNull
-        String getRelativePath(@NonNull OptionsMap global);
+        String getRelativePath(@NonNull String basePath);
 
         @NonNull
         String getAbsolutePath();
@@ -309,8 +307,6 @@ public abstract class DirectDownloadHelper implements Closeable {
     public interface UpdateDownloadCountListener {
         void onDdDownloadCount(int count);
     }
-
-    //endregion
 
     @UiThread
     public interface StartListener {
@@ -353,8 +349,8 @@ public abstract class DirectDownloadHelper implements Closeable {
 
         @NotNull
         @Override
-        public String getRelativePath(@NotNull OptionsMap global) {
-            return file.getRelativePath(global);
+        public String getRelativePath(@NotNull String basePath) {
+            return file.getRelativePath(basePath);
         }
 
         @NonNull

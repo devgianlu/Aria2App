@@ -23,6 +23,7 @@ import com.gianlu.commonutils.preferences.Prefs;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -84,10 +85,10 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
         });
     }
 
-    private void startInternal(OptionsMap global, DocumentFile ddDir, DdDatabase.Download download, boolean paused) throws PreparationException {
+    private void startInternal(OptionsMap global, DocumentFile ddDir, @NotNull DdDatabase.Download download, boolean paused) throws PreparationException {
         DocumentFile dest = createDestFile(global, ddDir, download.file);
 
-        DownloadRunnable runnable = makeRunnableFor(download.id, dest, global, download.file);
+        DownloadRunnable runnable = makeRunnableFor(download.id, dest, download.file);
         if (paused) runnable.pause();
 
         downloads.put(download.id, runnable);
@@ -269,7 +270,7 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
     }
 
     @NonNull
-    protected abstract DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull RemoteFile remoteFile);
+    protected abstract DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull RemoteFile remoteFile);
 
     @NonNull
     private DownloadRunnable makeRunnableFor(@NonNull DownloadRunnable old) {
@@ -318,11 +319,9 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
 
         @NonNull
         @Override
-        public String getRelativePath(@NonNull OptionsMap global) {
-            OptionsMap.OptionValue dir = global.get("dir");
-            String dirStr = dir == null ? null : dir.string();
-            if (dirStr == null) dirStr = "";
-            return path.substring(dirStr.length() + 1);
+        public String getRelativePath(@NonNull String basePath) {
+            if (path.startsWith(basePath)) return path.substring(basePath.length());
+            else return new File(basePath).toURI().relativize(new File(path).toURI()).getPath();
         }
 
         @NonNull
@@ -348,7 +347,7 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
         public DownloadRunnable(int id, @NonNull DocumentFile file, @NonNull String remotePath) {
             this.id = id;
             this.file = file;
-            this.remotePath = remotePath;
+            this.remotePath = remotePath.startsWith("/") ? remotePath : "/" + remotePath;
 
             this.status = DdDownload.Status.QUEUED;
         }
@@ -404,6 +403,7 @@ public abstract class AbsStreamDownloadHelper extends DirectDownloadHelper {
             boolean result = runInternal();
             if (!result) {
                 updateStatus(DdDownload.Status.FAILED);
+                terminated = true;
                 return;
             }
 

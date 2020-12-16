@@ -16,7 +16,6 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
-import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -198,9 +197,8 @@ public final class SftpHelper extends AbsStreamDownloadHelper {
 
     @NonNull
     @Override
-    protected DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull OptionsMap globalOptions, @NonNull RemoteFile remoteFile) {
-        java.io.File remote = new java.io.File(dd.path, remoteFile.getRelativePath(globalOptions));
-        return new SftpRunnable(id, file, remote.getAbsolutePath().substring(1));
+    protected DownloadRunnable makeRunnableFor(int id, @NonNull DocumentFile file, @NonNull RemoteFile remoteFile) {
+        return new SftpRunnable(id, file, remoteFile.getRelativePath(dd.path));
     }
 
     @NonNull
