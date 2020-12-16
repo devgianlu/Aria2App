@@ -1,5 +1,7 @@
 ### Added
-- Added support for FTP and SFTP relative path
+- Added option to toggle clearing WebView cookies
+- Added menu option to clear cookies
 
 ### Fixed
-- Fixed crash when leaving activity with dialog
+- Fixed DirectDownload download not cancelling when failed
+- Fixed DirectDownload download path not being calculated correctly
