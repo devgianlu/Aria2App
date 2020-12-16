@@ -369,7 +369,7 @@
     <string name="pathLabel">路径</string>
     <string name="sambaPathHelp">这是从共享到aria2下载文件夹的相对路径。</string>
     <string name="previous">上一个</string>
-    <string name="prefs_clearWebViewCookies">清除 WebView cookies</string>
+    <string name="prefs_clearWebViewCookies">清除WebView cookies</string>
     <string name="prefs_clearWebViewCookies_summary">打开WebView时清除cookie。</string>
     <string name="clearCookies">清除Cookies</string>
 </resources>
