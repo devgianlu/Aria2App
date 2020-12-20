@@ -2,8 +2,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
     <string name="tutorial_moreDetails">برای نشان دادن جزئیات بیشتر روی کارت بزنید</string>
+    <string name="tutorial_evenMoreDetails">برای نمایش تمام جزئیات روی دکمه بیشتر بزنید</string>
     <string name="tutorial_search">پالودن بارگیری‌ها بر اساس نام یا GID</string>
     <string name="tutorial_filters">پالودن بارگیری‌ها بر اساس وضعیت</string>
+    <string name="tutorial_fileDetails">برای نمایش جزئیات یا بارگیری یک پرونده روی آن بزنید</string>
     <!-- Prefs -->
     <string name="prefs_hideMetadata">فرا داده پیوند خورده را پنهان کن</string>
     <string name="prefs_updateRate">نرخ به‌روزرسانی</string>
@@ -135,6 +137,7 @@
     <string name="emptyPassword">بخش گذرواژه خالی است!</string>
     <string name="emptyUsername">بخش نام کاربری خالی است!</string>
     <string name="invalidAddress">نشانی نامعتبر است!</string>
+    <string name="pickProfile">یک نمایه را انتخاب یا ایجاد کنید. برای ویرایش بزنید و نگه دارید.</string>
     <string name="failedLoading">بارگذاری شکست خورد!</string>
     <string name="currentUri"><![CDATA[<b>کنونی URI:</b>]]> %s</string>
     <string name="uri"><![CDATA[<b>URI:</b>]]> %s</string>
