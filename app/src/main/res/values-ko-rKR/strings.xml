@@ -238,6 +238,7 @@ https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
     <string name="resumedAll">모든 다운로드 다시 시작됨.</string>
     <string name="purgedDownloadResult">모든 다운로드 제거됨.</string>
     <string name="skipThisVersion">이 버전 건너뛰기</string>
+    <string name="notificationException">%s을/를 위한 알림 서비스 실패함!</string>
     <string name="export">내보내기</string>
     <string name="noActivity">활동 없음</string>
     <string name="couldStreamVideo">동영상 스트림</string>
