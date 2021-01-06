@@ -6,6 +6,7 @@
     <string name="tutorial_search">پالودن بارگیری‌ها بر اساس نام یا GID</string>
     <string name="tutorial_filters">پالودن بارگیری‌ها بر اساس وضعیت</string>
     <string name="tutorial_fileDetails">برای نمایش جزئیات یا بارگیری یک پرونده روی آن بزنید</string>
+    <string name="tutorial_serverDetails">برای نمایش جزئیات سرور روی آن بزنید</string>
     <!-- Prefs -->
     <string name="prefs_hideMetadata">فرا داده پیوند خورده را پنهان کن</string>
     <string name="prefs_updateRate">نرخ به‌روزرسانی</string>
