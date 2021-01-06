@@ -6,6 +6,7 @@
     <string name="tutorial_search">پالودن بارگیری‌ها بر اساس نام یا GID</string>
     <string name="tutorial_filters">پالودن بارگیری‌ها بر اساس وضعیت</string>
     <string name="tutorial_fileDetails">برای نمایش جزئیات یا بارگیری یک پرونده روی آن بزنید</string>
+    <string name="tutorial_folderDetails">برای نمایش جزئیات یا بارگیری یک پوشه روی آن بزنید و نگه دارید</string>
     <string name="tutorial_serverDetails">برای نمایش جزئیات سرور روی آن بزنید</string>
     <string name="tutorial_peerDetails">برای نمایش جزئیات همتا روی آن بزنید</string>
     <!-- Prefs -->
@@ -15,8 +16,11 @@
     <string name="prefs_updateRate_summary">نرخ به‌روزرسانی رابط کاربری به ثانیه.</string>
     <string name="prefs_networkTimeout">تایم اوت شبکه</string>
     <string name="prefs_downloadDisplayInfo">بارگیری اطلاعات نمایش</string>
+    <string name="prefs_downloadDisplayInfo_summary">اطلاعات نشان داده شده در کارت بارگیری را سفارشی کنید.</string>
     <string name="prefs_versionCheck">نگارش aria2 را هنگام آغاز بررسی کن</string>
+    <string name="prefs_versionCheck_summary">بررسی کن که آخرین نگارش aria2 اجرا می‌شود.</string>
     <string name="prefs_ddDownloadPath">مسیر بارگیری</string>
+    <string name="prefs_ddDownloadPath_summary">همه پرونده‌ها در اینجا بارگیری خواهند شد.</string>
     <string name="prefs_ddMaxSimultaneousDownloads">بیشترین میزان بارگیری‌ها همزمان</string>
     <string name="prefs_ddResume">ادامه بارگیری‌ها</string>
     <string name="prefs_ddResume_summary">هنگام آغاز بارگیری‌های متوقف شده را ادامه بده</string>
@@ -151,6 +155,7 @@
     <string name="currentValue"><![CDATA[<b>مقدار کنونی:</b>]]> %s</string>
     <string name="newValue">مقدار جدید:</string>
     <string name="set">اعمال</string>
+    <string name="noUris_help">هیچ uriای وجود ندارد. لطفا با کلیک روی دکمه پایین، دست کم یکی را بیفزایید.</string>
     <string name="editUri">ویرایش uri</string>
     <string name="noUris">هیچ uri یافت نشد.</string>
     <string name="file">پرونده</string>
@@ -217,10 +222,12 @@
     <string name="searchEngines">موتورهای جستجو</string>
     <string name="noEnginesSelected">حداقل یک موتور جستجو را انتخاب کنید!</string>
     <string name="pending">در حال انتظار</string>
+    <string name="noFiles">هیچ پرونده‌ای برای نمایش وجود ندارد. این شاید بخاطر این است که بارگیری با \"pause=true\" افزوده شده</string>
     <string name="failed">شکست خورد</string>
     <string name="running">در حال اجرا</string>
     <string name="paused">متوقف شده</string>
     <string name="failedOpeningDownload">باز کردن بارگیری شکست خورد!</string>
+    <string name="noDirectDownloads">هیچ بارگیری وجود ندارد. می‌توانید بارگیری یک پرونده را از زبانه پرونده‌های بارگیری آغاز کنید. درباره بارگیری مستقیم اینجا بیشتر بخوانید: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="remainingTime">زمان باقی‌مانده</string>
     <string name="connectionsLabel">اتصال‌ها</string>
     <string name="selectCertificate">انتخاب/تغییر گواهی</string>
@@ -257,6 +264,7 @@
     <string name="readPermissionDenied">شما دسترسی خواندن را رد کردید!</string>
     <string name="batchAdd">افزودن دسته‌ای</string>
     <string name="torrents">تورنت‌ها</string>
+    <string name="metalinks">فراپیوندها</string>
     <string name="addSingle">افزودن تک</string>
     <string name="downloadsAddedBatch">همه بارگیری‌ها افزوده شدند.</string>
     <string name="failedAddingDownloads">افزودن برخی بارگیری‌ها شکست خورد.</string>
