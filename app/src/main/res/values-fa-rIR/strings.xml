@@ -7,8 +7,10 @@
     <string name="tutorial_filters">پالودن بارگیری‌ها بر اساس وضعیت</string>
     <string name="tutorial_fileDetails">برای نمایش جزئیات یا بارگیری یک پرونده روی آن بزنید</string>
     <string name="tutorial_serverDetails">برای نمایش جزئیات سرور روی آن بزنید</string>
+    <string name="tutorial_peerDetails">برای نمایش جزئیات همتا روی آن بزنید</string>
     <!-- Prefs -->
     <string name="prefs_hideMetadata">فرا داده پیوند خورده را پنهان کن</string>
+    <string name="prefs_hideMetadata_summary">فراداده که بارگیری دیگری را آغاز کرده را پهنان کن.</string>
     <string name="prefs_updateRate">نرخ به‌روزرسانی</string>
     <string name="prefs_updateRate_summary">نرخ به‌روزرسانی رابط کاربری به ثانیه.</string>
     <string name="prefs_networkTimeout">تایم اوت شبکه</string>
@@ -128,12 +130,14 @@
     <string name="progress">پیشرفت</string>
     <string name="addMetalink">افزودن Metalink</string>
     <string name="addTorrent">افزودن تورنت</string>
+    <string name="fatalExceptionMessage">یک استثنا مرگبار رخ داد!</string>
     <string name="connection">اتصال</string>
     <string name="invalidProfileName">نام نمایه نامعتبر است!</string>
     <string name="addressEmpty">بخش نشانی خالی است!</string>
     <string name="invalidPort">شماره درگاه نامعتبر است!</string>
     <string name="endpointEmpty">بخش نقطه پایان خالی است!</string>
     <string name="invalidCertificate">گواهی نامعتبر است!</string>
+    <string name="invalidCompleteAddress">با این تنظیمات یک نشانی نمی‌تواند ایجاد شود!</string>
     <string name="emptyToken">بخش توکن خالی است!</string>
     <string name="emptyPassword">بخش گذرواژه خالی است!</string>
     <string name="emptyUsername">بخش نام کاربری خالی است!</string>
@@ -161,6 +165,7 @@
     <string name="bluetooth">بلوتوث</string>
     <string name="wifi">وای‌فای</string>
     <string name="always">همیشه</string>
+    <string name="connectivityCondition">شرایط اتصال</string>
     <string name="create">ایجاد</string>
     <string name="emptySSID">ببخش SSID خالی است!</string>
     <string name="newCondition">افزودن شرط جدید</string>
@@ -264,6 +269,7 @@
     <string name="prefs_ddUseExternal">استفاده از بارگیرنده بیرونی</string>
     <string name="cannotDownloadDirWithExternal">نمی توان مسیر اصلی را بارگیری کرد</string>
     <string name="isThisToDownload">آیا این چیزی است که می‌خواهید بارگیری کنید؟</string>
+    <string name="isThisToDownload_message">آیا می‌خواهید که برای `%s` یک بارگیری آغاز کنید؟</string>
     <string name="useWebView">از WebView استفاده شود؟</string>
     <string name="webView">WebView</string>
     <string name="visit">بازدید</string>
@@ -303,4 +309,7 @@
     <string name="invalidPath">مسیر نامعتبر است!</string>
     <string name="pathLabel">مسیر</string>
     <string name="previous">پیشین</string>
+    <string name="prefs_clearWebViewCookies">پاک‌کردن کوکی‌های WebView</string>
+    <string name="prefs_clearWebViewCookies_summary">کوکی‌های WebView را هنگامی که باز شود پاک‌کن.</string>
+    <string name="clearCookies">پاک‌کردن کوکی‌ها</string>
 </resources>
