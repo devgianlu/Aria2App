@@ -209,6 +209,7 @@
     <string name="seeError">دیدن خطا</string>
     <string name="contactMe">تماس با من</string>
     <string name="failedLoading_reason">بارگذاری شکست خورد: %s</string>
+    <string name="searchEngine_disclaimer">این موتور جستجو توسط من (توسعه دهنده) طراحی شده است. این نتایج حاصل از منابع مختلف را با هم ترکیب می کند.</string>
     <string name="noServers">هیچ سروری یافت نشد</string>
     <string name="enableHostnameVerifier">فعال‌سازی تایید کننده نام میزبان</string>
     <string name="searchEngine_offline">این سرویس موقتا در دسترس نیست، چند دقیقه دیگر دوباره آنلاین خواهد شد.</string>
