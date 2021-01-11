@@ -372,4 +372,5 @@
     <string name="prefs_clearWebViewCookies">清除WebView cookies</string>
     <string name="prefs_clearWebViewCookies_summary">打开WebView时清除cookie。</string>
     <string name="clearCookies">清除Cookies</string>
+    <string name="notPermanentOptionsDisclaimer">这些选项会在重启时被重置。您可能想要在配置文件设置中编辑这些选项。</string>
 </resources>
