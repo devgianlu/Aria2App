@@ -1,0 +1,59 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Grant execute permission to scripts
+        run: chmod +x gradlew .github/decrypt_secrets.sh
+      - name: Decrypt GPG secrets
+        run: .github/decrypt_secrets.sh
+        env:
+          SECRETS_GPG_PASS: ${{ secrets.SECRETS_GPG_PASS }}
+      - name: Build with Gradle
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        run: ./gradlew connectedCheck --no-daemon
+      - name: Publish with Gradle
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        run: ./gradlew assembleRelease publish --no-daemon
+        env:
+          KEYSTORE_STORE_PASS: ${{ secrets.KEYSTORE_STORE_PASS }}
+          KEYSTORE_KEY_ALIAS: gianlu
+          KEYSTORE_KEY_PASS: ${{ secrets.KEYSTORE_KEY_PASS }}
+      - name: Create release
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body_path: app/src/main/play/release-notes/en-GB/production.txt
+          draft: true
+          prerelease: false
+      - name: Upload APK file
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app/build/outputs/apk/foss/release/app-foss-release.apk
+          asset_name: app-foss-release.apk
+          asset_content_type: application/vnd.android.package-archive
