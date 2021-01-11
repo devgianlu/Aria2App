@@ -377,4 +377,5 @@
     <string name="prefs_clearWebViewCookies">Clear WebView cookies</string>
     <string name="prefs_clearWebViewCookies_summary">Clear the cookies when the WebView is opened.</string>
     <string name="clearCookies">Clear cookies</string>
+    <string name="notPermanentOptionsDisclaimer">These options will be reset upon restart. You may want to edit them from the profile settings.</string>
 </resources>

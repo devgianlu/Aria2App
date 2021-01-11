@@ -139,6 +139,9 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             return null;
         }
 
+        layout.findViewById(R.id.optionsDialog_notPermanentOptionsDisclaimer)
+                .setVisibility(helper.isInAppDownloader() ? View.VISIBLE : View.GONE);
+
         helper.request(req, this);
 
         return layout;

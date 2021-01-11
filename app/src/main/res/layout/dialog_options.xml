@@ -14,6 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp" />
 
         <ProgressBar
@@ -23,6 +24,17 @@
             android:layout_gravity="center"
             android:layout_margin="48dp" />
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/optionsDialog_notPermanentOptionsDisclaimer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:text="@string/notPermanentOptionsDisclaimer"
+        android:textAlignment="center"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,7 +49,7 @@
             android:layout_height="wrap_content"
             android:text="@android:string/cancel" />
 
-        <View
+        <Space
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1" />

@@ -60,6 +60,10 @@ public class Aria2Helper {
         }
     }
 
+    public boolean isInAppDownloader() {
+        return client.isInAppDownloader();
+    }
+
     private void processGlobalOptionsUpdate(@NonNull JSONObject newOptions) {
         if (!client.isInAppDownloader()) return;
 
