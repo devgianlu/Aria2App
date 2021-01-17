@@ -5,7 +5,7 @@ plugins {
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.firebase.crashlytics'
 
-def isTravis = System.getenv("CI") == "true"
+def isCi = System.getenv("CI") == "true"
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -18,13 +18,13 @@ android {
         versionName "5.9.5"
     }
 
-    if (isTravis) {
+    if (isCi) {
         signingConfigs {
             release {
-                storeFile file("../.travis/keystore.jks")
-                storePassword System.getenv("keystore_storePsswd")
-                keyAlias = System.getenv("keystore_keyAlias")
-                keyPassword System.getenv("keystore_keyPsswd")
+                storeFile file("../.gtihub/keystore.jks")
+                storePassword System.getenv("KEYSTORE_STORE_PASS")
+                keyAlias = System.getenv("KEYSTORE_KEY_ALIAS")
+                keyPassword System.getenv("KEYSTORE_KEY_PASS")
             }
         }
     }
@@ -34,7 +34,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            if (isTravis) signingConfig signingConfigs.release
+            if (isCi) signingConfig signingConfigs.release
         }
     }
 
@@ -82,8 +82,8 @@ android {
 
 play {
     defaultToAppBundles.set(true)
-    enabled.set(isTravis)
-    serviceAccountCredentials.set(file("../.travis/secrets.json"))
+    enabled.set(isCi)
+    serviceAccountCredentials.set(file("../.github/secrets.json"))
     track.set("production")
     releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.DRAFT)
 }
