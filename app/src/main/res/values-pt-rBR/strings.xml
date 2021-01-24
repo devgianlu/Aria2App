@@ -347,6 +347,7 @@
     <string name="prefs_skipWebViewDialog">Pular diálogo do WebView</string>
     <string name="prefs_skipWebViewDialog_summary">Ignore a caixa de diálogo WebView quando compartilhar um link</string>
     <string name="desktopMode">Modo desktop</string>
+    <string name="copyMagnetLink">Copiar link magnético</string>
     <string name="samba">Samba</string>
     <string name="ftp">FTP</string>
     <string name="webServer">Servidores web</string>
@@ -367,4 +368,9 @@
     <string name="invalidPath">Caminho inválido!</string>
     <string name="pathLabel">Caminho</string>
     <string name="sambaPathHelp">Este é o caminho relativo do compartilhamento para a pasta de downloads do aria2.</string>
+    <string name="previous">Anterior</string>
+    <string name="prefs_clearWebViewCookies">Limpar cookies do WebView</string>
+    <string name="prefs_clearWebViewCookies_summary">Limpe os cookies quando o WebView for aberto.</string>
+    <string name="clearCookies">Limpar Cookies</string>
+    <string name="notPermanentOptionsDisclaimer">Essas opções serão redefinidas após a reinicialização. Você pode querer editá-las nas configurações do perfil.</string>
 </resources>
