@@ -2,6 +2,7 @@ package com.gianlu.aria2app.activities.moreabout.files;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -294,7 +295,16 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                 dismissDialog();
 
                 String mime = file.getMimeType();
-                if (mime != null && getContext() != null && helper.canStream(mime)) {
+
+                if (getHelper().isInAppDownloader()) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(file.getAbsolutePath()));
+                    if (mime != null) intent.setType(mime);
+                    startActivity(Intent.createChooser(intent, "Open the file..."));
+                    return;
+                }
+
+                if (mime != null && getContext() != null && helper.canStreamHttp(mime)) {
                     Intent intent = helper.getStreamIntent(result, file);
                     if (intent != null && Utils.canHandleIntent(requireContext(), intent)) {
                         AlertDialog.Builder builder = new MaterialAlertDialogBuilder(requireContext());

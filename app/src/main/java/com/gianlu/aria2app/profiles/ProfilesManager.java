@@ -79,6 +79,11 @@ public class ProfilesManager {
         }
     }
 
+    public boolean isCurrentInAppDownloader() {
+        if (currentProfile == null) currentProfile = getLastProfile();
+        return currentProfile != null && currentProfile.isInAppDownloader();
+    }
+
     @NonNull
     public MultiProfile.UserProfile getCurrentSpecific() throws NoCurrentProfileException {
         return getCurrent().getProfile(this);

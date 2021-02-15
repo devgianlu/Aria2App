@@ -219,18 +219,15 @@ public abstract class DirectDownloadHelper implements Closeable {
         return dest;
     }
 
-    public boolean canStream(@NonNull String mime) {
-        if (!Utils.isStreamable(mime))
-            return false;
-
-        return profile.directDownload != null && profile.directDownload.type == DirectDownload.Type.WEB;
+    public boolean canStreamHttp(@NonNull String mime) {
+        return profile.directDownload != null && profile.directDownload.type == DirectDownload.Type.WEB && Utils.isStreamable(mime);
     }
 
     @Nullable
     public Intent getStreamIntent(@NonNull OptionsMap global, @NonNull AriaFile file) {
         DirectDownload dd = profile.directDownload;
         if (dd == null || dd.type != DirectDownload.Type.WEB)
-            throw new IllegalStateException("WTF?!");
+            throw new IllegalStateException("DirectDownload is null or not WEB");
 
         HttpUrl base = dd.web.getUrl();
         if (base == null) return null;
