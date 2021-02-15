@@ -21,7 +21,7 @@ android {
     if (isCi) {
         signingConfigs {
             release {
-                storeFile file("../.gtihub/keystore.jks")
+                storeFile file("../.github/keystore.jks")
                 storePassword System.getenv("KEYSTORE_STORE_PASS")
                 keyAlias = System.getenv("KEYSTORE_KEY_ALIAS")
                 keyPassword System.getenv("KEYSTORE_KEY_PASS")
