@@ -52,6 +52,11 @@ public class Download {
         else return ChangeSelectionResult.DESELECTED;
     }
 
+    public boolean isFromInAppDownloader() {
+        ClientInterface clientInterface = client.get();
+        return clientInterface != null && clientInterface.isInAppDownloader();
+    }
+
     public void restart(AbstractClient.OnSuccess listener) {
         restart(new AbstractClient.OnResult<String>() {
             @Override

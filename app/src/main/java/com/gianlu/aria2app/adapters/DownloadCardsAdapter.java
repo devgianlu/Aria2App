@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.IBinder;
 import android.os.Messenger;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
+import com.gianlu.aria2app.api.aria2.AriaFile;
 import com.gianlu.aria2app.api.aria2.Download;
 import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.services.NotificationService;
@@ -51,6 +53,7 @@ import java.util.Queue;
 
 public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCardsAdapter.ViewHolder, DownloadWithUpdate, DownloadCardsAdapter.SortBy, Download.Status> implements ServiceConnection {
     private final Context context;
+    private final Context activityContext;
     private final Listener listener;
     private final LayoutInflater inflater;
     private final LocalReceiver receiver;
@@ -61,6 +64,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
     public DownloadCardsAdapter(Context context, List<DownloadWithUpdate> objs, Listener listener) {
         super(objs, SortBy.STATUS);
+        this.activityContext = context;
         this.context = context.getApplicationContext();
         this.listener = listener;
         this.inflater = LayoutInflater.from(context);
@@ -114,7 +118,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     public void onSetupViewHolder(@NonNull ViewHolder holder, int position, final @NonNull DownloadWithUpdate item) {
         DownloadWithUpdate.SmallUpdate update = item.update();
 
-        int colorAccent = ContextCompat.getColor(context, update.getColorVariant());
+        int colorAccent = ContextCompat.getColor(activityContext, update.getColorVariant());
         Utils.setupChart(holder.detailsChart, true);
         holder.detailsChart.setNoDataTextColor(colorAccent);
         holder.donutProgress.setFinishedStrokeColor(colorAccent);
@@ -293,6 +297,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         final SuperTextView detailsTotalLength;
         final SuperTextView detailsCompletedLength;
         final SuperTextView detailsUploadLength;
+        final ImageButton open;
         final ImageButton pause;
         final ImageButton start;
         final ImageButton stop;
@@ -313,6 +318,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             details = itemView.findViewById(R.id.downloadCard_details);
             pause = itemView.findViewById(R.id.downloadCard_pause);
             start = itemView.findViewById(R.id.downloadCard_start);
+            open = itemView.findViewById(R.id.downloadCard_open);
             stop = itemView.findViewById(R.id.downloadCard_stop);
             restart = itemView.findViewById(R.id.downloadCard_restart);
             remove = itemView.findViewById(R.id.downloadCard_remove);
@@ -400,6 +406,26 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                     toggleNotification.setVisibility(View.GONE);
                     break;
             }
+
+            if (!download.update().isTorrent() && download.update().status == Download.Status.COMPLETE
+                    && download.isFromInAppDownloader()) {
+                List<AriaFile> files = download.update().files;
+                if (files.size() == 1) {
+                    open.setVisibility(View.VISIBLE);
+                    open.setOnClickListener(v -> {
+                        AriaFile file = files.get(0);
+                        String mime = file.getMimeType();
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(file.getAbsolutePath()));
+                        if (mime != null) intent.setType(mime);
+                        activityContext.startActivity(Intent.createChooser(intent, "Open the file..."));
+                    });
+                } else {
+                    open.setVisibility(View.GONE);
+                }
+            } else {
+                open.setVisibility(View.GONE);
+            }
         }
 
         public void update(@NonNull DownloadWithUpdate download) {
@@ -437,11 +463,11 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             downloadName.setText(last.getName());
             if (last.status == Download.Status.ERROR) {
                 if (last.errorMessage == null)
-                    downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d", last.status.getFormal(context, true), last.errorCode));
+                    downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d", last.status.getFormal(activityContext, true), last.errorCode));
                 else
-                    downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", last.status.getFormal(context, true), last.errorCode, last.errorMessage));
+                    downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", last.status.getFormal(activityContext, true), last.errorCode, last.errorMessage));
             } else {
-                downloadStatus.setText(last.status.getFormal(context, true));
+                downloadStatus.setText(last.status.getFormal(activityContext, true));
             }
 
             customInfo.update(last);

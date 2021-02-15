@@ -100,6 +100,15 @@
             android:padding="8dp">
 
             <ImageButton
+                android:id="@+id/downloadCard_open"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/baseline_open_in_new_24" />
+
+            <ImageButton
                 android:id="@+id/downloadCard_pause"
                 android:layout_width="48dp"
                 android:layout_height="48dp"

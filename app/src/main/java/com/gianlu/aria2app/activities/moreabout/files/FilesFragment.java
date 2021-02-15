@@ -288,21 +288,20 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             dismissDialog();
         }
 
+        String mime = file.getMimeType();
+        if (getHelper().isInAppDownloader()) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(file.getAbsolutePath()));
+            if (mime != null) intent.setType(mime);
+            startActivity(Intent.createChooser(intent, "Open the file..."));
+            return;
+        }
+
         showProgress(R.string.gathering_information);
         getHelper().request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<OptionsMap>() {
             @Override
             public void onResult(@NonNull OptionsMap result) {
                 dismissDialog();
-
-                String mime = file.getMimeType();
-
-                if (getHelper().isInAppDownloader()) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(file.getAbsolutePath()));
-                    if (mime != null) intent.setType(mime);
-                    startActivity(Intent.createChooser(intent, "Open the file..."));
-                    return;
-                }
 
                 if (mime != null && getContext() != null && helper.canStreamHttp(mime)) {
                     Intent intent = helper.getStreamIntent(result, file);
