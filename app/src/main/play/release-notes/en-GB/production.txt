@@ -1,7 +1,4 @@
 ### Added
-- Added option to toggle clearing WebView cookies
-- Added menu option to clear cookies
-
-### Fixed
-- Fixed DirectDownload download not cancelling when failed
-- Fixed DirectDownload download path not being calculated correctly
+- Added disclaimer about non-permanent options
+- Intercept even more links in the browser
+- Open downloaded files with the InApp Downloader directly
