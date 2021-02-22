@@ -95,7 +95,7 @@ dependencies {
     implementation 'androidx.tonyodev.fetch2:xfetch2:3.1.6'
     implementation 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.6'
 
-    implementation 'commons-net:commons-net:3.7.2'
+    implementation 'commons-net:commons-net:3.8.0'
     implementation 'com.hierynomus:smbj:0.10.0'
     implementation 'com.jcraft:jsch:0.1.55'
 
