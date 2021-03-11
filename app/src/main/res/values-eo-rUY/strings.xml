@@ -15,4 +15,7 @@
     <string name="options">Opcioj</string>
     <string name="password">Pasvorto</string>
     <string name="about_aria2">Pri aria2</string>
+    <string name="editProfile">Redakti aŭ forigi profilon</string>
+    <string name="search">Serĉi</string>
+    <string name="sorting">Ordigi laŭ</string>
 </resources>
