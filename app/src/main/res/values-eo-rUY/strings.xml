@@ -3,4 +3,16 @@
     <!-- Tutorial -->
     <!-- Prefs -->
     <!-- General -->
+    <string name="downloadStatus_error">Eraro</string>
+    <string name="downloadStatus_paused">Paŭzita</string>
+    <string name="downloadStatus_unknown">Nekonata</string>
+    <string name="downloadStatus_removed">Forigita</string>
+    <string name="files">Dosieroj</string>
+    <string name="profileName">Profila nomo</string>
+    <string name="apply">Apliki</string>
+    <string name="save">Konsvervi</string>
+    <string name="add">Aldoni</string>
+    <string name="options">Opcioj</string>
+    <string name="password">Pasvorto</string>
+    <string name="about_aria2">Pri aria2</string>
 </resources>
