@@ -2,20 +2,55 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
     <!-- Prefs -->
+    <string name="profiles">Profiloj</string>
+    <string name="importProfiles">Enporti profilojn</string>
+    <string name="exportProfiles">Elporti profilojn</string>
+    <string name="userPasswd">Uzanto - pasvorto</string>
     <!-- General -->
     <string name="downloadStatus_error">Eraro</string>
     <string name="downloadStatus_paused">Paŭzita</string>
     <string name="downloadStatus_unknown">Nekonata</string>
     <string name="downloadStatus_removed">Forigita</string>
+    <string name="notificationError">Elŝutada eraro</string>
+    <string name="info">Informo</string>
     <string name="files">Dosieroj</string>
     <string name="profileName">Profila nomo</string>
+    <string name="address">Adreso</string>
+    <string name="addProfile">Aldoni profilon</string>
+    <string name="home">Hejmo</string>
+    <string name="port">Haveno</string>
     <string name="apply">Apliki</string>
     <string name="save">Konsvervi</string>
     <string name="add">Aldoni</string>
     <string name="options">Opcioj</string>
+    <string name="none">Neniu</string>
+    <string name="username">Uzantnomo</string>
     <string name="password">Pasvorto</string>
+    <string name="more">Pli</string>
     <string name="about_aria2">Pri aria2</string>
     <string name="editProfile">Redakti aŭ forigi profilon</string>
     <string name="search">Serĉi</string>
     <string name="sorting">Ordigi laŭ</string>
+    <string name="progress">Progreso</string>
+    <string name="addTorrent">Aldoni torenton</string>
+    <string name="invalidAddress">Nevalida adreso!</string>
+    <string name="set">Agordi</string>
+    <string name="file">Dosiero</string>
+    <string name="nameLabel">Nomo</string>
+    <string name="searchDownloads">Serĉi por elŝuti</string>
+    <string name="create">Krei</string>
+    <string name="deleteProfile">Forigi profilon</string>
+    <string name="filename">Dosiernomo:</string>
+    <string name="invalidFile">Nevalida dosiero!</string>
+    <string name="contactMe">Kontakti min</string>
+    <string name="failed">Malsukcesis</string>
+    <string name="name">Nomo: %s</string>
+    <string name="select">Elekti</string>
+    <string name="deselect">Malelekti</string>
+    <string name="selectAll">Elekti ĉiujn</string>
+    <string name="cancelled">Nuligita</string>
+    <string name="visit">Viziti</string>
+    <string name="goTo">Iri al</string>
+    <string name="setAsDefault">Agordi kiel defaŭlta</string>
+    <string name="webViewUrlHint">Tajpu URL-on por viziti…</string>
 </resources>
