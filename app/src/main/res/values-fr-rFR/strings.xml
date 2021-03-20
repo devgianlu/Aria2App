@@ -22,11 +22,11 @@
     <string name="prefs_versionCheck_summary">Vérifier que la dernière version du serveur aria2 est utilisée.</string>
     <string name="prefs_ddDownloadPath">Chemin de téléchargement</string>
     <string name="prefs_ddDownloadPath_summary">Tous les fichiers seront téléchargés ici.</string>
-    <string name="prefs_ddMaxSimultaneousDownloads">Téléchargements simultannés maximum</string>
-    <string name="prefs_ddMaxSimultaneousDownloads_summary">Nombre maximum de téléchagements au même moment.</string>
+    <string name="prefs_ddMaxSimultaneousDownloads">Téléchargements simultanés maximum</string>
+    <string name="prefs_ddMaxSimultaneousDownloads_summary">Nombre maximum de téléchargements au même moment.</string>
     <string name="prefs_ddResume">Reprendre les téléchargements</string>
     <string name="prefs_ddResume_summary">Reprendre les téléchargements en pause au démarrage</string>
-    <string name="prefs_enableNotifications">Activer les noticiations</string>
+    <string name="prefs_enableNotifications">Activer les notifications</string>
     <string name="prefs_enableNotifications_summary">Vous recevrez des notifications pour vos profils sélectionnés</string>
     <string name="prefs_notificationType">Types de notifications</string>
     <string name="prefs_notificationType_summary">Sélectionnez quels types de notifications vous recevrez</string>
@@ -34,7 +34,7 @@
     <string name="prefs_enableNotificationsAtBoot_summary">Le service de notification sera lancé au démarrage du téléphone</string>
     <string name="locationAccessDenied">Vous avez refusé l\'accès aux permissions de localisation.</string>
     <string name="locationAccess_title">Accès à la localisation nécessaire</string>
-    <string name="locationAccess_message">L\'application a besoin des permissions de localisation pour lire le nom (SSID) du réseau WiFi. Aucune autre opération ne sera réalisée.</string>
+    <string name="locationAccess_message">L\'application a besoin des permissions de localisation pour lire le nom (SSID) du réseau Wi-Fi. Aucune autre opération ne sera réalisée.</string>
     <string name="profiles">Profils</string>
     <string name="importProfiles">Importer les profils</string>
     <string name="importProfiles_summary">Importer les profiles depuis un fichier précédemment exporté.</string>
@@ -84,7 +84,7 @@
     <string name="versionLabel"><![CDATA[<b>Version :</b>]]> %s</string>
     <string name="gathering_information">Récupération des informations. Veuillez patienter…</string>
     <string name="info">Infos</string>
-    <string name="files">Fichier</string>
+    <string name="files">Fichiers</string>
     <string name="profileName">Nom du profil</string>
     <string name="profile_help">Si vous ne savez pas comment configurer un profil correctement, consultez ce guide sur mon site web : https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
     <string name="address">Adresse</string>
