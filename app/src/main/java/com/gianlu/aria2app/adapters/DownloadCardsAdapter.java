@@ -241,7 +241,11 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     public void activityDestroying(@NonNull Context context) {
-        context.getApplicationContext().unbindService(this);
+        try {
+            context.getApplicationContext().unbindService(this);
+        } catch (IllegalArgumentException ignored) {
+        }
+
         if (broadcastManager != null) broadcastManager.unregisterReceiver(receiver);
     }
 
