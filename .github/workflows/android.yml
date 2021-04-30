@@ -22,6 +22,7 @@ jobs:
       - name: Grant execute permission to scripts
         run: chmod +x gradlew .github/decrypt_secrets.sh
       - name: Decrypt GPG secrets
+        if: ${{ !startsWith(github.ref, 'refs/pull') }}
         run: .github/decrypt_secrets.sh
         env:
           SECRETS_GPG_PASS: ${{ secrets.SECRETS_GPG_PASS }}
