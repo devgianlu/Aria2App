@@ -23,6 +23,7 @@
     <string name="prefs_ddDownloadPath">مسیر بارگیری</string>
     <string name="prefs_ddDownloadPath_summary">همه پرونده‌ها در اینجا بارگیری خواهند شد.</string>
     <string name="prefs_ddMaxSimultaneousDownloads">بیشترین میزان بارگیری‌ها همزمان</string>
+    <string name="prefs_ddMaxSimultaneousDownloads_summary">بیشترین شمار بارگیری‌های همزمان.</string>
     <string name="prefs_ddResume">ادامه بارگیری‌ها</string>
     <string name="prefs_ddResume_summary">هنگام آغاز بارگیری‌های متوقف شده را ادامه بده</string>
     <string name="prefs_enableNotifications">فعال‌کردن خدمات اعلان</string>
@@ -33,6 +34,7 @@
     <string name="prefs_enableNotificationsAtBoot_summary">خدمات اعلان هنگام راه اندازی دستگاه آغاز خواهد شد</string>
     <string name="locationAccessDenied">شما مجوز دسترسی به مکان را رد کردید.</string>
     <string name="locationAccess_title">دسترسی مکان مورد نیاز است</string>
+    <string name="locationAccess_message">برای خواندن SSID وای‌فای، برنامه باید مجوز مکان داشته باشد، هیچ عملیات دیگری انجام نخواهد شد.</string>
     <string name="profiles">نمایه‌ها</string>
     <string name="importProfiles">وارد کردن نمایه‌ها</string>
     <string name="importProfiles_summary">وارد کردن نمایه‌ها از یک پرونده قبلی.</string>
@@ -251,6 +253,7 @@
     <string name="resumedAll">همه بارگیری‌ها را ادامه بده.</string>
     <string name="purgedDownloadResult">نتایج همه بارگیری را پاک‌ کن.</string>
     <string name="skipThisVersion">از این نگارش صرف‌ نظر کن</string>
+    <string name="pickProfile_someAction">یک نمایه را برای تکمیل این کنش انتخاب کنید:</string>
     <string name="notificationException">خدمات اعلان برای %s شکست خورد!</string>
     <string name="notificationUnsupportedConnMethod">شیوه اتصال برای %s پشتیبانی نمی‌شود!</string>
     <string name="export">برون‌بری</string>
