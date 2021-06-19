@@ -283,7 +283,6 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         if (torrent.torrentFileUrl != null) {
             builder.setNeutralButton(R.string.getTorrent, (dialogInterface, i) -> {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(torrent.torrentFileUrl)));
-
                 AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH_GET_TORRENT);
             });
         }
