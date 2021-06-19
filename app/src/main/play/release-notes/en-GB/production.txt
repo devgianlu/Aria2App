@@ -1,4 +1,6 @@
 ### Added
-- Added disclaimer about non-permanent options
-- Intercept even more links in the browser
-- Open downloaded files with the InApp Downloader directly
+- Lots of translations
+
+### Fixed
+- Fixed open file button not working
+- Minor bugs

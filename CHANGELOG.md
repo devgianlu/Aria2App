@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.9.7] - 19-06-2021
+### Added
+- Lots of translations
+
+### Fixed
+- Fixed open file button not working
+- Minor bugs
+
+
 ## [5.9.6] - 15-02-2021
 ### Added
 - Added disclaimer about non-permanent options
