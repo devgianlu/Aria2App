@@ -55,6 +55,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -291,7 +292,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         String mime = file.getMimeType();
         if (getHelper().isInAppDownloader()) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(file.getAbsolutePath()));
+            intent.setData(Uri.fromFile(new File(file.getAbsolutePath())));
             if (mime != null) intent.setType(mime);
             startActivity(Intent.createChooser(intent, "Open the file..."));
             return;

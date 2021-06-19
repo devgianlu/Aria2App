@@ -41,6 +41,7 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
+import java.io.File;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -420,7 +421,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                         AriaFile file = files.get(0);
                         String mime = file.getMimeType();
                         Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(file.getAbsolutePath()));
+                        intent.setData(Uri.fromFile(new File(file.getAbsolutePath())));
                         if (mime != null) intent.setType(mime);
                         activityContext.startActivity(Intent.createChooser(intent, "Open the file..."));
                     });
