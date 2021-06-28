@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.IBinder;
 import android.os.Messenger;
 import android.view.LayoutInflater;
@@ -19,6 +18,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -420,8 +420,9 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                     open.setOnClickListener(v -> {
                         AriaFile file = files.get(0);
                         String mime = file.getMimeType();
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.fromFile(new File(file.getAbsolutePath())));
+                        Intent intent = new Intent(Intent.ACTION_VIEW)
+                                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        intent.setData(FileProvider.getUriForFile(context, "com.gianlu.aria2app", new File(file.getAbsolutePath())));
                         if (mime != null) intent.setType(mime);
                         activityContext.startActivity(Intent.createChooser(intent, "Open the file..."));
                     });

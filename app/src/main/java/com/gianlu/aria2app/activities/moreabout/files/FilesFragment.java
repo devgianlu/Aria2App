@@ -2,7 +2,6 @@ package com.gianlu.aria2app.activities.moreabout.files;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -291,8 +291,9 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
         String mime = file.getMimeType();
         if (getHelper().isInAppDownloader()) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.fromFile(new File(file.getAbsolutePath())));
+            Intent intent = new Intent(Intent.ACTION_VIEW)
+                    .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setData(FileProvider.getUriForFile(requireContext(), "com.gianlu.aria2app", new File(file.getAbsolutePath())));
             if (mime != null) intent.setType(mime);
             startActivity(Intent.createChooser(intent, "Open the file..."));
             return;
