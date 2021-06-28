@@ -14,8 +14,8 @@ android {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 219
-        versionName "5.9.7"
+        versionCode 220
+        versionName "5.9.8"
     }
 
     if (isCi) {

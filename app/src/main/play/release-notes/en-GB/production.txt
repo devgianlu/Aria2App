@@ -1,6 +1,2 @@
-### Added
-- Lots of translations
-
 ### Fixed
-- Fixed open file button not working
-- Minor bugs
+- Fixed crash when trying to open local file
