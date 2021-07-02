@@ -37,7 +37,7 @@
     <string name="locationAccess_message">L\'application a besoin des permissions de localisation pour lire le nom (SSID) du réseau Wi-Fi. Aucune autre opération ne sera réalisée.</string>
     <string name="profiles">Profils</string>
     <string name="importProfiles">Importer les profils</string>
-    <string name="importProfiles_summary">Importer les profiles depuis un fichier précédemment exporté.</string>
+    <string name="importProfiles_summary">Importer les profils depuis un fichier précédemment exporté.</string>
     <string name="exportProfiles">Exporter les profils</string>
     <string name="exportProfiles_summary">Exporter tous les profils vers un seul fichier.</string>
     <string name="failedImportingProfiles">Échec de l\'importation du fichier des profils !</string>
