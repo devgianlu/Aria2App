@@ -257,7 +257,7 @@
     <string name="running">En cours</string>
     <string name="paused">En pause</string>
     <string name="failedOpeningDownload">Échec d\'ouverture du téléchargement !</string>
-    <string name="noDirectDownloads">Il n\'y a pas de téléchargement. Vous pouvez récupérer un fichier depuis l\'onglet Fichiers d\'un téléchargement. Pour en savoir plus sur le DirectDownload : https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
+    <string name="noDirectDownloads">Il n\'y a pas de téléchargement. Vous pouvez récupérer un fichier depuis l\'onglet Fichiers d\'un téléchargement. Pour en savoir plus sur le DirectDownload (en anglais) : https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="remainingTime">Temps restant</string>
     <string name="connectionsLabel">Connexions</string>
     <string name="numSeederLabel">Seeders</string>
@@ -311,11 +311,11 @@
     <string name="torrentFiles">Fichiers torrent</string>
     <string name="metalinkFiles">Fichiers métaliens</string>
     <string name="urisFile">Fichiers URI</string>
-    <string name="urisFile_help">Pour en savoir plus sur les fichiers URI : https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
+    <string name="urisFile_help">Pour en savoir plus sur les fichiers URI (en anglais) : https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
     <string name="cancelled">Annulé</string>
     <string name="failedStartingAria2Android">Échec du démarrage de Aria2Android !</string>
     <string name="prefs_ddUseExternal">Utiliser un service de téléchargement externe</string>
-    <string name="prefs_ddUseExternal_summary">Envoyer le téléchargement vers le système ou une autre application.</string>
+    <string name="prefs_ddUseExternal_summary">Envoyer le téléchargement vers le système ou vers une autre application.</string>
     <string name="cannotDownloadDirWithExternal">Impossible de télécharger un dossier</string>
     <string name="cannotDownloadDirWithExternal_message">Vous ne pouvez pas télécharger un dossier avec un service de téléchargement externe. Voulez-vous démarrer le téléchargement avec la solution intégrée ?</string>
     <string name="isThisToDownload">Est-ce ce que vous souhaitez télécharger ?</string>
@@ -330,8 +330,8 @@
     <string name="addBestTrackers">Ajouter de meilleurs traquers</string>
     <string name="health"><![CDATA[<b>Santé :</b>]]> %.2f%% (%d/%d)</string>
     <string name="inAppDownloader_serviceStarted">Le service est démarré et fonctionnel.</string>
-    <string name="inAppDownloader_serviceNotStarted">Le service n\'a pas été démarré.</string>
-    <string name="inAppDownloader_serviceNotConfigured">Le service n\'a pas été configuré.</string>
+    <string name="inAppDownloader_serviceNotStarted">Le service n\'est pas démarré.</string>
+    <string name="inAppDownloader_serviceNotConfigured">Le service n\'est pas configuré.</string>
     <string name="inAppDownloader_configuration">Configuration du serveur de téléchargement intégré</string>
     <string name="oldAria2AppNoInApp">Cette fonctionnalité n\'est plus supporté</string>
     <string name="oldAria2AppNoInApp_message">Une mise a jour récente a rendu possible d\'intégrer toutes les fonctionnalités d\'Aria2Android à Aria2App. Mettez à jour l\'application pour l\'utiliser.</string>
