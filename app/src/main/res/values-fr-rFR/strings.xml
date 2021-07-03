@@ -157,7 +157,7 @@
     <string name="emptyPassword">Le champ mot de passe est vide!</string>
     <string name="emptyUsername">Le champ nom d\'utilisateur est vide !</string>
     <string name="invalidAddress">Adresse invalide !</string>
-    <string name="pickProfile">Choisissez un profil ou en créer un nouveau. Maintenez appuyé pour mettre à jour.</string>
+    <string name="pickProfile">Choisissez un profil ou créez-en un nouveau. Maintenez appuyé pour mettre à jour.</string>
     <string name="failedLoading">Chargement échoué !</string>
     <string name="currentUri"><![CDATA[<b>URL actuelle :</b>]]> %s</string>
     <string name="uri"><![CDATA[<b>URL :</b>]]> %s</string>
@@ -175,7 +175,7 @@
     <string name="file">Fichier</string>
     <string name="pickTorrent_help">Sélectionner un fichier torrent. Le MIME type supporté est <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
     <string name="pickMetalink_help">Sélectionnez un fichier métalien. Les types MIME supportés sont <![CDATA[<b>application/metalink4+xml</b>]]> et <![CDATA[<b>application/metalink+xml</b>]]>.</string>
-    <string name="outdated_aria2">Version aria2 obsolète</string>
+    <string name="outdated_aria2">Version d\'aria2 obsolète</string>
     <string name="outdated_aria2_message">La version du serveur aria2 est obsolète. Aria2App est programmée pour fonctionner avec la dernière version d\'aria2. C\'est pourquoi vous devriez le mettre à jour. Vous pouvez désactiver ce messages dans les préférences. \n\nVersion actuelle : %1$s \nDernière version: %2$s</string>
     <string name="selectFile_help">Le fichier peut être sélectionné ou désélectionné des téléchargements seulement pour les torrents multi-fichiers.</string>
     <string name="nameLabel">Nom</string>
