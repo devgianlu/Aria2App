@@ -13,8 +13,8 @@ android {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 220
-        versionName "5.9.8"
+        versionCode 221
+        versionName "5.9.9"
     }
 
     if (isCi) {
@@ -91,8 +91,8 @@ dependencies {
     implementation project(':CommonUtils')
     implementation project(':aria2lib')
 
-    implementation 'androidx.tonyodev.fetch2:xfetch2:3.1.6'
-    implementation 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.6'
+    implementation 'com.github.tonyofrancis.Fetch:xfetch2:3.1.6'
+    implementation 'com.github.tonyofrancis.Fetch:xfetch2okhttp:3.1.6'
 
     implementation 'commons-net:commons-net:3.8.0'
     implementation 'com.hierynomus:smbj:0.11.1'

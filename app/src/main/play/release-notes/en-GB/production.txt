@@ -1,2 +1,5 @@
 ### Fixed
-- Fixed crash when trying to open local file
+- Minor bug fixes
+
+### Changed
+- Updated third party libraries
