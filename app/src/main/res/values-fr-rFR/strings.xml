@@ -37,7 +37,7 @@
     <string name="locationAccess_message">L\'application a besoin des permissions de localisation pour lire le nom (SSID) du réseau Wi-Fi. Aucune autre opération ne sera réalisée.</string>
     <string name="profiles">Profils</string>
     <string name="importProfiles">Importer les profils</string>
-    <string name="importProfiles_summary">Importer les profiles depuis un fichier précédemment exporté.</string>
+    <string name="importProfiles_summary">Importer les profils depuis un fichier précédemment exporté.</string>
     <string name="exportProfiles">Exporter les profils</string>
     <string name="exportProfiles_summary">Exporter tous les profils vers un seul fichier.</string>
     <string name="failedImportingProfiles">Échec de l\'importation du fichier des profils !</string>
@@ -157,7 +157,7 @@
     <string name="emptyPassword">Le champ mot de passe est vide!</string>
     <string name="emptyUsername">Le champ nom d\'utilisateur est vide !</string>
     <string name="invalidAddress">Adresse invalide !</string>
-    <string name="pickProfile">Choisissez un profil ou en créer un nouveau. Maintenez appuyé pour mettre à jour.</string>
+    <string name="pickProfile">Choisissez un profil ou créez-en un nouveau. Maintenez appuyé pour mettre à jour.</string>
     <string name="failedLoading">Chargement échoué !</string>
     <string name="currentUri"><![CDATA[<b>URL actuelle :</b>]]> %s</string>
     <string name="uri"><![CDATA[<b>URL :</b>]]> %s</string>
@@ -175,7 +175,7 @@
     <string name="file">Fichier</string>
     <string name="pickTorrent_help">Sélectionner un fichier torrent. Le MIME type supporté est <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
     <string name="pickMetalink_help">Sélectionnez un fichier métalien. Les types MIME supportés sont <![CDATA[<b>application/metalink4+xml</b>]]> et <![CDATA[<b>application/metalink+xml</b>]]>.</string>
-    <string name="outdated_aria2">Version aria2 obsolète</string>
+    <string name="outdated_aria2">Version d\'aria2 obsolète</string>
     <string name="outdated_aria2_message">La version du serveur aria2 est obsolète. Aria2App est programmée pour fonctionner avec la dernière version d\'aria2. C\'est pourquoi vous devriez le mettre à jour. Vous pouvez désactiver ce messages dans les préférences. \n\nVersion actuelle : %1$s \nDernière version: %2$s</string>
     <string name="selectFile_help">Le fichier peut être sélectionné ou désélectionné des téléchargements seulement pour les torrents multi-fichiers.</string>
     <string name="nameLabel">Nom</string>
@@ -257,7 +257,7 @@
     <string name="running">En cours</string>
     <string name="paused">En pause</string>
     <string name="failedOpeningDownload">Échec d\'ouverture du téléchargement !</string>
-    <string name="noDirectDownloads">Il n\'y a pas de téléchargement. Vous pouvez récupérer un fichier depuis l\'onglet Fichiers d\'un téléchargement. Pour en savoir plus sur le DirectDownload : https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
+    <string name="noDirectDownloads">Il n\'y a pas de téléchargement. Vous pouvez récupérer un fichier depuis l\'onglet Fichiers d\'un téléchargement. Pour en savoir plus sur le DirectDownload (en anglais) : https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="remainingTime">Temps restant</string>
     <string name="connectionsLabel">Connexions</string>
     <string name="numSeederLabel">Seeders</string>
@@ -311,11 +311,11 @@
     <string name="torrentFiles">Fichiers torrent</string>
     <string name="metalinkFiles">Fichiers métaliens</string>
     <string name="urisFile">Fichiers URI</string>
-    <string name="urisFile_help">Pour en savoir plus sur les fichiers URI : https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
+    <string name="urisFile_help">Pour en savoir plus sur les fichiers URI (en anglais) : https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
     <string name="cancelled">Annulé</string>
     <string name="failedStartingAria2Android">Échec du démarrage de Aria2Android !</string>
     <string name="prefs_ddUseExternal">Utiliser un service de téléchargement externe</string>
-    <string name="prefs_ddUseExternal_summary">Envoyer le téléchargement vers le système ou une autre application.</string>
+    <string name="prefs_ddUseExternal_summary">Envoyer le téléchargement vers le système ou vers une autre application.</string>
     <string name="cannotDownloadDirWithExternal">Impossible de télécharger un dossier</string>
     <string name="cannotDownloadDirWithExternal_message">Vous ne pouvez pas télécharger un dossier avec un service de téléchargement externe. Voulez-vous démarrer le téléchargement avec la solution intégrée ?</string>
     <string name="isThisToDownload">Est-ce ce que vous souhaitez télécharger ?</string>
@@ -330,8 +330,8 @@
     <string name="addBestTrackers">Ajouter de meilleurs traquers</string>
     <string name="health"><![CDATA[<b>Santé :</b>]]> %.2f%% (%d/%d)</string>
     <string name="inAppDownloader_serviceStarted">Le service est démarré et fonctionnel.</string>
-    <string name="inAppDownloader_serviceNotStarted">Le service n\'a pas été démarré.</string>
-    <string name="inAppDownloader_serviceNotConfigured">Le service n\'a pas été configuré.</string>
+    <string name="inAppDownloader_serviceNotStarted">Le service n\'est pas démarré.</string>
+    <string name="inAppDownloader_serviceNotConfigured">Le service n\'est pas configuré.</string>
     <string name="inAppDownloader_configuration">Configuration du serveur de téléchargement intégré</string>
     <string name="oldAria2AppNoInApp">Cette fonctionnalité n\'est plus supporté</string>
     <string name="oldAria2AppNoInApp_message">Une mise a jour récente a rendu possible d\'intégrer toutes les fonctionnalités d\'Aria2Android à Aria2App. Mettez à jour l\'application pour l\'utiliser.</string>
