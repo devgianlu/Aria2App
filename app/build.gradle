@@ -3,7 +3,6 @@ plugins {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.firebase.crashlytics'
 
 def isCi = System.getenv("CI") == "true"
 android {
@@ -112,10 +111,5 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
 }
 
-task printVersionName {
-    doLast {
-        println android.defaultConfig.versionName
-    }
-}
-
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
