@@ -88,7 +88,7 @@
     <string name="profileName">配置名称</string>
     <string name="profile_help">如果您不知道如何正确建立配置文件，请查看我的网站上的指南: https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
     <string name="address">地址</string>
-    <string name="peers">可连接用户</string>
+    <string name="peers">节点</string>
     <string name="servers">服务器</string>
     <string name="addProfile">添加配置文件</string>
     <string name="home">主页面</string>
