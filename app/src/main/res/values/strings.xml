@@ -204,7 +204,7 @@
     <string name="base64NotSelected">You haven\'t selected a file!</string>
     <string name="certDisclaimer">A certificate isn\'t required if your server is already trusted by this system (usually if you installed the certificate or if your certificate is signed by a trusted source)</string>
     <string name="test">Test</string>
-    <string name="test_help">Pressing the test button Aria2App will check your configuration and help you diagnose network problems. To get further help contact me at altomanigianluca@gmail.com.</string>
+    <string name="test_help">Pressing the test button Aria2App will check your configuration and help you diagnose network problems.</string>
     <string name="completedLengthLabel">Completed length</string>
     <string name="filename">Filename:</string>
     <string name="filename_help" tools:ignore="TypographyDashes">File name of the downloaded file. Leave empty to let aria2 generate one. This will override the --out option.</string>
