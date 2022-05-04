@@ -199,7 +199,6 @@
     <string name="base64NotSelected">Vous n\'avez pas sélectionné de fichier !</string>
     <string name="certDisclaimer">Un certificat n\'est pas nécessaire si votre serveur est déjà validé par cet appareil (habituellement, si vous avez installé le certificat ou s\'il s\'agît d\'un certificat signé)</string>
     <string name="test">Tester</string>
-    <string name="test_help">Appuyer sur le bouton Tester pour vérifier votre configuration et aider à diagnostiquer s\'il y a des problèmes. Pour obtenir de l\'aide supplémentaire, contactez-moi via altomanigianluca@gmail.com.</string>
     <string name="completedLengthLabel">Données téléchargées</string>
     <string name="filename">Nom du fichier :</string>
     <string name="filename_help" tools:ignore="TypographyDashes">Nom du fichier téléchargé. Laisser vide pour laisser aria2 en générer un. Cela surchargera l\'option --out.</string>
