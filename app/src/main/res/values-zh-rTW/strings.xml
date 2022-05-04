@@ -164,7 +164,6 @@
     <string name="base64NotSelected">您還沒有選擇檔案!</string>
     <string name="certDisclaimer">如果您的服務器已被此系統信任（通常是您安裝了證書或證書由受信任的來源簽名），則不需要證書</string>
     <string name="test">測試</string>
-    <string name="test_help">按下測試按鈕 Aria2App 將檢查您的設定並幫助您診斷網絡問題。要獲得進一步的幫助，請通過 altomanigianluca@gmail.com 與我聯繫。</string>
     <string name="completedLengthLabel">完成大小</string>
     <string name="filename">檔案名:</string>
     <string name="filename_help" tools:ignore="TypographyDashes">下載檔案的檔案名。可留空讓 Aria2 自行生成。本訊息將替換 --out 參數的內容.</string>
