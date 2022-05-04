@@ -199,6 +199,7 @@
     <string name="base64NotSelected">您还没有选择文件！</string>
     <string name="certDisclaimer">如果您的服务器已被此系统信任（通常是您安装了证书或证书由受信任的来源签名），则不需要证书</string>
     <string name="test">测试</string>
+    <string name="test_help">按下测试按钮，Aria2App 将检查你的配置并帮助你诊断网络问题。</string>
     <string name="completedLengthLabel">完成长度</string>
     <string name="filename">文件名：</string>
     <string name="filename_help" tools:ignore="TypographyDashes">下载文件的文件名。可留空让Aria2自行生成。 本信息将替换--out参数的内容.</string>
