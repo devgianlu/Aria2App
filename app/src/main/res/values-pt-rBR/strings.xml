@@ -199,6 +199,7 @@
     <string name="base64NotSelected">Você não selecionou um arquivo!</string>
     <string name="certDisclaimer">Um certificado não é necessário se o seu servidor já é confiável por este sistema (geralmente se você instalou o certificado ou se o seu certificado foi assinado por uma fonte confiável)</string>
     <string name="test">Teste</string>
+    <string name="test_help">Pressionar o botão de teste Aria2App irá verificar sua configuração e ajudá-lo a diagnosticar problemas de rede.</string>
     <string name="completedLengthLabel">Dados Baixados</string>
     <string name="filename">Nome do arquivo:</string>
     <string name="filename_help" tools:ignore="TypographyDashes">Nome do arquivo baixado. Deixe em branco para permitir que o aria2 gere um. Isso substituirá a opção --out.</string>
