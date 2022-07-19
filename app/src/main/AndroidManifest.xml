@@ -48,7 +48,8 @@
         <activity
             android:name=".LoadingActivity"
             android:configChanges="uiMode"
-            android:theme="@style/FullscreenTheme">
+            android:theme="@style/FullscreenTheme"
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -5691,7 +5692,8 @@
         <!-- Chooser service -->
         <service
             android:name=".services.ProfileChooserService"
-            android:permission="android.permission.BIND_CHOOSER_TARGET_SERVICE">
+            android:permission="android.permission.BIND_CHOOSER_TARGET_SERVICE"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.service.chooser.ChooserTargetService" />
             </intent-filter>

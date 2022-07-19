@@ -6,13 +6,13 @@ apply plugin: 'com.android.application'
 
 def isCi = System.getenv("CI") == "true"
 android {
-    compileSdkVersion 30
-    buildToolsVersion "31.0.0"
+    compileSdkVersion 32
+    buildToolsVersion "33.0.0"
 
     defaultConfig {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode 221
         versionName "5.9.9"
     }
@@ -67,7 +67,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    lintOptions {
+    lint {
         warning 'MissingTranslation', 'Instantiatable'
     }
 
@@ -106,9 +106,9 @@ dependencies {
     implementation 'com.github.devgianlu:Android--Library-Country-Flags:6fc6059f91'
 
     implementation 'androidx.documentfile:documentfile:1.0.1'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0-alpha01'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.material:material:1.6.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
