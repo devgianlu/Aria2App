@@ -1,5 +1,2 @@
-### Fixed
-- Minor bug fixes
-
 ### Changed
-- Updated third party libraries
+- Updated libraries
