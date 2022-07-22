@@ -1,2 +1,2 @@
-### Changed
-- Updated libraries
+### Fixed
+- Crash on startup for some devices
