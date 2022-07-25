@@ -284,7 +284,7 @@ public class NotificationService extends Service {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
-                .addAction(new NotificationCompat.Action(R.drawable.baseline_clear_24, getString(R.string.stopService), PendingIntent.getService(this, 1, new Intent(this, NotificationService.class).setAction(ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT)))
+                .addAction(new NotificationCompat.Action(R.drawable.baseline_clear_24, getString(R.string.stopService), PendingIntent.getService(this, 1, new Intent(this, NotificationService.class).setAction(ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)))
                 .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
 
         return builder.build();
@@ -341,7 +341,7 @@ public class NotificationService extends Service {
         bundle.putString("profileId", profile.getParent().id);
         bundle.putString("gid", gid);
         builder.setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class)
-                .putExtras(bundle), PendingIntent.FLAG_UPDATE_CURRENT| PendingIntent.FLAG_IMMUTABLE));
+                .putExtras(bundle), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
 
         notificationManager.notify(ThreadLocalRandom.current().nextInt(), builder.build());
     }
