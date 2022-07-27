@@ -1,7 +1,7 @@
 # Aria2App
 ![Android CI](https://github.com/devgianlu/Aria2App/workflows/Android%20CI/badge.svg?branch=master)
 [![Crowdin](https://badges.crowdin.net/aria2app/localized.svg)](https://crowdin.com/project/aria2app)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/114416a87cef4df8b99565f029711869)](https://www.codacy.com/manual/devgianlu/Aria2App?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=devgianlu/Aria2App&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/b08dff3cf63844a2b226d96f1c91fbf1)](https://www.codacy.com/gh/devgianlu/Aria2App/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=devgianlu/Aria2App&amp;utm_campaign=Badge_Grade)
 [![time tracker](https://wakatime.com/badge/github/devgianlu/Aria2App.svg)](https://wakatime.com/badge/github/devgianlu/Aria2App)
 [![Donate Bitcoin](https://img.shields.io/badge/donate-bitcoin-orange.svg)](https://gianlu.xyz/donate/)
 
