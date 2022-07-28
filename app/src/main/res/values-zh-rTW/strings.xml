@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
+    <string name="tutorial_moreDetails">點一下卡片顯示詳情</string>
+    <string name="tutorial_evenMoreDetails">點「更多」按鈕顯示所有細節</string>
+    <string name="tutorial_search">依名稱或 GID 篩選下載</string>
+    <string name="tutorial_filters">依狀態篩選下載</string>
+    <string name="tutorial_fileDetails">點一下任意檔案以顯示詳情，或下載該檔案</string>
+    <string name="tutorial_folderDetails">按住任意資料夾以顯示詳情，或下載該資料夾</string>
+    <string name="tutorial_serverDetails">點一下任意伺服器以顯示詳情</string>
     <!-- Prefs -->
     <string name="prefs_hideMetadata">隱藏連結 Metadata</string>
     <string name="prefs_hideMetadata_summary">隱藏後續會啟動另一個下載的 Metadata。</string>
     <string name="prefs_updateRate">更新頻率</string>
     <string name="prefs_updateRate_summary">界面更新頻率，以秒為單位。</string>
+    <string name="prefs_networkTimeout">網路逾時</string>
+    <string name="prefs_networkTimeout_summary">如果您的網路延遲很高，調高這項數值（單位：秒）可避免出現錯誤。</string>
     <string name="prefs_downloadDisplayInfo">下載顯示訊息</string>
     <string name="prefs_downloadDisplayInfo_summary">自定下載面板中顯示的訊息。</string>
     <string name="prefs_versionCheck">在啟動時檢查 aria2 版本</string>
@@ -22,6 +31,9 @@
     <string name="prefs_notificationType_summary">選擇要接收的通知類型</string>
     <string name="prefs_enableNotificationsAtBoot">手機啟動時啟動通知服務</string>
     <string name="prefs_enableNotificationsAtBoot_summary">手機啟動時將啟動通知服務</string>
+    <string name="locationAccessDenied">您拒絕了位置存取權的許可權。</string>
+    <string name="locationAccess_title">需要位置存取權</string>
+    <string name="locationAccess_message">本應用程式需要位置存取權以讀取 WiFi SSID，不會做其他動作。</string>
     <!-- General -->
     <string name="downloadStatus_waiting">在序列中等候</string>
     <string name="downloadStatus_error">錯誤</string>
@@ -66,6 +78,7 @@
     <string name="addProfile">新增設定檔</string>
     <string name="home">主頁面</string>
     <string name="announceList">Tracker 列表</string>
+    <string name="port">埠</string>
     <string name="authentication">驗證</string>
     <string name="pickFromFile">從檔案中選擇</string>
     <string name="filters">篩選條件</string>
@@ -276,4 +289,6 @@
     <string name="prefs_ddUseExternal_summary">把下載任務發送至系統或其它 App</string>
     <string name="cannotDownloadDirWithExternal">不能下載資料夾</string>
     <string name="cannotDownloadDirWithExternal_message">您不可以使用外部下載管理器下載資料夾。請問您想使用內建下載管理器下載嗎?</string>
+    <string name="visit">造訪</string>
+    <string name="goTo">前往</string>
 </resources>
