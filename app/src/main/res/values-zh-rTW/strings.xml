@@ -289,6 +289,22 @@
     <string name="prefs_ddUseExternal_summary">把下載任務發送至系統或其它 App</string>
     <string name="cannotDownloadDirWithExternal">不能下載資料夾</string>
     <string name="cannotDownloadDirWithExternal_message">您不可以使用外部下載管理器下載資料夾。請問您想使用內建下載管理器下載嗎?</string>
+    <string name="isThisToDownload">這是您想下載的東西嗎？</string>
+    <string name="isThisToDownload_message">您要開始下載「%s」嗎？</string>
+    <string name="useWebView">是否使用 WebView？</string>
+    <string name="useWebView_message">如果想要下載沒有固定 URL 的檔案，可以用這項功能攔截下載動作，就像用瀏覽器下載一樣。是否開啟 WebView？</string>
+    <string name="webView">WebView</string>
     <string name="visit">造訪</string>
     <string name="goTo">前往</string>
+    <string name="inAppDownloader_serviceStarted">服務已上線，正在運作中。</string>
+    <string name="inAppDownloader_serviceNotStarted">服務尚未啟動。</string>
+    <string name="inAppDownloader_serviceNotConfigured">服務尚未配置。</string>
+    <string name="oldAria2AppNoInApp">不再支援這項功能</string>
+    <string name="addWebViewShortcutToHomePage">將 WebView 捷徑加到首頁</string>
+    <string name="addWebViewShortcutToHomePage_summary">將通往 WebView 的捷徑加到您的首頁上。</string>
+    <string name="setAsDefault">設為預設</string>
+    <string name="webViewUrlHint">輸入要造訪的 URL……</string>
+    <string name="noDownloads_addOne">目前沒有下載！按右下角的加號圖示即可新增下載。</string>
+    <string name="noDownloads_changeFilters">沒有可顯示的下載！請變更篩選條件看看。</string>
+    <string name="filtersShowingOnly">僅顯示 %s（%d）</string>
 </resources>
