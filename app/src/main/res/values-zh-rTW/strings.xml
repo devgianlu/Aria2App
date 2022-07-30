@@ -8,6 +8,7 @@
     <string name="tutorial_fileDetails">點一下任意檔案以顯示詳情，或下載該檔案</string>
     <string name="tutorial_folderDetails">按住任意資料夾以顯示詳情，或下載該資料夾</string>
     <string name="tutorial_serverDetails">點一下任意伺服器以顯示詳情</string>
+    <string name="tutorial_peerDetails">輕觸任意同儕以顯示詳細資料</string>
     <!-- Prefs -->
     <string name="prefs_hideMetadata">隱藏連結 Metadata</string>
     <string name="prefs_hideMetadata_summary">隱藏後續會啟動另一個下載的 Metadata。</string>
@@ -34,6 +35,16 @@
     <string name="locationAccessDenied">您拒絕了位置存取權的許可權。</string>
     <string name="locationAccess_title">需要位置存取權</string>
     <string name="locationAccess_message">本應用程式需要位置存取權以讀取 WiFi SSID，不會做其他動作。</string>
+    <string name="profiles">設定檔</string>
+    <string name="importProfiles">匯入設定檔</string>
+    <string name="importProfiles_summary">從一個先前匯出的檔案匯入設定檔</string>
+    <string name="exportProfiles">匯出設定檔</string>
+    <string name="exportProfiles_summary">將你的所有設定檔匯出為一個檔案</string>
+    <string name="failedImportingProfiles">匯入設定檔失敗！</string>
+    <string name="failedExportingProfiles">匯出設定檔失敗！</string>
+    <string name="profilesImportedSuccessfully">匯入設定檔成功。</string>
+    <string name="profilesExportedSuccessfully">已成功匯出設定檔至 %s。</string>
+    <string name="userPasswd">使用者名稱 - 密碼</string>
     <!-- General -->
     <string name="downloadStatus_waiting">在序列中等候</string>
     <string name="downloadStatus_error">錯誤</string>
@@ -50,6 +61,7 @@
     <string name="connections"><![CDATA[<b>連接:</b>]]> %d</string>
     <string name="verifyIntegrityPending"><![CDATA[<b>等待完整性檢查:</b>]]> %s</string>
     <string name="verifiedLength"><![CDATA[<b>已驗證大小:</b>]]> %s</string>
+    <string name="gid"><![CDATA[<b>GID:</b>]]> %s</string>
     <string name="directory"><![CDATA[<b>目標資料夾:</b>]]> %s</string>
     <string name="seeder"><![CDATA[<b>種子源:</b>]]> %s</string>
     <string name="numSeeder"><![CDATA[<b>種子數量:</b>]]> %d</string>
@@ -148,6 +160,7 @@
     <string name="newValue">新的設定值:</string>
     <string name="set">設定</string>
     <string name="noUris_help">沒有網址。請點擊下面的按鈕新增。</string>
+    <string name="editUri">編輯 URL</string>
     <string name="queuePosition_help">若留空，將會把本次下載新增到序列的尾端。</string>
     <string name="uris_disclaimer">必須只新增指向同一檔案的 HTTP / FTP / SFTP / BitTorrent 網址。如果您把指向不同的檔案的網址新增在一起，有可能雖然 aria2 不會給出任何錯誤提示，但下載會失敗，或者產生資料損毀。</string>
     <string name="noUris">沒有 uris。</string>
