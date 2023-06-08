@@ -147,8 +147,6 @@ public class WebViewActivity extends ActivityWithDialog {
         settings.setAllowFileAccess(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
-        settings.setAppCacheEnabled(true);
-        settings.setAppCachePath(getCacheDir().getAbsolutePath());
 
         toggleDesktopMode(false);
 
