@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.triplet.play' version '3.8.1'
+    id 'com.github.triplet.play' version '3.8.3'
 }
 
 apply plugin: 'com.android.application'
