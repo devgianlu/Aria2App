@@ -1,2 +1,2 @@
-### Fixed
-- Crash on startup for some devices with notification service
+### Changed
+- Updated libraries
