@@ -94,7 +94,7 @@ dependencies {
     implementation 'com.github.tonyofrancis.Fetch:xfetch2:3.1.6'
     implementation 'com.github.tonyofrancis.Fetch:xfetch2okhttp:3.1.6'
 
-    implementation 'commons-net:commons-net:3.9.0'
+    implementation 'commons-net:commons-net:3.10.0'
     implementation 'com.hierynomus:smbj:0.12.2'
     implementation 'com.jcraft:jsch:0.1.55'
 
