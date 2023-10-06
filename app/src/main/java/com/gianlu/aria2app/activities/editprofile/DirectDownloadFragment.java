@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -453,24 +454,30 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         enableDirectDownload = layout.findViewById(R.id.editProfile_enableDirectDownload);
         enableDirectDownload.setOnCheckedChangeListener((buttonView, isChecked) -> {
             container.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-            if (isChecked && getActivity() != null) {
-                AskPermission.ask(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, new AskPermission.Listener() {
-                    @Override
-                    public void permissionGranted(@NonNull String permission) {
-                    }
+            if (!isChecked || getActivity() == null) return;
 
-                    @Override
-                    public void permissionDenied(@NonNull String permission) {
-                        showToast(Toaster.build().message(R.string.writePermissionDenied));
-                    }
+            AskPermission.Listener listener = new AskPermission.Listener() {
+                @Override
+                public void permissionGranted(@NonNull String permission) {
+                }
 
-                    @Override
-                    public void askRationale(@NonNull AlertDialog.Builder builder) {
-                        builder.setTitle(R.string.writeExternalStorageRequest_title)
-                                .setMessage(R.string.writeExternalStorageRequest_message);
-                    }
-                });
+                @Override
+                public void permissionDenied(@NonNull String permission) {
+                    showToast(Toaster.build().message(R.string.writePermissionDenied));
+                }
+
+                @Override
+                public void askRationale(@NonNull AlertDialog.Builder builder) {
+                    builder.setTitle(R.string.writeExternalStorageRequest_title)
+                            .setMessage(R.string.writeExternalStorageRequest_message);
+                }
+            };
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                listener.permissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                return;
             }
+
+            AskPermission.ask(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, listener);
         });
 
         encryptionContainer = layout.findViewById(R.id.editProfile_dd_encryption);

@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -129,7 +130,7 @@ public class CertificateInputView extends LinearLayout {
         final FragmentActivity activity = activityProvider.getActivity();
         if (activity == null) return;
 
-        AskPermission.ask(activity, Manifest.permission.READ_EXTERNAL_STORAGE, new AskPermission.Listener() {
+        AskPermission.Listener listener = new AskPermission.Listener() {
             @Override
             public void permissionGranted(@NonNull String permission) {
                 if (activityProvider instanceof Fragment) {
@@ -152,7 +153,13 @@ public class CertificateInputView extends LinearLayout {
                 builder.setTitle(R.string.readExternalStorageRequest_title)
                         .setMessage(R.string.readExternalStorageRequest_certMessage);
             }
-        });
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listener.permissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE);
+            return;
+        }
+
+        AskPermission.ask(activity, Manifest.permission.READ_EXTERNAL_STORAGE, listener);
     }
 
     void showCertificateDetails(@NonNull X509Certificate certificate) {

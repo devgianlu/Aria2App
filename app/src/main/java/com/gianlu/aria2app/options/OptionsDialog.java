@@ -3,6 +3,7 @@ package com.gianlu.aria2app.options;
 import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -223,8 +224,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
 
     private void export() {
         if (getActivity() == null) return;
-
-        AskPermission.ask(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, new AskPermission.Listener() {
+        AskPermission.Listener listener = new AskPermission.Listener() {
             @Override
             public void permissionGranted(@NonNull String permission) {
                 doExportOptions();
@@ -240,7 +240,13 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
                 builder.setTitle(R.string.writeExternalStorageRequest_title)
                         .setMessage(R.string.exportOptionsGrantWrite);
             }
-        });
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listener.permissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            return;
+        }
+
+        AskPermission.ask(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, listener);
     }
 
     @Override

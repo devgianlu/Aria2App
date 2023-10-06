@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -419,7 +420,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 if ("magnet".equals(scheme) || "http".equals(scheme) || "https".equals(scheme) || "ftp".equals(scheme) || "sftp".equals(scheme)) {
                     processUrl(shareData);
                 } else {
-                    AskPermission.ask(this, Manifest.permission.READ_EXTERNAL_STORAGE, new AskPermission.Listener() {
+                    AskPermission.Listener listener =  new AskPermission.Listener() {
                         @Override
                         public void permissionGranted(@NonNull String permission) {
                             processFileUri(shareData);
@@ -437,7 +438,13 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                             builder.setTitle(R.string.readExternalStorageRequest_title)
                                     .setMessage(R.string.readExternalStorageRequest_base64Message);
                         }
-                    });
+                    };
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        listener.permissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE);
+                        return;
+                    }
+
+                    AskPermission.ask(this, Manifest.permission.READ_EXTERNAL_STORAGE, listener);
                 }
             }
         }

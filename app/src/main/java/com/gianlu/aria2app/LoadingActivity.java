@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -201,7 +202,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void connectToInAppDownloader(@NonNull MultiProfile profile) {
-        AskPermission.ask(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, new AskPermission.Listener() {
+        AskPermission.Listener listener = new AskPermission.Listener() {
             @Override
             public void permissionGranted(@NonNull String permission) {
                 connecting.setVisibility(View.VISIBLE);
@@ -241,7 +242,13 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 builder.setTitle(R.string.writeExternalStorageRequest_title)
                         .setMessage(R.string.writeExternalStorageRequest_message);
             }
-        });
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listener.permissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            return;
+        }
+
+        AskPermission.ask(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, listener);
     }
 
     @Override
