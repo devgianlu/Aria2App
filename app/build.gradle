@@ -1,3 +1,5 @@
+import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+
 plugins {
     id 'com.github.triplet.play' version '3.8.4'
 }
@@ -37,7 +39,7 @@ android {
         }
     }
 
-    flavorDimensions 'main'
+    flavorDimensions = ['main']
     productFlavors {
         standard {
             dimension 'main'
@@ -84,7 +86,7 @@ play {
     enabled.set(isCi)
     serviceAccountCredentials.set(file("../.github/secrets.json"))
     track.set("production")
-    releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.DRAFT)
+    releaseStatus.set(ReleaseStatus.DRAFT)
 }
 
 dependencies {
@@ -108,7 +110,7 @@ dependencies {
     implementation 'androidx.documentfile:documentfile:1.0.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.10.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
