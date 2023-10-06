@@ -1,2 +1,5 @@
+### Fixed
+- Fixed permission issues on Android 13
+
 ### Changed
 - Updated libraries
