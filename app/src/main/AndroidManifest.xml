@@ -6,10 +6,15 @@
     <!-- List networks -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        tools:targetApi="o" />
+    <uses-permission
         android:name="android.permission.ACCESS_FINE_LOCATION"
         tools:targetApi="o" />
     <!-- You known... -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Post notifications on Android 14+ -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Download files -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Load certificate or files -->
@@ -5677,6 +5682,7 @@
         <!-- Notification service -->
         <service
             android:name=".services.NotificationService"
+            android:foregroundServiceType="dataSync"
             android:exported="false" />
 
         <!-- Boot completed receiver -->
