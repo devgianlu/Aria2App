@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -25,6 +26,7 @@ import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.ui.Toaster;
 import com.yarolegovich.mp.AbsMaterialTextValuePreference;
 import com.yarolegovich.mp.MaterialCheckboxPreference;
+import com.yarolegovich.mp.MaterialEditTextPreference;
 import com.yarolegovich.mp.MaterialMultiChoicePreference;
 import com.yarolegovich.mp.MaterialSeekBarPreference;
 import com.yarolegovich.mp.MaterialStandardPreference;
@@ -306,22 +308,26 @@ public class PreferenceActivity extends BasePreferenceActivity {
             external.setIcon(R.drawable.baseline_share_24);
             addPreference(external);
 
-            MaterialStandardPreference downloadPath = new MaterialStandardPreference.Builder(context)
+            MaterialEditTextPreference downloadPath = new MaterialEditTextPreference.Builder(context)
                     .key(PK.DD_DOWNLOAD_PATH.key())
                     .defaultValue(PK.DD_DOWNLOAD_PATH.fallback())
                     .build();
             downloadPath.setTitle(R.string.prefs_ddDownloadPath);
             downloadPath.setSummary(R.string.prefs_ddDownloadPath_summary);
             downloadPath.setIcon(R.drawable.baseline_folder_24);
-            downloadPath.addPreferenceClickListener(v -> {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                    startActivityForResult(intent, DOWNLOAD_PATH_CODE);
-                } catch (ActivityNotFoundException ex) {
-                    showToast(Toaster.build().message(R.string.noFilemanager));
-                }
-            });
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                downloadPath.setOverrideClickListener(v -> {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                        startActivityForResult(intent, DOWNLOAD_PATH_CODE);
+                        return true;
+                    } catch (ActivityNotFoundException ex) {
+                        showToast(Toaster.build().message(R.string.noFilemanager));
+                        return false;
+                    }
+                });
+            }
             addPreference(downloadPath);
 
             MaterialSeekBarPreference concurrentDownloads = new MaterialSeekBarPreference.Builder(context)
