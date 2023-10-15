@@ -15,6 +15,7 @@
     <Button
         android:id="@+id/base64Fragment_pick"
         style="?android:borderlessButtonStyle"
+        android:textColor="?colorOnSurface"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

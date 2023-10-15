@@ -117,6 +117,7 @@
         <Button
             android:id="@+id/loading_settings"
             style="?android:attr/buttonBarButtonStyle"
+            android:textColor="?colorAccent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -125,6 +126,7 @@
         <Button
             android:id="@+id/loading_seeError"
             style="?android:attr/buttonBarButtonStyle"
+            android:textColor="?colorAccent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/seeError"
