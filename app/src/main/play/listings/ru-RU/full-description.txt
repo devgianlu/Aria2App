@@ -1,7 +1,7 @@
-Aria2App is your portable server-grade download manager backed by aria2 directly on your device. You can also manage aria2 instances running on external devices thanks to the JSON-RPC interface.
+Aria2App - это ваш менеджер загрузки портативных серверов с поддержкой aria2 непосредственно на вашем устройстве. Кроме того, благодаря интерфейсу JSON-RPC вы можете управлять экземплярами aria2, работающими на внешних устройствах.
 
-Some of the features are:
-- Handle more servers simultaneously
+Некоторые из особенностей:
+- Обрабатывайте больше серверов одновременно
 - Add HTTP(s), (s)FTP, BitTorrent, Metalink downloads
 - Add Torrents with the integrated search engine
 - Start downloads by clicking on links on the browser
