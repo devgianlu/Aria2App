@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Tutorial -->
+    <string name="tutorial_moreDetails">Нажмите на карту, чтобы показать больше деталей</string>
+    <string name="tutorial_evenMoreDetails">Нажмите на дополнительную кнопку, чтобы показать все детали</string>
+    <!-- Prefs -->
+    <string name="prefs_ddDownloadPath">Путь для сохранения</string>
+    <!-- General -->
+</resources>
