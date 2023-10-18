@@ -70,6 +70,12 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         return BuildConfig.DEBUG;
     }
 
+    @NonNull
+    @Override
+    protected String getGithubProjectName() {
+        return "Aria2App";
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
