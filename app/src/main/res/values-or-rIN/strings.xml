@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Tutorial -->
+    <!-- Prefs -->
+    <string name="userPasswd">ଉପଭୋକ୍ତା - ପାସ୍‌ୱର୍ଡ଼</string>
+    <!-- General -->
+    <string name="downloadStatus_error">ତ୍ରୁଟି</string>
+    <string name="downloadStatus_unknown">ଅଜ୍ଞାତ</string>
+    <string name="downloadStatus_active">ସକ୍ରିୟ</string>
+    <string name="info">ସୂଚନା</string>
+</resources>
