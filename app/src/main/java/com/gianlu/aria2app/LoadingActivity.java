@@ -359,7 +359,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.failedConnecting)
                 .setPositiveButton(android.R.string.ok, null)
-                .setNeutralButton(R.string.contactMe, (dialog, which) -> LogsHelper.sendEmail(LoadingActivity.this, ex))
+                .setNeutralButton(R.string.contactMe, (dialog, which) -> LogsHelper.openGithubIssue(LoadingActivity.this, "Aria2App", ex))
                 .setMessage(ex.toString());
 
         showDialog(builder);

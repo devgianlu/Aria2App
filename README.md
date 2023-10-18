@@ -3,7 +3,6 @@
 [![Crowdin](https://badges.crowdin.net/aria2app/localized.svg)](https://crowdin.com/project/aria2app)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/b08dff3cf63844a2b226d96f1c91fbf1)](https://www.codacy.com/gh/devgianlu/Aria2App/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=devgianlu/Aria2App&amp;utm_campaign=Badge_Grade)
 [![time tracker](https://wakatime.com/badge/github/devgianlu/Aria2App.svg)](https://wakatime.com/badge/github/devgianlu/Aria2App)
-[![Donate Bitcoin](https://img.shields.io/badge/donate-bitcoin-orange.svg)](https://gianlu.xyz/donate/)
 
 Aria2App allows you to handle your downloads on [aria2](https://github.com/aria2/aria2) wherever you are!
 

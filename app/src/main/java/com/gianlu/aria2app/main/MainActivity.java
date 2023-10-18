@@ -219,7 +219,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 startActivity(new Intent(this, PreferenceActivity.class));
                 return false;
             case SUPPORT:
-                LogsHelper.sendEmail(this, null);
+                LogsHelper.openGithubIssue(this, "Aria2App", null);
                 return true;
             case ABOUT_ARIA2:
                 AboutAria2Dialog.get().show(getSupportFragmentManager(), null);
