@@ -2,20 +2,20 @@ Aria2App - это ваш менеджер загрузки портативны�
 
 Некоторые из особенностей:
 - Обрабатывайте больше серверов одновременно
-- Add HTTP(s), (s)FTP, BitTorrent, Metalink downloads
-- Add Torrents with the integrated search engine
-- Start downloads by clicking on links on the browser
-- Handle downloads (pause, resume, stop)
-- Find basic and in-depth information
-- View statistics about peers and server of your downloads
-- Display the information about every file in download
-- Download files from the server to your device through DirectDownload
-- Change a single download or aria2 general options
-- Receive live notifications of your downloads or your selected downloads
-And even more
+- Добавляйте HTTP, FTP, BitTorrent, Metalink загрузки
+- Добавление торрентов с встроенным поисковым движком
+- Начать загрузку, нажав на ссылки в браузере
+- Обработка загрузок (пауза, возобновить, остановить)
+- Поиск базовой и углебленной информации
+- Просмотр статистики о пирах и сервере ваших загрузок
+- Отображение информации о каждом файле при загрузке
+- Загрузка файлов с сервера на ваше устройство через Прямой Скачки
+- Изменение одной загрузки или общих опций aria2
+- Получать уведомления о выходе загрузок или выбранных вами загрузок
+И много чего еще
 
-This project is open source at https://github.com/devgianlu/Aria2App
+Этот проект с открытым исходным кодом https://github.com/devgianlu/Aria2App
 ---------------------------------------
 
-aria2 is developed by Tatsuhiro Tsujikawa (https://github.com/tatsuhiro-t).
-BitTorrent is a registered trademark by BitTorrent Inc.
+aria2 разработан Tatsuhiro Tsujikawa (https://github.com/tatsuhiro-t).
+BitTorrent является зарегистрированной торговой маркой BitTorrent Inc.
