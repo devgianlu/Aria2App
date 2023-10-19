@@ -1,6 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
+    <string name="tutorial_moreDetails">Toque la tarjeta para revelar más detalles</string>
+    <string name="tutorial_evenMoreDetails">Toca el botón más para mostrar todos los detalles</string>
+    <string name="tutorial_search">Filtrar descargas por nombre o por GID</string>
+    <string name="tutorial_filters">Filtrar descargas por estado</string>
+    <string name="tutorial_fileDetails">Toque un archivo para revelar detalles o descargarlo</string>
+    <string name="tutorial_folderDetails">Mantenga presionada una carpeta para revelar detalles o descargarla</string>
+    <string name="tutorial_serverDetails">Toca un servidor para revelar detalles</string>
+    <string name="tutorial_peerDetails">Toque el par para revelar detalles sobre él</string>
     <!-- Prefs -->
+    <string name="prefs_hideMetadata">Ocultar metadatos vinculados</string>
+    <string name="prefs_hideMetadata_summary">Ocultar metadatos que iniciaron otra descarga</string>
+    <string name="prefs_updateRate">Frecuencia de actualización</string>
+    <string name="prefs_updateRate_summary">Tasa de actualización de la UI en segundos</string>
+    <string name="prefs_networkTimeout">Tiempo de espera de la red</string>
+    <string name="prefs_networkTimeout_summary">Si tu red tiene una latencia muy alta, aumenta este valor (en segundos) para evitar errores</string>
+    <string name="prefs_downloadDisplayInfo">Descargar información de visualización</string>
+    <string name="prefs_downloadDisplayInfo_summary">Personaliza la información que se muestra en la tarjeta de descarga.</string>
+    <string name="prefs_versionCheck">Verificar la versión de aria2 al iniciar</string>
+    <string name="prefs_versionCheck_summary">Comprueba que se esté ejecutando la última versión de aria2</string>
+    <string name="prefs_ddDownloadPath">Ruta de descarga</string>
+    <string name="prefs_ddDownloadPath_summary">Todos los archivos se descargarán aquí.</string>
+    <string name="prefs_ddMaxSimultaneousDownloads">Descargas simultáneas máximas</string>
+    <string name="prefs_ddMaxSimultaneousDownloads_summary">Número máximo de descargas ejecutándose al mismo tiempo</string>
+    <string name="prefs_ddResume">Reanudar descargas</string>
+    <string name="prefs_ddResume_summary">Reanudar descargas pausadas al inicio</string>
+    <string name="prefs_enableNotifications">Habilitar el servicio de notificaciones</string>
+    <string name="prefs_enableNotifications_summary">Recibirás notificaciones de tus perfiles seleccionados</string>
+    <string name="prefs_notificationType">Tipos de notificación</string>
+    <string name="prefs_notificationType_summary">Seleccione qué tipo de notificaciones recibir</string>
+    <string name="prefs_enableNotificationsAtBoot">Iniciar el servicio de notificación al arrancar</string>
+    <string name="prefs_enableNotificationsAtBoot_summary">El servicio de notificación se iniciará cuando se inicie el teléfono</string>
+    <string name="locationAccessDenied">Negaste el permiso de acceso a la ubicación</string>
+    <string name="locationAccess_title">Se necesita acceso a la ubicación</string>
+    <string name="locationAccess_message">La aplicación debe tener permiso de ubicación para poder leer el SSID de WiFi, no se realizarán otras operaciones.</string>
+    <string name="profiles">Perfiles</string>
+    <string name="importProfiles">Importar perfiles</string>
+    <string name="importProfiles_summary">Importe perfiles desde un archivo previamente exportado</string>
+    <string name="exportProfiles">Exportar perfiles</string>
+    <string name="exportProfiles_summary">Exporta todos tus perfiles a un solo archivo.</string>
+    <string name="failedImportingProfiles">¡Error al importar el archivo de perfiles!</string>
+    <string name="failedExportingProfiles">¡Error al exportar el archivo de perfiles!</string>
+    <string name="profilesImportedSuccessfully">Perfiles importados exitosamente</string>
+    <string name="profilesExportedSuccessfully">Perfiles exportados exitosamente a %s.</string>
+    <string name="userPasswd">Usuario - contraseña</string>
     <!-- General -->
+    <string name="downloadStatus_waiting">esperando en cola</string>
+    <string name="downloadStatus_error">Error</string>
+    <string name="downloadStatus_paused">En pausa</string>
+    <string name="downloadStatus_unknown">Desconocido</string>
+    <string name="downloadStatus_complete">Completado</string>
+    <string name="downloadStatus_removed">Remoto</string>
+    <string name="downloadStatus_active">Activo </string>
+    <string name="support">Apoyo</string>
+    <string name="add">Agregar</string>
+    <string name="options">Opciones </string>
+    <string name="position">Posición en la cola:</string>
+    <string name="downloadSpeed">Velocidad de Descarga</string>
+    <string name="uploadSpeed">Velocidad de carga</string>
+    <string name="none">Ninguno</string>
 </resources>
