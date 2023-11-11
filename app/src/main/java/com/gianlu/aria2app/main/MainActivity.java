@@ -866,7 +866,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             recyclerViewLayout.showList();
         }
 
-        tutorialManager.tryShowingTutorials(this);
+        if (tutorialManager != null)
+            tutorialManager.tryShowingTutorials(this);
     }
 
     @Override
