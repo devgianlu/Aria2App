@@ -1,1 +1,1 @@
-An advanced download manager and aria2 client for your pocket.
+一個隨身進階下載管理員和 Aria2 用戶端。
