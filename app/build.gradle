@@ -1,7 +1,7 @@
 import com.github.triplet.gradle.androidpublisher.ReleaseStatus
 
 plugins {
-    id 'com.github.triplet.play' version '3.8.4'
+    id 'com.github.triplet.play' version '3.8.5'
 }
 
 apply plugin: 'com.android.application'
