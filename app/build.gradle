@@ -8,6 +8,8 @@ apply plugin: 'com.android.application'
 
 def isCi = System.getenv("CI") == "true"
 android {
+    namespace 'com.gianlu.aria2app'
+
     defaultConfig {
         compileSdk 34
         
@@ -77,6 +79,12 @@ android {
         foss {
             commit.set(false)
             enabled.set(false)
+        }
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 }
