@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version: '17'
       - name: Grant execute permission to scripts
         run: chmod +x gradlew .github/decrypt_secrets.sh
       - name: Decrypt GPG secrets
