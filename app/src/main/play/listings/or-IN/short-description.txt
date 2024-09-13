@@ -1,1 +1,0 @@
-An advanced download manager and aria2 client for your pocket.
