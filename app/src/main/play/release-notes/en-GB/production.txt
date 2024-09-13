@@ -1,6 +1,6 @@
-### Fixed
-- Fixed permission issues on Android 13
-- Crash when starting in-app downloader on Android 14
+### Added
+- Some translations
+- Monochrome icon
 
 ### Changed
 - Updated libraries
