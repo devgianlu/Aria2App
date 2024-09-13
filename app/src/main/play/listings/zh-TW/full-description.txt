@@ -1,21 +1,21 @@
-Aria2App is your portable server-grade download manager backed by aria2 directly on your device. You can also manage aria2 instances running on external devices thanks to the JSON-RPC interface.
+Aria2App 是您裝置上由 Aria2 直接支援的可攜式伺服器級下載管理員。 透過 JSON-RPC 介面，你還可以管理在裝置外部執行的 Aria2 執行個體。
 
-Some of the features are:
-- Handle more servers simultaneously
-- Add HTTP(s), (s)FTP, BitTorrent, Metalink downloads
-- Add Torrents with the integrated search engine
-- Start downloads by clicking on links on the browser
-- Handle downloads (pause, resume, stop)
-- Find basic and in-depth information
-- View statistics about peers and server of your downloads
-- Display the information about every file in download
-- Download files from the server to your device through DirectDownload
-- Change a single download or aria2 general options
-- Receive live notifications of your downloads or your selected downloads
-And even more
+精采特色：
+- 同時處理更多伺服器
+- 新增 HTTP、FTP、BitTorrent、中繼連結下載
+- 透過整合搜尋引擎新增 Torrent
+- 按一下瀏覽器上的連結即可開始下載
+- 處理下載 (暫停、繼續、停止)
+- 尋找基本和深入資訊
+- 檢視有關下載同儕和伺服器的統計資料
+- 顯示正在下載的每個檔案的資訊
+- 透過直接下載將檔案直接從伺服器下載到您的裝置
+- 變更單一下載或 Aria2 一般選項
+- 接收您的下載或您選取的下載的即時通知
+甚至更多
 
-This project is open source at https://github.com/devgianlu/Aria2App
+此專案於此開放原始碼：https://github.com/devgianlu/Aria2App
 ---------------------------------------
 
-aria2 is developed by Tatsuhiro Tsujikawa (https://github.com/tatsuhiro-t).
-BitTorrent is a registered trademark by BitTorrent Inc.
+Aria2 由 Tatsuhiro Tsujikawa (https://github.com/tatsuhiro-t) 開發。
+BitTorrent® 是 BitTorrent, Inc 的註冊商標。
