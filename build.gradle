@@ -1,24 +1,5 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.6.0'
-        classpath 'com.google.gms:google-services:4.4.1'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
+plugins {
+    id 'com.android.application' version '8.6.0' apply false
+    id 'com.google.gms.google-services' version '4.4.2' apply false
+    id 'com.google.firebase.crashlytics' version '3.0.2' apply false
 }

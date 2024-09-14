@@ -2,9 +2,10 @@ import com.github.triplet.gradle.androidpublisher.ReleaseStatus
 
 plugins {
     id 'com.github.triplet.play' version '3.9.1'
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
-
-apply plugin: 'com.android.application'
 
 def isCi = System.getenv("CI") == "true"
 android {
@@ -87,6 +88,10 @@ android {
             useLegacyPackaging = true
         }
     }
+
+    buildFeatures {
+        buildConfig true
+    }
 }
 
 play {
@@ -118,8 +123,5 @@ dependencies {
     implementation 'androidx.documentfile:documentfile:1.0.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'com.google.android.material:material:1.12.0'
 }
-
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
