@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
+    <string name="tutorial_moreDetails">انقر على البطاقة لإظهار المزيد من التفاصيل</string>
+    <string name="tutorial_evenMoreDetails">انقر على زر \"المزيد\" لإظهار كل التفاصيل</string>
+    <string name="tutorial_filters">فلتره التنزيلات بناءً على الحالة</string>
+    <string name="tutorial_fileDetails">انقر على ملف لظهار التفاصيل أو لتنزيله</string>
+    <string name="tutorial_folderDetails">انقر نقرة مطولة على مجلد لإظهار التفاصيل أو لتنزيله</string>
     <!-- Prefs -->
     <!-- General -->
 </resources>
