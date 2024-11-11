@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Tutorial -->
+    <string name="tutorial_moreDetails">Нажмите на карту, чтобы показать больше деталей</string>
+    <string name="tutorial_evenMoreDetails">Нажмите на дополнительную кнопку, чтобы показать все детали</string>
+    <string name="tutorial_search">Фильтр загрузок по названию или GID</string>
+    <string name="tutorial_filters">Фильтровать загрузки по статусу</string>
+    <string name="tutorial_fileDetails">Нажмите на файл, чтобы показать детали или скачать его</string>
+    <string name="tutorial_folderDetails">Нажмите и удерживайте папку, чтобы раскрыть детали или скачать ее</string>
+    <string name="tutorial_serverDetails">Нажмите на сервер, чтобы показать детали об этом</string>
+    <string name="tutorial_peerDetails">Нажмите на пира, чтобы показать детали об этом</string>
+    <!-- Prefs -->
+    <string name="prefs_hideMetadata">Скрыть связанные метаданные</string>
+    <string name="prefs_hideMetadata_summary">Скрыть метаданные, которые запустили другую загрузку.</string>
+    <string name="prefs_updateRate">Частота обновлений</string>
+    <string name="prefs_updateRate_summary">Частота обновления пользовательского интерфейса в секундах.</string>
+    <string name="prefs_networkTimeout">Тайм-аут сети</string>
+    <string name="prefs_networkTimeout_summary">Если ваша сеть имеет очень высокую задержку, увеличьте это значение (в секундах), чтобы избежать ошибок.</string>
+    <string name="prefs_downloadDisplayInfo">Загрузить информацию о дисплее</string>
+    <string name="prefs_downloadDisplayInfo_summary">Настройте информацию, показанную на карте загрузки.</string>
+    <string name="prefs_ddDownloadPath">Путь для сохранения</string>
+    <!-- General -->
+</resources>
