@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
+    <string name="tutorial_moreDetails">Klepnutím na kartu zobrazíte další podrobnosti</string>
+    <string name="tutorial_evenMoreDetails">Klepnutím na tlačítko více zobrazíte všechny podrobnosti</string>
+    <string name="tutorial_search">Filtrujte stahování podle názvu nebo GID</string>
+    <string name="tutorial_filters">Filtrujte stahování podle stavu</string>
+    <string name="tutorial_fileDetails">Klepnutím na soubor zobrazíte podrobnosti nebo jej stáhnete</string>
+    <string name="tutorial_folderDetails">Klepnutím a držením na složku zobrazíte podrobnosti nebo jej stáhnete</string>
+    <string name="tutorial_serverDetails">Klepnutím na server zobrazíte podrobnosti o něm</string>
+    <string name="tutorial_peerDetails">Klepnutím na server zobrazíte podrobnosti o něm</string>
     <!-- Prefs -->
     <!-- General -->
 </resources>
