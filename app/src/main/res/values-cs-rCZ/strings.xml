@@ -10,5 +10,13 @@
     <string name="tutorial_serverDetails">Klepnutím na server zobrazíte podrobnosti o něm</string>
     <string name="tutorial_peerDetails">Klepnutím na server zobrazíte podrobnosti o něm</string>
     <!-- Prefs -->
+    <string name="prefs_hideMetadata">Skrýt připojená metadata</string>
+    <string name="prefs_hideMetadata_summary">Skrýt metadata, která zahájila další stahování.</string>
+    <string name="prefs_updateRate">Rychlost aktualizace</string>
+    <string name="prefs_updateRate_summary">Rychlost aktualizace uživatelského rozhraní v sekundách.</string>
+    <string name="prefs_networkTimeout">Časový limit sítě</string>
+    <string name="prefs_networkTimeout_summary">Pokud má vaše síť velmi vysoké zpoždění, zvyšte tuto hodnotu (v sekundách), abyste se vyhnuli chybám.</string>
+    <string name="prefs_downloadDisplayInfo">Stáhnout zobrazovací informace</string>
+    <string name="prefs_downloadDisplayInfo_summary">Přizpůsobit informace zobrazené na kartě pro stahování.</string>
     <!-- General -->
 </resources>
