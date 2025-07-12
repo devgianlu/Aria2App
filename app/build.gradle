@@ -12,11 +12,11 @@ android {
     namespace 'com.gianlu.aria2app'
 
     defaultConfig {
-        compileSdk 34
+        compileSdk 36
         
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 36
 
         versionCode 230
         versionName "5.9.18"
