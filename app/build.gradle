@@ -1,7 +1,7 @@
 import com.github.triplet.gradle.androidpublisher.ReleaseStatus
 
 plugins {
-    id 'com.github.triplet.play' version '3.9.1'
+    id 'com.github.triplet.play' version '3.12.1'
     id 'com.android.application'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         compileSdk 36
-        
+
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 36
@@ -88,6 +88,10 @@ android {
         }
     }
 
+    packaging {
+        resources.pickFirsts.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
+    }
+
     buildFeatures {
         buildConfig true
     }
@@ -105,21 +109,21 @@ dependencies {
     implementation project(':CommonUtils')
     implementation project(':aria2lib')
 
-    implementation 'com.github.tonyofrancis.Fetch:xfetch2:3.1.6'
-    implementation 'com.github.tonyofrancis.Fetch:xfetch2okhttp:3.1.6'
+    implementation 'com.github.tonyofrancis.Fetch:fetch2:3.4.1'
+    implementation 'com.github.tonyofrancis.Fetch:fetch2okhttp:3.4.1'
 
-    implementation 'commons-net:commons-net:3.10.0'
-    implementation 'com.hierynomus:smbj:0.13.0'
+    implementation 'commons-net:commons-net:3.11.1'
+    implementation 'com.hierynomus:smbj:0.14.0'
     implementation 'com.jcraft:jsch:0.1.55'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.1.0'
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation 'org.apmem.tools:layouts:1.10@aar'
     implementation 'com.github.devgianlu:Android--Library-Country-Flags:6fc6059f91'
 
-    implementation 'androidx.documentfile:documentfile:1.0.1'
+    implementation 'androidx.documentfile:documentfile:1.1.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
     implementation 'com.google.android.material:material:1.12.0'
