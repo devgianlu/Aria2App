@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.10.0] - 13-07-2025
+### Changed
+- Updated libraries
+
 ## [5.9.18] - 14-09-2024
 ### Fixed
 - Fixed startup crash on production build

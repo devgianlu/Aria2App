@@ -1,9 +1,2 @@
-### Added
-- Some translations
-- Monochrome icon
-
-### Fixed
-- Fixed startup crash
-
 ### Changed
 - Updated libraries
