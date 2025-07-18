@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Tutorial -->
+    <string name="tutorial_moreDetails"></string>
+    <string name="tutorial_evenMoreDetails"></string>
+    <!-- Prefs -->
+    <!-- General -->
+</resources>
