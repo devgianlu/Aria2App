@@ -18,6 +18,10 @@
     <string name="prefs_networkTimeout_summary">Если ваша сеть имеет очень высокую задержку, увеличьте это значение (в секундах), чтобы избежать ошибок.</string>
     <string name="prefs_downloadDisplayInfo">Загрузить информацию о дисплее</string>
     <string name="prefs_downloadDisplayInfo_summary">Настройте информацию, показанную на карте загрузки.</string>
+    <string name="prefs_versionCheck"></string>
+    <string name="prefs_versionCheck_summary">Убедитесь, что запущена последняя версия aria2.</string>
     <string name="prefs_ddDownloadPath">Путь для сохранения</string>
+    <string name="prefs_ddDownloadPath_summary">Все файлы будут загружены здесь.</string>
+    <string name="prefs_ddMaxSimultaneousDownloads">Максимум одновременных загрузок</string>
     <!-- General -->
 </resources>
