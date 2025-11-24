@@ -14,3 +14,4 @@ Aria2App allows you to handle your downloads on [aria2](https://github.com/aria2
 
 ## Setup
 This project uses [devgianlu/CommonUtils](https://github.com/devgianlu/CommonUtils), please follow the link to setup your environment properly.
+MR1
