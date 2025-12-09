@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
+    <string name="tutorial_evenMoreDetails">Tippe auf \"mehr\" um alle Details anzuzeigen</string>
     <string name="tutorial_search">Filtere Downloads nach Name oder GID</string>
     <string name="tutorial_filters">Filtere Downloads nach Status</string>
     <string name="tutorial_fileDetails">Tippe eine Datei an für Details oder um sie zu downloaden</string>
@@ -9,5 +10,13 @@
     <string name="tutorial_peerDetails">Tippe auf einen Peer für mehr Details</string>
     <!-- Prefs -->
     <string name="prefs_hideMetadata">Verstecke zugehörige Metadaten</string>
+    <string name="prefs_hideMetadata_summary">Verstecke Metadaten die einen anderen Download gestartet haben.</string>
+    <string name="prefs_updateRate">Aktualisierungsrate</string>
+    <string name="prefs_updateRate_summary">Aktualisierungsrate der Benutzeroberfläche in Sekunden.</string>
+    <string name="prefs_networkTimeout">Netzwerkzeitüberschreitung</string>
+    <string name="prefs_networkTimeout_summary">Sollte dein Netzwerk sehr hohe Latenzen haben, erhöhe diesen Sekundenwert um Fehler zu vermeiden.</string>
+    <string name="prefs_downloadDisplayInfo">Download anzeige Info</string>
+    <string name="prefs_downloadDisplayInfo_summary">Personalisiere die Informationen, die in der Download-Karte angezeigt werden.</string>
+    <string name="prefs_versionCheck">Überprüfe die Version von aria2 beim Start</string>
     <!-- General -->
 </resources>
