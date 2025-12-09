@@ -19,5 +19,18 @@
     <string name="prefs_downloadDisplayInfo">Download anzeige Info</string>
     <string name="prefs_downloadDisplayInfo_summary">Personalisiere die Informationen, die in der Download-Karte angezeigt werden.</string>
     <string name="prefs_versionCheck">Überprüfe die Version von aria2 beim Start</string>
+    <string name="prefs_versionCheck_summary">Überprüfe, dass die neuste Version von aria2 läuft.</string>
+    <string name="prefs_ddDownloadPath">Pfad für Downloads</string>
+    <string name="prefs_ddDownloadPath_summary">Alle Dateien werden hierher heruntergeladen.</string>
+    <string name="prefs_ddMaxSimultaneousDownloads">Maximal gleichzeitig laufenden Downloads</string>
+    <string name="prefs_ddMaxSimultaneousDownloads_summary">Maximale Anzahl an Downloads die zur gleichen Zeit laufen können.</string>
+    <string name="prefs_ddResume">Download fortsetzen</string>
+    <string name="prefs_ddResume_summary">Setze pausierte Downloads beim Starten fort</string>
+    <string name="prefs_enableNotifications">Benachrichtigungsservice aktivieren</string>
+    <string name="prefs_enableNotifications_summary">Du wirst für alle von dir ausgewählten Profile Benachrichtigungen erhalten</string>
+    <string name="prefs_notificationType">Nachrichtentypen</string>
+    <string name="prefs_notificationType_summary">Wähle aus, welche Art von Benachrichtigungen du erhalten willst</string>
+    <string name="prefs_enableNotificationsAtBoot">Starte den Benachrichtigungsservice beim Booten</string>
+    <string name="prefs_enableNotificationsAtBoot_summary">Der Benachrichtigungsservice wird gestartet, sobald das Gerät bootet</string>
     <!-- General -->
 </resources>
