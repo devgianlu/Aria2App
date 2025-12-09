@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
+    <string name="tutorial_moreDetails">Tippe auf die Karte für mehr Informationen</string>
     <string name="tutorial_evenMoreDetails">Tippe auf \"mehr\" um alle Details anzuzeigen</string>
     <string name="tutorial_search">Filtere Downloads nach Name oder GID</string>
     <string name="tutorial_filters">Filtere Downloads nach Status</string>
