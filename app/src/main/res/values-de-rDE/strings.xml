@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
+    <string name="tutorial_search">Filtere Downloads nach Name oder GID</string>
+    <string name="tutorial_filters">Filtere Downloads nach Status</string>
+    <string name="tutorial_fileDetails">Tippe eine Datei an für Details oder um sie zu downloaden</string>
+    <string name="tutorial_folderDetails">Tippe und halte einen Ordner an für Details oder um ihn zu downloaden</string>
+    <string name="tutorial_serverDetails">Tippe auf einen Server für mehr Details</string>
+    <string name="tutorial_peerDetails">Tippe auf einen Peer für mehr Details</string>
     <!-- Prefs -->
+    <string name="prefs_hideMetadata">Verstecke zugehörige Metadaten</string>
     <!-- General -->
 </resources>
