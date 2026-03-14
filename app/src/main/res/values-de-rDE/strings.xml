@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
+    <string name="tutorial_moreDetails">Tippe auf die Karte für mehr Informationen</string>
+    <string name="tutorial_evenMoreDetails">Tippe auf \"mehr\" um alle Details anzuzeigen</string>
+    <string name="tutorial_search">Filtere Downloads nach Name oder GID</string>
+    <string name="tutorial_filters">Filtere Downloads nach Status</string>
+    <string name="tutorial_fileDetails">Tippe eine Datei an für Details oder um sie zu downloaden</string>
+    <string name="tutorial_folderDetails">Tippe und halte einen Ordner an für Details oder um ihn zu downloaden</string>
+    <string name="tutorial_serverDetails">Tippe auf einen Server für mehr Details</string>
+    <string name="tutorial_peerDetails">Tippe auf einen Peer für mehr Details</string>
     <!-- Prefs -->
+    <string name="prefs_hideMetadata">Verstecke zugehörige Metadaten</string>
+    <string name="prefs_hideMetadata_summary">Verstecke Metadaten die einen anderen Download gestartet haben.</string>
+    <string name="prefs_updateRate">Aktualisierungsrate</string>
+    <string name="prefs_updateRate_summary">Aktualisierungsrate der Benutzeroberfläche in Sekunden.</string>
+    <string name="prefs_networkTimeout">Netzwerkzeitüberschreitung</string>
+    <string name="prefs_networkTimeout_summary">Sollte dein Netzwerk sehr hohe Latenzen haben, erhöhe diesen Sekundenwert um Fehler zu vermeiden.</string>
+    <string name="prefs_downloadDisplayInfo">Download anzeige Info</string>
+    <string name="prefs_downloadDisplayInfo_summary">Personalisiere die Informationen, die in der Download-Karte angezeigt werden.</string>
+    <string name="prefs_versionCheck">Überprüfe die Version von aria2 beim Start</string>
+    <string name="prefs_versionCheck_summary">Überprüfe, dass die neuste Version von aria2 läuft.</string>
+    <string name="prefs_ddDownloadPath">Pfad für Downloads</string>
+    <string name="prefs_ddDownloadPath_summary">Alle Dateien werden hierher heruntergeladen.</string>
+    <string name="prefs_ddMaxSimultaneousDownloads">Maximal gleichzeitig laufenden Downloads</string>
+    <string name="prefs_ddMaxSimultaneousDownloads_summary">Maximale Anzahl an Downloads die zur gleichen Zeit laufen können.</string>
+    <string name="prefs_ddResume">Download fortsetzen</string>
+    <string name="prefs_ddResume_summary">Setze pausierte Downloads beim Starten fort</string>
+    <string name="prefs_enableNotifications">Benachrichtigungsservice aktivieren</string>
+    <string name="prefs_enableNotifications_summary">Du wirst für alle von dir ausgewählten Profile Benachrichtigungen erhalten</string>
+    <string name="prefs_notificationType">Nachrichtentypen</string>
+    <string name="prefs_notificationType_summary">Wähle aus, welche Art von Benachrichtigungen du erhalten willst</string>
+    <string name="prefs_enableNotificationsAtBoot">Starte den Benachrichtigungsservice beim Booten</string>
+    <string name="prefs_enableNotificationsAtBoot_summary">Der Benachrichtigungsservice wird gestartet, sobald das Gerät bootet</string>
     <!-- General -->
 </resources>

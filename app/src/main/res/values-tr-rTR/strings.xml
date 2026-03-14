@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
+    <string name="tutorial_moreDetails">Daha fazla ayrıntı görmek için karta tıklayın</string>
+    <string name="tutorial_evenMoreDetails">Bütün ayrıntıları görmek için daha fazla butonuna tıklayın</string>
+    <string name="tutorial_search">İndirmeleri isme veya GID\'ye göre filtrele</string>
+    <string name="tutorial_filters">İndirmeleri duruma göre filtrele</string>
+    <string name="tutorial_fileDetails">Detayları görüntülemek veya indirmek için dosyaya tıklayın</string>
+    <string name="tutorial_folderDetails">Bir klasörün ayrıntılarını görüntülemek veya indirmek için klasöre tıklayın ve basılı tutun</string>
+    <string name="tutorial_serverDetails">Ayrıntılarını görüntülemek için sunucuya tıklayın</string>
     <!-- Prefs -->
+    <string name="prefs_hideMetadata">Bağlanmış metadata\'yı gizle</string>
+    <string name="prefs_hideMetadata_summary">Başka bir indirme başlatmış metadata\'yı gizle.</string>
+    <string name="prefs_updateRate">Yenileme oranı</string>
+    <string name="prefs_updateRate_summary">Saniyedeki arayüz yenileme oranı.</string>
+    <string name="prefs_networkTimeout">Bağlantı zamanaşımı</string>
+    <string name="prefs_networkTimeout_summary">Ağınızın gecikme süresi çok yüksekse, hataları önlemek için değeri (saniye cinsinden) artırın.</string>
+    <string name="prefs_downloadDisplayInfo_summary">İndirme kartındaki bilgiyi özelleştir.</string>
+    <string name="prefs_versionCheck">Başlangıçta aria2 sürümünü kontrol et</string>
+    <string name="prefs_versionCheck_summary">Aria2\'nin son sürümünün çalıştığını kontrol et.</string>
+    <string name="prefs_ddDownloadPath">İndirilenler yolu</string>
+    <string name="prefs_ddDownloadPath_summary">Bütün dosyalar buraya indirilecektir.</string>
+    <string name="prefs_ddMaxSimultaneousDownloads">En fazla aynı anda indirme</string>
+    <string name="prefs_ddMaxSimultaneousDownloads_summary">Aynı zamandaki en fazla aynı anda indirme sayısı.</string>
+    <string name="prefs_ddResume">İndirmeye devam et</string>
+    <string name="prefs_ddResume_summary">Başlangıçta durdurulan indirmeleri devam ettir</string>
+    <string name="prefs_enableNotifications">Bildirim servislerini etkinleştir</string>
+    <string name="prefs_enableNotifications_summary">Seçili profilleriniz için bildirim alıcaksınız</string>
+    <string name="prefs_notificationType">Bildirim türleri</string>
     <!-- General -->
 </resources>
