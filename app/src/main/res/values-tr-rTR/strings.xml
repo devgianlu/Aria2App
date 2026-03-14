@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tutorial -->
+    <string name="tutorial_moreDetails">Daha fazla ayrıntı görmek için karta tıklayın</string>
+    <string name="tutorial_evenMoreDetails">Bütün ayrıntıları görmek için daha fazla butonuna tıklayın</string>
+    <string name="tutorial_search">İndirmeleri isme veya GID\'ye göre filtrele</string>
+    <string name="tutorial_filters">İndirmeleri duruma göre filtrele</string>
+    <string name="tutorial_fileDetails">Detayları görüntülemek veya indirmek için dosyaya tıklayın</string>
+    <string name="tutorial_folderDetails">Bir klasörün ayrıntılarını görüntülemek veya indirmek için klasöre tıklayın ve basılı tutun</string>
+    <string name="tutorial_serverDetails">Ayrıntılarını görüntülemek için sunucuya tıklayın</string>
     <!-- Prefs -->
+    <string name="prefs_hideMetadata">Bağlanmış metadata\'yı gizle</string>
+    <string name="prefs_hideMetadata_summary">Başka bir indirme başlatmış metadata\'yı gizle.</string>
+    <string name="prefs_updateRate">Yenileme oranı</string>
     <!-- General -->
 </resources>
