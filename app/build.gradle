@@ -116,7 +116,7 @@ dependencies {
     implementation 'com.hierynomus:smbj:0.14.0'
     implementation 'com.jcraft:jsch:0.1.55'
 
-    implementation 'com.squareup.okhttp3:okhttp:5.1.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.3.2'
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
