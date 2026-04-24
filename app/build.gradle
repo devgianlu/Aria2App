@@ -112,7 +112,7 @@ dependencies {
     implementation 'com.github.tonyofrancis.Fetch:fetch2:3.4.1'
     implementation 'com.github.tonyofrancis.Fetch:fetch2okhttp:3.4.1'
 
-    implementation 'commons-net:commons-net:3.11.1'
+    implementation 'commons-net:commons-net:3.13.0'
     implementation 'com.hierynomus:smbj:0.14.0'
     implementation 'com.jcraft:jsch:0.1.55'
 
