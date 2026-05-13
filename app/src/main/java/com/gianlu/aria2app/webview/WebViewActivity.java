@@ -144,7 +144,13 @@ public class WebViewActivity extends ActivityWithDialog {
 
         WebSettings settings = web.getSettings();
         settings.setJavaScriptEnabled(true);
-        settings.setAllowFileAccess(true);
+        // The WebView is used to browse the web for downloadable links and
+        // hand them off to aria2. shouldInterceptRequest below routes every
+        // request through an OkHttpClient that only handles http and https
+        // (HttpUrl.parse returns null for file:// URIs and the request is
+        // dropped). file:// inputs are not a supported use case here, so
+        // there is no reason to leave the default file-access surface on.
+        settings.setAllowFileAccess(false);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
 
